@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img"><title>Пятнадцать уроков</title><defs>
+<radialGradient id="bgc" cx="50%" cy="34%" r="74%">
+<stop offset="0" stop-color="#2C2449"/><stop offset="58%" stop-color="#1B1830"/><stop offset="100%" stop-color="#110E1D"/>
+</radialGradient>
+<linearGradient id="au" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#F2DC9E"/><stop offset="46%" stop-color="#D8B251"/><stop offset="100%" stop-color="#AE8227"/>
+</linearGradient>
+<radialGradient id="emb" cx="46%" cy="42%" r="56%">
+<stop offset="0" stop-color="#FFE4BC"/><stop offset="42%" stop-color="#ED9048"/><stop offset="100%" stop-color="#B4581F"/>
+</radialGradient>
+<radialGradient id="glo" cx="50%" cy="104%" r="72%">
+<stop offset="0" stop-color="#E8833A" stop-opacity=".32"/><stop offset="100%" stop-color="#E8833A" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="vio" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#BCA2EE"/><stop offset="100%" stop-color="#6B4FA8"/>
+</linearGradient>
+</defs><circle cx="256" cy="256" r="250" fill="url(#bgc)"/><circle cx="256" cy="256" r="250" fill="url(#glo)"/><g transform="translate(256.7 256.7) scale(1.4871) translate(-256 -256)" stroke="url(#au)" fill="none" stroke-width="14.79" stroke-linecap="round" stroke-linejoin="round"><rect x="146" y="188" width="220" height="136" rx="24" stroke-opacity=".9"/><path d="M170 220 L170 292" stroke-width="9" stroke-opacity="0.32"/><path d="M182 220 L182 292" stroke-width="9" stroke-opacity="0.32"/><path d="M194 220 L194 292" stroke-width="9" stroke-opacity="0.32"/><path d="M207 220 L207 292" stroke-width="9" stroke-opacity="0.32"/><path d="M219 220 L219 292" stroke-width="9" stroke-opacity="0.32"/><path d="M231 220 L231 292" stroke-width="9" stroke-opacity="0.32"/><path d="M243 220 L243 292" stroke-width="9" stroke-opacity="0.32"/><path d="M255 220 L255 292" stroke-width="9" stroke-opacity="0.32"/><path d="M268 220 L268 292" stroke-width="9" stroke-opacity="0.32"/><path d="M280 220 L280 292" stroke-width="9" stroke-opacity="0.32"/><path d="M292 220 L292 292" stroke-width="9" stroke-opacity="0.32"/><path d="M304 220 L304 292" stroke-width="9" stroke-opacity="0.32"/><path d="M316 220 L316 292" stroke-width="15" stroke-opacity="1"/><path d="M329 220 L329 292" stroke-width="15" stroke-opacity="1"/><path d="M341 220 L341 292" stroke-width="15" stroke-opacity="1"/></g><circle cx="256" cy="256" r="240" fill="none" stroke="url(#au)" stroke-opacity=".5" stroke-width="5"/><circle cx="256" cy="256" r="214" fill="none" stroke="url(#au)" stroke-opacity=".13" stroke-width="2"/></svg>

@@ -1,0 +1,602 @@
+[
+{
+"brand": "ADMIRAL ACBAR",
+"name": "CEREAL",
+"desc": "Сливочный вкус сладкой овсяной каши с ягодами",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "TWO APPLES",
+"desc": "Двойное яблоко: сладкое и кислое, классика",
+"tags": [
+"фрукт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "GRAPE MINT",
+"desc": "Виноград с холодком мяты",
+"tags": [
+"фрукт",
+"холод",
+"лёгкая крепость"
+],
+"strength": "лёгкая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «лёгкая»"
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "LEMON PIE",
+"desc": "Лимонный пирог с безе, сладкий с кислинкой",
+"tags": [
+"десерт",
+"цитрус",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "BLUEBERRY",
+"desc": "Черника с лёгкой кислинкой",
+"tags": [
+"ягода",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "COLA",
+"desc": "Газированная кола с карамелью",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "PEACH",
+"desc": "Спелый персик, мягкий и сладкий",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "ADMIRAL ACBAR",
+"name": "MINT",
+"desc": "Чистая мята, сильный холод",
+"tags": [
+"холод",
+"лёгкая крепость",
+"моно"
+],
+"strength": "лёгкая",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "AL FAKHER",
+"name": "GRAPE MINT",
+"desc": "Виноград с мятой, самый узнаваемый вкус",
+"tags": [
+"фрукт",
+"холод",
+"средняя крепость"
+],
+"strength": "средняя",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "AL FAKHER",
+"name": "TWO APPLES",
+"desc": "Яблоко с анисом, классический восточный профиль",
+"tags": [
+"фрукт",
+"средняя крепость",
+"пряность"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "AL FAKHER",
+"name": "WATERMELON MINT",
+"desc": "Арбуз с холодком, летний",
+"tags": [
+"ягода",
+"холод",
+"лёгкая крепость"
+],
+"strength": "лёгкая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «лёгкая»"
+},
+{
+"brand": "AL FAKHER",
+"name": "LEMON MINT",
+"desc": "Лимон с мятой, освежающий",
+"tags": [
+"цитрус",
+"холод",
+"лёгкая крепость"
+],
+"strength": "лёгкая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «лёгкая»"
+},
+{
+"brand": "AL FAKHER",
+"name": "COCONUT",
+"desc": "Кокос, сливочный и мягкий",
+"tags": [
+"десерт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "AL FAKHER",
+"name": "VANILLA",
+"desc": "Ваниль, сладкая и тёплая",
+"tags": [
+"десерт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "AL FAKHER",
+"name": "GUMMY BEAR",
+"desc": "Мармеладные мишки, детский сладкий вкус",
+"tags": [
+"десерт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "MUST HAVE",
+"name": "SPACE",
+"desc": "Ягодный микс с сильным холодом",
+"tags": [
+"ягода",
+"холод",
+"высокая крепость"
+],
+"strength": "высокая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «высокая»"
+},
+{
+"brand": "MUST HAVE",
+"name": "BERRY BLEND",
+"desc": "Лесные ягоды без холода",
+"tags": [
+"ягода",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "MUST HAVE",
+"name": "CHOCO",
+"desc": "Тёмный шоколад с горчинкой",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "MUST HAVE",
+"name": "MOJITO",
+"desc": "Лайм, мята и тростниковый сахар",
+"tags": [
+"цитрус",
+"холод",
+"средняя крепость"
+],
+"strength": "средняя",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "MUST HAVE",
+"name": "PINEAPPLE",
+"desc": "Сочный ананас с кислинкой",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "DOGMA",
+"name": "MANGO",
+"desc": "Спелое манго, густой и сладкий",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "DOGMA",
+"name": "PEAR",
+"desc": "Груша, мягкая и водянистая",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "DOGMA",
+"name": "CHEESECAKE",
+"desc": "Чизкейк с ягодным соусом",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "DOGMA",
+"name": "MINT ICE",
+"desc": "Мята с усиленным холодом",
+"tags": [
+"холод",
+"высокая крепость",
+"моно"
+],
+"strength": "высокая",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "DOGMA",
+"name": "GRAPE",
+"desc": "Виноград без мяты, сладкий",
+"tags": [
+"фрукт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "SAPPHIRE CROWN",
+"name": "LEMON CAKE",
+"desc": "Лимонный бисквит",
+"tags": [
+"десерт",
+"цитрус",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "SAPPHIRE CROWN",
+"name": "BERRY JAM",
+"desc": "Ягодный джем, густой",
+"tags": [
+"ягода",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "SAPPHIRE CROWN",
+"name": "ICE FRUIT",
+"desc": "Фруктовый микс с холодом",
+"tags": [
+"фрукт",
+"холод",
+"средняя крепость"
+],
+"strength": "средняя",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "SAPPHIRE CROWN",
+"name": "NUTTY",
+"desc": "Ореховая паста с карамелью",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "HLGN ROR",
+"name": "RED ENERGY",
+"desc": "Энергетик с красными ягодами",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "HLGN ROR",
+"name": "BLUE MIST",
+"desc": "Голубая ягода с холодом",
+"tags": [
+"ягода",
+"холод",
+"высокая крепость"
+],
+"strength": "высокая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «высокая»"
+},
+{
+"brand": "HLGN ROR",
+"name": "CARAMEL",
+"desc": "Жжёная карамель",
+"tags": [
+"десерт",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "JOY",
+"name": "CHERRY",
+"desc": "Черешня с кислинкой",
+"tags": [
+"ягода",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "JOY",
+"name": "GRAPE SODA",
+"desc": "Виноградный лимонад с газом",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "JOY",
+"name": "ICE CREAM",
+"desc": "Сливочное мороженое",
+"tags": [
+"десерт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "CRZ",
+"name": "CITRUS MIX",
+"desc": "Микс цитрусов, кислый",
+"tags": [
+"цитрус",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "CRZ",
+"name": "RASPBERRY",
+"desc": "Малина, кисло-сладкая",
+"tags": [
+"ягода",
+"средняя крепость",
+"без холода"
+],
+"strength": "средняя",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "IZI",
+"name": "TROPIC",
+"desc": "Тропический микс, сладкий",
+"tags": [
+"фрукт",
+"лёгкая крепость",
+"без холода"
+],
+"strength": "лёгкая",
+"cold": false,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+},
+{
+"brand": "IZI",
+"name": "MELON",
+"desc": "Дыня с холодком",
+"tags": [
+"фрукт",
+"холод",
+"лёгкая крепость"
+],
+"strength": "лёгкая",
+"cold": true,
+"inQuiz": true,
+"status": "требует проверки",
+"note": "крепость: колонка «средняя» ≠ теги «лёгкая»"
+},
+{
+"brand": "HQD",
+"name": "COLA ICE",
+"desc": "Кола с холодом",
+"tags": [
+"десерт",
+"холод",
+"средняя крепость"
+],
+"strength": "средняя",
+"cold": true,
+"inQuiz": true,
+"status": "на согласовании",
+"note": ""
+}
+]

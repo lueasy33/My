@@ -1,0 +1,133 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../api'
+import { useApp } from '../App'
+import { Icon, PageSkeleton, LoadError, Modal, Tabs, PageHead, Empty, useLoad, useToast, avatarSrc, RARITY } from '../ui'
+
+function StatusTag({ rarity }) {
+  const r = RARITY[rarity] || RARITY.common
+  return <span className={r.cls} style={{ marginTop: 4 }}>{r.label}</span>
+}
+
+export default function Shop() {
+  const { user, refresh, reload: reloadUser } = useApp()
+  const nav = useNavigate()
+  const toast = useToast()
+  const { data, error, reload } = useLoad(() => api.shop(), [])
+  const [tab, setTab] = useState('avatar')
+  const [confirm, setConfirm] = useState(null)
+  const [busy, setBusy] = useState(false)
+
+  if (error) return <main className="page"><LoadError error={error} onRetry={reload} /></main>
+  if (!data) return <main className="page"><PageSkeleton /></main>
+
+  const items = data.items.filter(i => i.kind === tab)
+
+  async function buy(item) {
+    setBusy(true)
+    try {
+      await api.buy(item.id)
+      setConfirm(null)
+      await Promise.all([reload(), refresh()])
+    } catch (e) { toast(e.message, 'error') } finally { setBusy(false) }
+  }
+
+  async function apply(item) {
+    try {
+      if (item.kind === 'theme') {
+        await api.patchMe({ theme: item.ref })
+        await reloadUser()
+        toast('Тема применена', 'success')
+      } else {
+        await api.select(item.kind, item.ref)
+        await Promise.all([reload(), reloadUser()])
+        toast(item.kind === 'avatar' ? 'Аватарка выбрана' : 'Статус выбран', 'success')
+      }
+      reload()
+    } catch (e) { toast(e.message, 'error') }
+  }
+
+  return (
+    <main className="page wide">
+      <PageHead title="Магазин" sub="Трать COIL на аватарки, статусы и темы. Купленное остаётся навсегда"
+        action={<span className="coil-chip" style={{ height: 40, fontSize: 16 }}><Icon.coin size={18} />{data.balance.toLocaleString('ru')}</span>} />
+
+      <div style={{ marginBottom: 18 }}>
+        <Tabs value={tab} onChange={setTab} items={[['avatar', 'Аватарки'], ['status', 'Статусы'], ['theme', 'Темы']]} />
+      </div>
+
+      {items.length === 0 ? <Empty icon={<Icon.bag size={26} />} title="Здесь пока пусто" text="Администратор скоро добавит товары" /> : (
+        <div className="shop-grid">
+          {items.map(item => (
+            <div key={item.id} className={'shop-item' + (item.owned ? ' owned' : '') + (!item.purchaseable && !item.owned ? ' limited' : '')}>
+              {item.kind === 'avatar'
+                ? <img className="thumb" src={avatarSrc(item.ref, 256)} alt="" loading="lazy" style={!item.owned && !item.purchaseable ? { filter: 'grayscale(.6)' } : undefined} />
+                : item.kind === 'theme' && item.swatch
+                  ? <div className="thumb" style={{ background: item.swatch[0], border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6, padding: 14, borderRadius: 18 }}>
+                      <i style={{ height: 14, borderRadius: 5, background: item.swatch[1] }} />
+                      <i style={{ height: 8, width: '60%', borderRadius: 4, background: item.swatch[2] }} />
+                    </div>
+                  : item.image
+                    ? <img className="thumb" src={item.image} alt="" loading="lazy" style={{ objectFit: 'contain', background: 'var(--surface-2)', padding: 8 }} />
+                    : <div className="thumb" style={{ color: 'var(--brand-text)', background: 'var(--brand-soft)' }}><Icon.star size={34} /></div>}
+
+              <div>
+                <div className="bold" style={{ lineHeight: 1.3 }}>{item.title}</div>
+                {item.kind === 'status' && <StatusTag rarity={item.rarity} />}
+                {item.description && <div className="tiny muted" style={{ marginTop: 4 }}>{item.description}</div>}
+                {item.kind === 'theme' && item.level && <div className="tiny muted">или бесплатно на {item.level} уровне</div>}
+              </div>
+
+              <div style={{ marginTop: 'auto' }}>
+                {item.owned ? (
+                  item.selected
+                    ? <span className="badge success"><Icon.check size={12} />{item.kind === 'theme' ? 'Включена' : 'Выбрано'}</span>
+                    : <button className="btn ghost sm block" onClick={() => apply(item)}>{item.kind === 'theme' ? 'Включить' : 'Выбрать'}</button>
+                ) : !item.purchaseable ? (
+                  <span className="badge gold"><Icon.medal size={12} />Только за достижение</span>
+                ) : item.missing > 0 ? (
+                  <button className="btn ghost sm block" disabled title={`Не хватает ${item.missing} COIL`}>
+                    <Icon.coin size={15} />{item.price} · не хватает {item.missing}
+                  </button>
+                ) : (
+                  <button className="btn sm block" onClick={() => setConfirm(item)}><Icon.coin size={15} />{item.price}</button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <section className="section">
+        <div className="section-head"><h2>Как заработать COIL</h2></div>
+        <div className="card">
+          <div className="grid-auto" style={{ gap: 8 }}>
+            {[['Пройти урок', 15], ['Сдать тест', 10], ['Тест на 100%', 15], ['Завершить курс', 40], ['Зайти в день', 5], ['Серия 7 дней', 30], ['Тренировка вкусов', 18]].map(([l, v]) => (
+              <div key={l} className="row between small" style={{ padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+                <span className="muted bold">{l}</span>
+                <span className="mono bold reward">+{v}</span>
+              </div>
+            ))}
+          </div>
+          <button className="btn soft sm" style={{ marginTop: 14 }} onClick={() => nav('/library')}><Icon.book size={16} />К урокам</button>
+        </div>
+      </section>
+
+      {confirm && (
+        <Modal title={`Купить «${confirm.title}»?`} onClose={() => setConfirm(null)} width={380}
+          footer={<>
+            <button className="btn ghost" onClick={() => setConfirm(null)}>Отмена</button>
+            <button className="btn" disabled={busy || data.balance < confirm.price} onClick={() => buy(confirm)}>
+              {busy ? 'Покупаем…' : `Списать ${confirm.price} COIL`}
+            </button>
+          </>}>
+          <div className="row between" style={{ padding: '6px 0' }}><span className="muted">Баланс</span><span className="mono bold">{data.balance}</span></div>
+          <div className="row between" style={{ padding: '6px 0' }}><span className="muted">Цена</span><span className="mono bold" style={{ color: 'var(--danger-text)' }}>− {confirm.price}</span></div>
+          <div className="divider" style={{ margin: '8px 0' }} />
+          <div className="row between"><span className="bold">Останется</span><span className="mono bold reward" style={{ fontSize: 18 }}>{data.balance - confirm.price}</span></div>
+          <p className="small muted" style={{ marginTop: 14 }}>Возврата покупки нет. COIL — внутренняя валюта, на деньги не обменивается.</p>
+        </Modal>
+      )}
+    </main>
+  )
+}

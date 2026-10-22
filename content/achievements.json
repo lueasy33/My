@@ -1,0 +1,218 @@
+[
+  {
+    "code": "ach_01_pervyy-shag",
+    "title": "Первый шаг",
+    "description": "Пройден первый урок",
+    "icon": "ach_01_pervyy-shag",
+    "kind": "auto",
+    "rule": { "type": "lessons", "count": 1 },
+    "xp": 10, "coil": 20, "sort": 1
+  },
+  {
+    "code": "ach_02_pyat-urokov",
+    "title": "Пять уроков",
+    "description": "Пройдено пять уроков",
+    "icon": "ach_02_pyat-urokov",
+    "kind": "auto",
+    "rule": { "type": "lessons", "count": 5 },
+    "xp": 25, "coil": 40, "sort": 2
+  },
+  {
+    "code": "ach_03_pyatnadcat",
+    "title": "Пятнадцать уроков",
+    "description": "Пройдено пятнадцать уроков",
+    "icon": "ach_03_pyatnadcat",
+    "kind": "auto",
+    "rule": { "type": "lessons", "count": 15 },
+    "xp": 50, "coil": 80, "sort": 3
+  },
+  {
+    "code": "ach_04_pervyy-kurs",
+    "title": "Первый курс",
+    "description": "Полностью пройден один курс",
+    "icon": "ach_04_pervyy-kurs",
+    "kind": "auto",
+    "rule": { "type": "courses", "count": 1 },
+    "xp": 30, "coil": 40, "sort": 4
+  },
+  {
+    "code": "ach_05_tri-kursa",
+    "title": "Три курса",
+    "description": "Полностью пройдено три курса",
+    "icon": "ach_05_tri-kursa",
+    "kind": "auto",
+    "rule": { "type": "courses", "count": 3 },
+    "xp": 60, "coil": 100, "sort": 5
+  },
+  {
+    "code": "ach_06_otlichnik",
+    "title": "Отличник",
+    "description": "Тест сдан на 100%",
+    "icon": "ach_06_otlichnik",
+    "kind": "auto",
+    "rule": { "type": "perfect", "count": 1 },
+    "xp": 15, "coil": 30, "sort": 6
+  },
+  {
+    "code": "ach_07_pyat-otlichnyh",
+    "title": "Пять отличных",
+    "description": "Пять тестов сданы на 100%",
+    "icon": "ach_07_pyat-otlichnyh",
+    "kind": "auto",
+    "rule": { "type": "perfect", "count": 5 },
+    "xp": 40, "coil": 60, "sort": 7
+  },
+  {
+    "code": "ach_08_upornyy",
+    "title": "Упорный",
+    "description": "Тест сдан с третьей попытки",
+    "icon": "ach_08_upornyy",
+    "kind": "auto",
+    "rule": { "type": "patient", "attempts": 3 },
+    "xp": 20, "coil": 40, "sort": 8
+  },
+  {
+    "code": "ach_09_seriya-3",
+    "title": "Серия 3 дня",
+    "description": "Три дня подряд",
+    "icon": "ach_09_seriya-3",
+    "kind": "auto",
+    "rule": { "type": "streak", "days": 3 },
+    "xp": 10, "coil": 30, "sort": 9
+  },
+  {
+    "code": "ach_10_seriya-7",
+    "title": "Серия 7 дней",
+    "description": "Неделя подряд",
+    "icon": "ach_10_seriya-7",
+    "kind": "auto",
+    "rule": { "type": "streak", "days": 7 },
+    "xp": 20, "coil": 30, "sort": 10
+  },
+  {
+    "code": "ach_11_seriya-14",
+    "title": "Серия 14 дней",
+    "description": "Две недели подряд",
+    "icon": "ach_11_seriya-14",
+    "kind": "auto",
+    "rule": { "type": "streak", "days": 14 },
+    "xp": 40, "coil": 70, "sort": 11
+  },
+  {
+    "code": "ach_12_seriya-30",
+    "title": "Серия 30 дней",
+    "description": "Месяц подряд",
+    "icon": "ach_12_seriya-30",
+    "kind": "auto",
+    "rule": { "type": "streak", "days": 30 },
+    "xp": 80, "coil": 200, "sort": 12
+  },
+  {
+    "code": "ach_13_osnovy-kalyana",
+    "title": "Основы кальяна",
+    "description": "Курс «Основы кальяна» пройден полностью",
+    "icon": "ach_13_osnovy-kalyana",
+    "kind": "auto",
+    "rule": { "type": "course", "course_id": 1 },
+    "xp": 30, "coil": 50, "sort": 13
+  },
+  {
+    "code": "ach_14_tabak",
+    "title": "Табак",
+    "description": "Курс «Табак: крепость, жар и вкус» пройден полностью",
+    "icon": "ach_14_tabak",
+    "kind": "auto",
+    "rule": { "type": "course", "course_id": 2 },
+    "xp": 30, "coil": 50, "sort": 14
+  },
+  {
+    "code": "ach_15_bezopasnost",
+    "title": "Безопасность",
+    "description": "Курс «Стандарты сервиса и безопасность» пройден полностью",
+    "icon": "ach_15_bezopasnost",
+    "kind": "auto",
+    "rule": { "type": "course", "course_id": 3 },
+    "xp": 30, "coil": 50, "sort": 15
+  },
+  {
+    "code": "ach_16_standarty",
+    "title": "Стандарты",
+    "description": "Все тесты курса «Стандарты» сданы на 100%",
+    "icon": "ach_16_standarty",
+    "kind": "auto",
+    "rule": { "type": "course_perfect", "course_id": 3 },
+    "xp": 50, "coil": 90, "sort": 16
+  },
+  {
+    "code": "ach_17_reglament",
+    "title": "Регламент",
+    "description": "Три теста сданы на 100%",
+    "icon": "ach_17_reglament",
+    "kind": "auto",
+    "rule": { "type": "perfect", "count": 3 },
+    "xp": 30, "coil": 50, "sort": 17
+  },
+  {
+    "code": "ach_18_nochnaya-smena",
+    "title": "Ночная смена",
+    "description": "Урок пройден после 22:00",
+    "icon": "ach_18_nochnaya-smena",
+    "kind": "auto",
+    "rule": { "type": "night" },
+    "xp": 10, "coil": 20, "sort": 18
+  },
+  {
+    "code": "ach_19_vozvrashchenie",
+    "title": "Возвращение",
+    "description": "Возвращение в систему после месяца отсутствия",
+    "icon": "ach_19_vozvrashchenie",
+    "kind": "auto",
+    "rule": { "type": "comeback", "days": 30 },
+    "xp": 25, "coil": 50, "sort": 19
+  },
+  {
+    "code": "ach_20_dosrochno",
+    "title": "Досрочно",
+    "description": "Урок сдан за три дня до дедлайна или раньше",
+    "icon": "ach_20_dosrochno",
+    "kind": "auto",
+    "rule": { "type": "early", "days": 3 },
+    "xp": 20, "coil": 35, "sort": 20
+  },
+  {
+    "code": "ach_21_pervaya-pokupka",
+    "title": "Первая покупка",
+    "description": "Куплено что-то за COIL",
+    "icon": "ach_21_pervaya-pokupka",
+    "kind": "auto",
+    "rule": { "type": "purchases", "count": 1 },
+    "xp": 10, "coil": 20, "sort": 21
+  },
+  {
+    "code": "ach_22_nastavnik",
+    "title": "Наставник",
+    "description": "Наставничество — выдаётся вручную",
+    "icon": "ach_22_nastavnik",
+    "kind": "manual",
+    "rule": {},
+    "xp": 25, "coil": 50, "sort": 22
+  },
+  {
+    "code": "ach_23_luchshiy-servis",
+    "title": "Лучший сервис",
+    "description": "Лучший сервис месяца — выдаётся вручную",
+    "icon": "ach_23_luchshiy-servis",
+    "kind": "manual",
+    "rule": {},
+    "xp": 50, "coil": 100, "sort": 23
+  },
+  {
+    "code": "ach_24_legenda",
+    "title": "Легенда",
+    "description": "Легенда смены — выдаётся вручную",
+    "icon": "ach_24_legenda",
+    "kind": "manual",
+    "rule": {},
+    "xp": 100, "coil": 200, "sort": 24
+  }
+]

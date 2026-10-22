@@ -1,0 +1,37 @@
+start.command
+=============
+
+ALADDIN LMS - HOW TO START (macOS and Linux)
+============================================
+
+STEP 1. Install Node.js (only once)
+  Open https://nodejs.org in your browser.
+  Download the big green "LTS" button and install it (click Next/Continue).
+
+STEP 2. Start
+  Open Terminal in this folder and run:
+
+      chmod +x start.command
+      ./start.command
+
+  Or simply double-click start.command in Finder
+  (the first time macOS may ask you to allow it).
+
+STEP 3. Open in the browser
+  When the black window shows an address, open:
+
+      http://localhost:8080
+
+  Password for everyone: aladdin2026
+
+      Administrator:       +7 910 123-45-67
+      Branch manager:      +7 910 222-33-44
+      Employee:            +7 910 333-44-55
+
+FROM A PHONE
+  Connect the phone to the SAME Wi-Fi as the computer.
+  The black window prints an address like http://192.168.1.5:8080
+  Type that address in the phone browser.
+
+TO STOP
+  Press Ctrl+C in the terminal window.
