@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import { useApp } from '../App'
 import { Icon, PageSkeleton, ProgressBar, LoadError, Empty, Tabs, PageHead, useLoad, plural, daysLabel, IMPORTANCE } from '../ui'
 
 // Цвет обложки по категории: курс узнаётся по цвету, а не по тексту (бриф 10.5).
@@ -35,6 +36,7 @@ export function Cover({ id, complete, size = 56, color }) {
 }
 
 export default function Library() {
+  const { user } = useApp()
   const [filter, setFilter] = useState('all')
   const [view, setView] = useState(() => { try { return localStorage.getItem('libView') || 'grid' } catch { return 'grid' } })
   const { data, error, reload } = useLoad(() => api.library(filter), [filter])
@@ -69,7 +71,8 @@ export default function Library() {
           <Empty icon={<Icon.book size={26} />}
             title={filter === 'all' ? 'Курсов пока нет' : filter === 'overdue' ? 'Просрочек нет' : filter === 'done' ? 'Пока ничего не завершено' : 'Нет курсов в работе'}
             text={filter === 'all' ? 'Администратор ещё не опубликовал курсы. Загляни позже.' : filter === 'overdue' ? 'Так держать — всё сдано вовремя.' : 'Открой курс из вкладки «Все» и пройди первый урок.'}
-            action={filter !== 'all' && <button className="btn ghost sm" onClick={() => setFilter('all')}>Показать все</button>} />
+            action={filter !== 'all' ? <button className="btn ghost sm" onClick={() => setFilter('all')}>Показать все</button>
+              : user.role === 'admin' && <Link className="btn primary sm" to="/admin/content">Создать курс</Link>} />
         ) : (
           <div className="col" style={{ gap: 28 }}>
             {data.categories.map(cat => (

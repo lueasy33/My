@@ -3,18 +3,21 @@ import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { Icon, PageSkeleton, ProgressBar, LoadError, PageHead, Tabs, Empty, useLoad, plural } from '../ui'
 import { BrandLogo, brandColor } from './flavorUi'
+import { useApp } from '../App'
 
 // Тренажёр вкусов в духе Duolingo: путь из брендов, цель дня, серия,
 // короткие сессии. Плюс «Коллекция» — справочник всех брендов и вкусов.
 export default function Flavors() {
   const nav = useNavigate()
+  const { user } = useApp()
   const { data, error, reload } = useLoad(() => api.flavors(), [])
   const [tab, setTab] = useState('path')
   const [q, setQ] = useState('')
 
   if (error) return <main className="page"><LoadError error={error} onRetry={reload} /></main>
   if (!data) return <main className="page"><PageSkeleton /></main>
-  if (!data.brands.length) return <main className="page"><Empty icon={<Icon.target size={26} />} title="Вкусов пока нет" text="Администратор ещё не добавил бренды и вкусы" /></main>
+  if (!data.brands.length) return <main className="page"><Empty icon={<Icon.target size={26} />} title="Вкусов пока нет" text={user.role === 'admin' ? 'Добавьте бренды и вкусы — они появятся здесь для обучения' : 'Администратор ещё не добавил бренды и вкусы'}
+    action={user.role === 'admin' && <Link className="btn primary sm" to="/admin/flavors">Добавить вкусы</Link>} /></main>
 
   const goalDone = data.today.sessions >= data.today.goal
   const work = data.due + Math.min(data.fresh, 4)

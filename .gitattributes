@@ -1,0 +1,10 @@
+# Скрипты для Linux-сервера и Docker должны иметь окончания строк LF,
+# иначе bash на сервере споткнётся о символ \r
+*.sh text eol=lf
+start.command text eol=lf
+Dockerfile text eol=lf
+Caddyfile text eol=lf
+docker-compose.yml text eol=lf
+.env.example text eol=lf
+# Файл запуска Windows — с окончаниями CRLF
+*.bat text eol=crlf
