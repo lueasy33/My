@@ -60,14 +60,26 @@ if [ ! -f .env ]; then
   say "Настройка сайта"
   echo "  Адрес сайта. Если домена нет — просто нажмите Enter,"
   echo "  будет бесплатный адрес https://${ip//./-}.sslip.io"
-  domain="$(ask 'Домен (например learn.shop-aladdin.ru): ')"
-  [ -n "$domain" ] || domain="${ip//./-}.sslip.io"
-  domain="${domain#https://}"; domain="${domain#http://}"; domain="${domain%%/*}"
+  while :; do
+    domain="$(ask 'Свой домен или просто Enter: ')"
+    domain="${domain#https://}"; domain="${domain#http://}"; domain="${domain%%/*}"
+    if [ -z "$domain" ]; then domain="${ip//./-}.sslip.io"; break; fi
+    # Домен должен уже указывать на этот сервер, иначе HTTPS не получится
+    dns="$(getent ahostsv4 "$domain" 2>/dev/null | awk 'NR==1{print $1}')"
+    if [ "$dns" = "$ip" ]; then break; fi
+    echo "  Домен $domain не указывает на этот сервер ($ip)."
+    echo "  Если своего домена нет — просто нажмите Enter."
+  done
+  echo "  Адрес сайта: https://$domain"
 
   echo
   echo "  Первый администратор — им вы войдёте на сайт."
-  phone="$(ask 'Телефон (+79001234567): ')"
-  [ -n "$phone" ] || fail "Телефон обязателен"
+  while :; do
+    phone="$(ask 'Ваш телефон (например +79161234567): ')"
+    digits="${phone//[^0-9]/}"
+    [ "${#digits}" -ge 10 ] && break
+    echo "  Введите номер телефона цифрами, например +79161234567"
+  done
   name="$(ask 'Имя и фамилия: ')"
   [ -n "$name" ] || name="Администратор"
   while :; do
