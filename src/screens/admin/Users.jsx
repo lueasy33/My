@@ -124,7 +124,7 @@ export default function Users() {
 
       {list.length === 0 ? <Empty icon={<Icon.users size={26} />} title={archived ? 'Архив пуст' : 'Никого не нашли'} text={q ? 'Попробуйте другой запрос' : ''} /> : (
         <div className="table-wrap">
-          <table className="dtable">
+          <table className="dtable stack">
             <thead><tr><th>Сотрудник</th><th>Филиал</th><th>Прогресс</th><th>Ур.</th><th>Был</th><th></th></tr></thead>
             <tbody>
               {list.map(u => (
@@ -143,11 +143,11 @@ export default function Users() {
                       {u.status === 'blocked' && !u.archived_at && <span className="badge danger">Заблокирован</span>}
                     </div>
                   </td>
-                  <td className="muted">{u.branch || '—'}</td>
-                  <td style={{ minWidth: 120 }}><div className="row" style={{ gap: 8 }}><span className="mono small" style={{ width: 34 }}>{u.percent}%</span><div style={{ flex: 1 }}><ProgressBar percent={u.percent} thin /></div></div></td>
-                  <td className="mono">{u.level}</td>
-                  <td className="small muted">{u.last_active_day ? fmtDate(u.last_active_day) : 'не заходил'}</td>
-                  <td>
+                  <td className="muted" data-label="Филиал">{u.branch || '—'}</td>
+                  <td style={{ minWidth: 120 }} data-label="Прогресс"><div className="row" style={{ gap: 8 }}><span className="mono small" style={{ width: 34 }}>{u.percent}%</span><div style={{ flex: 1 }}><ProgressBar percent={u.percent} thin /></div></div></td>
+                  <td className="mono" data-label="Уровень">{u.level}</td>
+                  <td className="small muted" data-label="Был">{u.last_active_day ? fmtDate(u.last_active_day) : 'не заходил'}</td>
+                  <td className="stack-actions">
                     {isAdmin && (
                       <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
                         {archived ? (

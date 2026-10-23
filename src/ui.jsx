@@ -9,6 +9,7 @@ export const Icon = {
   home: (p) => <Svg {...p}><path d="M3 10.5 12 3l9 7.5" /><path d="M5.5 9.5V20h13V9.5" /><path d="M9.5 20v-5.5h5V20" /></Svg>,
   book: (p) => <Svg {...p}><path d="M4 4.5h6a3 3 0 0 1 3 3v12a2.5 2.5 0 0 0-2.5-2.5H4z" /><path d="M20 4.5h-6a3 3 0 0 0-3 3v12a2.5 2.5 0 0 1 2.5-2.5H20z" /></Svg>,
   search: (p) => <Svg {...p}><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></Svg>,
+  gift: (p) => <Svg {...p}><rect x="3.5" y="8" width="17" height="4" rx="1" /><path d="M5 12v8.5h14V12" /><path d="M12 8v12.5" /><path d="M12 8c-1.5-3.5-5.5-3.5-5.5-1S10 8 12 8c2 0 5.5 1.5 5.5-1s-4-2.5-5.5 1" /></Svg>,
   bag: (p) => <Svg {...p}><path d="M5 8h14l-1 12H6z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></Svg>,
   user: (p) => <Svg {...p}><circle cx="12" cy="8.5" r="3.6" /><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0" /></Svg>,
   flame: (p) => <Svg {...p}><path d="M12 20c3.3 0 6-2.4 6-5.4 0-2.1-1.1-3.8-2.6-5.3C13.9 7.8 12.8 5.6 13 3c-2.7 1.3-5 3.6-5 6.6 0 1 .2 1.8.6 2.5-.9-.2-1.7-.9-2.1-1.9-.9 1.3-1.5 2.9-1.5 4.4C5 17.6 8.7 20 12 20Z" /></Svg>,
@@ -181,7 +182,7 @@ export function useConfirm() {
 /* ─── Окно награды ──────────────────────────────────────────── */
 const KIND_LABEL = {
   achievement: 'Достижение', level: 'Новый уровень', course: 'Курс пройден', avatar: 'Аватарка',
-  status: 'Статус', theme: 'Тема оформления', review: 'Ответ зачтён', lesson: 'Урок пройден'
+  status: 'Статус', theme: 'Тема оформления', review: 'Ответ зачтён', lesson: 'Урок пройден', prize: 'Приз заказан'
 }
 
 function chime() {
@@ -254,10 +255,10 @@ export function RewardWindow({ items, onClose, sound = true, reduceMotion = fals
     ? <img className="reward-avatar" src={avatarSrc(item.avatar, 256)} alt="" />
     : item.kind === 'level'
       ? <div className="reward-level"><span>{item.level}</span></div>
-      : item.kind === 'status' && item.image
+      : (item.kind === 'status' || item.kind === 'prize') && item.image
         ? <img src={item.image} alt="" />
-        : item.kind === 'theme' || item.kind === 'status'
-          ? <div className="reward-level">{item.kind === 'theme' ? <Icon.palette size={44} /> : <Icon.star size={44} />}</div>
+        : ['theme', 'status', 'prize'].includes(item.kind)
+          ? <div className="reward-level">{item.kind === 'theme' ? <Icon.palette size={44} /> : item.kind === 'prize' ? <Icon.gift size={44} /> : <Icon.star size={44} />}</div>
           : <img src={iconSrc(item.icon)} alt="" />
 
   return (
@@ -346,9 +347,31 @@ export function ProgressBar({ percent, gold, thin }) {
   )
 }
 
+// Вкладки-категории. Подсветка выбранной плавно переезжает, а сама вкладка
+// прокручивается в видимую область, если их больше, чем помещается.
 export function Tabs({ value, onChange, items, size }) {
+  const ref = useRef(null)
+  const [pos, setPos] = useState(null)
+  useEffect(() => {
+    const box = ref.current
+    if (!box) return
+    const measure = () => {
+      const el = box.querySelector('button[aria-selected="true"]')
+      if (!el) return setPos(null)
+      setPos({ x: el.offsetLeft, w: el.offsetWidth })
+    }
+    measure()
+    const el = box.querySelector('button[aria-selected="true"]')
+    if (el && box.scrollWidth > box.clientWidth) {
+      box.scrollTo({ left: el.offsetLeft - (box.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' })
+    }
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
+    ro?.observe(box)
+    return () => ro?.disconnect()
+  }, [value, items.length])
   return (
-    <div className={'segmented' + (size === 'sm' ? ' sm' : '')} role="tablist">
+    <div ref={ref} className={'segmented' + (size === 'sm' ? ' sm' : '') + (pos ? ' slide' : '')} role="tablist">
+      {pos && <span className="seg-indicator" aria-hidden="true" style={{ '--x': pos.x - 4 + 'px', '--w': pos.w + 'px', left: 4 }} />}
       {items.map(([k, label, count]) => (
         <button key={k} role="tab" aria-selected={value === k} className={value === k ? 'on' : ''} onClick={() => onChange(k)}>
           {label}{count !== undefined && count !== null && <span className="count">{count}</span>}

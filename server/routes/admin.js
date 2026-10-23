@@ -734,6 +734,9 @@ export default async function adminRoutes(app) {
 
   // ─── Мастерская: достижения ─────────────────────────────────
   // Картинка — загруженный файл (/uploads/…), готовая иконка из набора (код) или ссылка https.
+  // Остаток приза: пусто — без ограничения, иначе целое от 0
+  const cleanStock = (v) => (v === '' || v === null || v === undefined) ? null : Math.max(0, Math.floor(Number(v)) || 0)
+
   const cleanImage = (v) => {
     const s = String(v || '').trim()
     if (!s) return ''
@@ -848,7 +851,7 @@ export default async function adminRoutes(app) {
 
   app.post('/api/admin/shop', admin, async (req, reply) => {
     const { kind, ref, title, price, purchaseable, image, description, rarity } = req.body || {}
-    if (!['avatar', 'status', 'theme'].includes(kind) || !String(title || '').trim()) return reply.code(400).send({ error: 'Заполните название' })
+    if (!['avatar', 'status', 'theme', 'prize'].includes(kind) || !String(title || '').trim()) return reply.code(400).send({ error: 'Заполните название' })
     const img = cleanImage(image)
     if (img === null) return reply.code(400).send({ error: 'Некорректная картинка' })
     // Аватарка из загруженного файла: её код — сам адрес картинки.
@@ -856,14 +859,15 @@ export default async function adminRoutes(app) {
     let code = ref
     if (kind === 'avatar') code = img || ref
     if (kind === 'status') code = `status_${Date.now().toString(36)}${randomBytes(2).toString('hex')}`
+    if (kind === 'prize') code = `prize_${Date.now().toString(36)}${randomBytes(2).toString('hex')}`
     if (!code) return reply.code(400).send({ error: kind === 'avatar' ? 'Загрузите картинку аватарки' : 'Выберите тему' })
     if (db.prepare('SELECT 1 FROM shop_items WHERE kind = ? AND ref = ?').get(kind, code)) return reply.code(409).send({ error: 'Такой предмет уже есть' })
     if (Number(price) < 0) return reply.code(400).send({ error: 'Цена не может быть меньше нуля' })
     const sort = db.prepare('SELECT COALESCE(MAX(sort),0) m FROM shop_items').get().m + 1
-    const id = db.prepare('INSERT INTO shop_items(kind,ref,title,price,purchaseable,sort,image,description,rarity) VALUES (?,?,?,?,?,?,?,?,?)')
+    const id = db.prepare('INSERT INTO shop_items(kind,ref,title,price,purchaseable,sort,image,description,rarity,stock) VALUES (?,?,?,?,?,?,?,?,?,?)')
       .run(kind, code, String(title).trim(), Number(price) || 0, purchaseable ? 1 : 0, sort,
-        kind === 'status' ? (img || '') : '', String(description || '').trim(),
-        ['common', 'rare', 'legendary'].includes(rarity) ? rarity : 'common').lastInsertRowid
+        kind === 'status' || kind === 'prize' ? (img || '') : '', String(description || '').trim(),
+        ['common', 'rare', 'legendary'].includes(rarity) ? rarity : 'common', kind === 'prize' ? cleanStock(req.body.stock) : null).lastInsertRowid
     audit(req.user.id, 'shop.create', 'item', id, { title })
     reply.send({ id, ref: code })
   })
@@ -871,7 +875,7 @@ export default async function adminRoutes(app) {
   app.patch('/api/admin/shop/:id', admin, async (req, reply) => {
     const it = db.prepare('SELECT * FROM shop_items WHERE id = ?').get(req.params.id)
     if (!it) return reply.code(404).send({ error: 'Не найдено' })
-    const { title, price, purchaseable, image, description, rarity } = req.body || {}
+    const { title, price, purchaseable, image, description, rarity, stock } = req.body || {}
     if (price !== undefined && Number(price) < 0) return reply.code(400).send({ error: 'Цена не может быть меньше нуля' })
     const img = image === undefined ? undefined : cleanImage(image)
     if (img === null) return reply.code(400).send({ error: 'Некорректная картинка' })
@@ -879,7 +883,8 @@ export default async function adminRoutes(app) {
       db.prepare('UPDATE shop_items SET title=?, price=?, purchaseable=?, description=?, rarity=? WHERE id=?')
         .run(String(title ?? it.title).trim() || it.title, price ?? it.price, purchaseable === undefined ? it.purchaseable : (purchaseable ? 1 : 0),
           description ?? it.description, ['common', 'rare', 'legendary'].includes(rarity) ? rarity : it.rarity, it.id)
-      if (img !== undefined && it.kind === 'status') db.prepare('UPDATE shop_items SET image = ? WHERE id = ?').run(img, it.id)
+      if (img !== undefined && (it.kind === 'status' || it.kind === 'prize')) db.prepare('UPDATE shop_items SET image = ? WHERE id = ?').run(img, it.id)
+      if (stock !== undefined && it.kind === 'prize') db.prepare('UPDATE shop_items SET stock = ? WHERE id = ?').run(cleanStock(stock), it.id)
       // Замена картинки аватарки: переносим новую картинку всем, у кого она уже есть
       if (img && it.kind === 'avatar' && img !== it.ref) {
         db.prepare('UPDATE shop_items SET ref = ? WHERE id = ?').run(img, it.id)
@@ -899,13 +904,44 @@ export default async function adminRoutes(app) {
     const it = db.prepare('SELECT * FROM shop_items WHERE id = ?').get(req.params.id)
     if (!it) return reply.code(404).send({ error: 'Не найдено' })
     const inRewards = db.prepare('SELECT COUNT(*) c FROM achievements WHERE reward_avatar = ? OR reward_status = ?').get(it.ref, it.ref).c
-    if (holdersOf(it) || inRewards) {
+    const orders = db.prepare('SELECT COUNT(*) c FROM prize_orders WHERE item_id = ?').get(it.id).c
+    if (holdersOf(it) || inRewards || orders) {
       db.prepare('UPDATE shop_items SET purchaseable = 0 WHERE id = ?').run(it.id)
       audit(req.user.id, 'shop.hide', 'item', it.id, { title: it.title })
       return reply.send({ ok: true, hidden: true })
     }
     db.prepare('DELETE FROM shop_items WHERE id = ?').run(it.id)
     audit(req.user.id, 'shop.delete', 'item', it.id, { title: it.title })
+    reply.send({ ok: true })
+  })
+
+  // ─── Заказы призов ───────────────────────────────────────────
+  app.get('/api/admin/prize-orders', staff, async (req, reply) => {
+    reply.send({
+      orders: db.prepare(`SELECT o.*, u.name AS user_name, u.phone, b.name AS branch, s.image
+        FROM prize_orders o JOIN users u ON u.id = o.user_id LEFT JOIN branches b ON b.id = u.branch_id
+        LEFT JOIN shop_items s ON s.id = o.item_id
+        ORDER BY CASE o.status WHEN 'new' THEN 0 ELSE 1 END, o.id DESC LIMIT 300`).all()
+    })
+  })
+
+  // Выдан — или отменён с возвратом COIL и приза на склад
+  app.patch('/api/admin/prize-orders/:id', admin, async (req, reply) => {
+    const o = db.prepare('SELECT * FROM prize_orders WHERE id = ?').get(req.params.id)
+    if (!o) return reply.code(404).send({ error: 'Заказ не найден' })
+    if (o.status !== 'new') return reply.code(409).send({ error: 'Заказ уже закрыт' })
+    const { status, note } = req.body || {}
+    if (!['done', 'cancelled'].includes(status)) return reply.code(400).send({ error: 'Неизвестное действие' })
+    db.transaction(() => {
+      db.prepare("UPDATE prize_orders SET status = ?, note = ?, closed_at = datetime('now') WHERE id = ?").run(status, String(note || '').trim(), o.id)
+      if (status === 'cancelled') {
+        awardCoil(o.user_id, o.price, 'prize_refund', String(o.id))
+        db.prepare('UPDATE shop_items SET stock = stock + 1 WHERE id = ? AND stock IS NOT NULL').run(o.item_id)
+      }
+    })()
+    if (status === 'done') notify(o.user_id, 'prize', `Приз выдан: ${o.title}`, note || 'Спасибо за отличную учёбу!', '/shop')
+    else notify(o.user_id, 'prize', `Заказ отменён: ${o.title}`, `${o.price} COIL вернулись на счёт${note ? '. ' + note : ''}`, '/shop')
+    audit(req.user.id, 'prize.' + status, 'order', o.id, { title: o.title })
     reply.send({ ok: true })
   })
 

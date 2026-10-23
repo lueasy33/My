@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { api } from '../../api'
-import { Icon, PageSkeleton, LoadError, PageHead, Modal, Tabs, Empty, useLoad, useToast, useConfirm, avatarSrc, iconSrc, plural, RARITY } from '../../ui'
+import { Icon, PageSkeleton, LoadError, PageHead, Modal, Tabs, Empty, useLoad, useToast, useConfirm, avatarSrc, iconSrc, plural, fmtDate, RARITY } from '../../ui'
 import { THEMES } from '../../theme'
 import ImageUpload from './ImageUpload'
 
-// Мастерская: администратор создаёт достижения, аватарки и статусы
-// со своими картинками и решает, как их получают.
+// Мастерская: администратор создаёт достижения, аватарки, статусы и призы
+// со своими картинками и решает, как их получают. Здесь же — выдача заказанных призов.
 
 // Условия автодостижений. Список закрытый — каждое правило исполняется на сервере.
 const RULES = {
@@ -37,9 +37,12 @@ const ruleText = (a, courses) => {
 export default function Workshop() {
   const toast = useToast()
   const [ask, confirmNode] = useConfirm()
-  const { data, error, reload } = useLoad(() => Promise.all([api.admin.achievements(), api.admin.shopItems(), api.admin.content()])
-    .then(([a, s, c]) => ({ ...a, shop: s.items, courses: c.courses })), [])
-  const [tab, setTab] = useState('ach')
+  const { data, error, reload } = useLoad(() => Promise.all([api.admin.achievements(), api.admin.shopItems(), api.admin.content(), api.admin.prizeOrders()])
+    .then(([a, s, c, o]) => ({ ...a, shop: s.items, courses: c.courses, orders: o.orders })), [])
+  const [params, setParams] = useSearchParams()
+  const tab = params.get('tab') || 'ach'
+  const setTab = (t) => setParams({ tab: t }, { replace: true })
+  const [order, setOrder] = useState(null)
   const [ach, setAch] = useState(null)
   const [item, setItem] = useState(null)
 
@@ -49,6 +52,8 @@ export default function Workshop() {
   const avatars = data.shop.filter(s => s.kind === 'avatar')
   const statuses = data.shop.filter(s => s.kind === 'status')
   const themes = data.shop.filter(s => s.kind === 'theme')
+  const prizes = data.shop.filter(s => s.kind === 'prize')
+  const newOrders = data.orders.filter(o => o.status === 'new')
 
   const run = async (fn, ok) => { try { await fn(); if (ok) toast(ok, 'success'); await reload(); return true } catch (e) { toast(e.message, 'error'); return false } }
 
@@ -77,15 +82,15 @@ export default function Workshop() {
   }
 
   function newItem(kind) {
-    setItem({ kind, title: '', description: '', image: '', price: kind === 'avatar' ? 150 : kind === 'status' ? 250 : 300, purchaseable: true, rarity: 'common', ref: kind === 'theme' ? (THEMES.find(t => t.unlock === 'level' && !themes.some(s => s.ref === t.slug))?.slug || 'neon') : '' })
+    setItem({ kind, title: '', description: '', image: '', stock: '', price: kind === 'avatar' ? 150 : kind === 'status' ? 250 : kind === 'prize' ? 500 : 300, purchaseable: true, rarity: 'common', ref: kind === 'theme' ? (THEMES.find(t => t.unlock === 'level' && !themes.some(s => s.ref === t.slug))?.slug || 'neon') : '' })
   }
   function openItem(it) {
-    setItem({ ...it, purchaseable: !!it.purchaseable, image: it.kind === 'avatar' ? it.ref : it.image })
+    setItem({ ...it, purchaseable: !!it.purchaseable, image: it.kind === 'avatar' ? it.ref : it.image, stock: it.stock ?? '' })
   }
   async function saveItem(e) {
     e.preventDefault()
     if (item.kind === 'avatar' && !item.image) return toast('Загрузите картинку аватарки', 'error')
-    const body = { kind: item.kind, ref: item.ref, title: item.title, description: item.description, price: Number(item.price) || 0, purchaseable: item.purchaseable, rarity: item.rarity, image: item.image }
+    const body = { kind: item.kind, ref: item.ref, title: item.title, description: item.description, price: Number(item.price) || 0, purchaseable: item.purchaseable, rarity: item.rarity, image: item.image, stock: item.stock }
     const ok = await run(() => item.id ? api.admin.updateShopItem(item.id, body) : api.admin.createShopItem(body),
       item.id ? 'Сохранено' : 'Создано')
     if (ok) setItem(null)
@@ -96,16 +101,21 @@ export default function Workshop() {
     if (await run(() => api.admin.deleteShopItem(item.id), used ? 'Снято с продажи' : 'Удалено')) setItem(null)
   }
 
-  const add = { ach: ['Достижение', newAch], avatar: ['Аватарка', () => newItem('avatar')], status: ['Статус', () => newItem('status')], theme: ['Тема', () => newItem('theme')] }[tab]
+  async function closeOrder(status) {
+    const ok = await run(() => api.admin.closePrizeOrder(order.id, status, order.note || ''), status === 'done' ? 'Отмечено: приз выдан' : 'Заказ отменён, COIL возвращены')
+    if (ok) setOrder(null)
+  }
+
+  const add = { ach: ['Достижение', newAch], prize: ['Приз', () => newItem('prize')], orders: ['Приз', () => { setTab('prize'); newItem('prize') }], avatar: ['Аватарка', () => newItem('avatar')], status: ['Статус', () => newItem('status')], theme: ['Тема', () => newItem('theme')] }[tab] || ['Достижение', newAch]
 
   return (
     <>
-      <PageHead title="Мастерская" sub="Создавайте достижения, аватарки и статусы со своими картинками и решайте, как их получают"
+      <PageHead title="Мастерская" sub="Достижения, призы, аватарки и статусы со своими картинками — и как их получают"
         action={<button className="btn sm" onClick={add[1]}><Icon.plus size={16} />{add[0]}</button>} />
 
       <div style={{ marginBottom: 16 }}>
         <Tabs value={tab} onChange={setTab} items={[
-          ['ach', 'Достижения', data.achievements.length], ['avatar', 'Аватарки', avatars.length],
+          ['ach', 'Достижения', data.achievements.length], ['prize', 'Призы', prizes.length], ['orders', 'Заказы', newOrders.length], ['avatar', 'Аватарки', avatars.length],
           ['status', 'Статусы', statuses.length], ['theme', 'Темы в магазине', themes.length]
         ]} />
       </div>
@@ -126,6 +136,38 @@ export default function Workshop() {
             </button>
           ))}
         </div>
+      )}
+
+      {tab === 'prize' && (
+        prizes.length === 0 ? <Empty icon={<Icon.gift size={26} />} title="Призов пока нет" text="Настоящие подарки за COIL: мерч, скидка в магазине, сладости, выходной. Сотрудник заказывает — вы выдаёте лично и отмечаете здесь" action={<button className="btn sm" onClick={() => newItem('prize')}><Icon.plus size={16} />Создать приз</button>} /> : (
+          <div className="workshop-grid">
+            {prizes.map(it => (
+              <button key={it.id} className="workshop-tile" onClick={() => openItem(it)}>
+                <span className="workshop-img badge">{it.image ? <img src={it.image} alt="" style={{ objectFit: 'cover', width: '100%', height: '100%' }} /> : <Icon.gift size={34} style={{ color: 'var(--brand-text)' }} />}</span>
+                <b>{it.title}</b>
+                {it.purchaseable ? <span className="badge gold"><Icon.coin size={11} />{it.price} COIL</span> : <span className="badge">скрыт</span>}
+                <span className="tiny muted">{it.stock === null ? 'без ограничения' : it.stock > 0 ? `осталось ${it.stock}` : 'закончился'}</span>
+              </button>
+            ))}
+          </div>
+        )
+      )}
+
+      {tab === 'orders' && (
+        data.orders.length === 0 ? <Empty icon={<Icon.gift size={26} />} title="Заказов пока нет" text="Когда сотрудник закажет приз, он появится здесь, а вам придёт уведомление" /> : (
+          <div className="card flush">
+            {data.orders.map(o => (
+              <button key={o.id} className="order-row" onClick={() => setOrder({ ...o, note: '' })}>
+                <span className="order-thumb">{o.image ? <img src={o.image} alt="" /> : <Icon.gift size={20} />}</span>
+                <div style={{ minWidth: 0, flex: 1, textAlign: 'left' }}>
+                  <div className="bold ellipsis">{o.title}</div>
+                  <div className="tiny muted ellipsis">{o.user_name}{o.branch ? ` · ${o.branch}` : ''} · {fmtDate(o.created_at)}</div>
+                </div>
+                <span className={o.status === 'new' ? 'badge gold' : o.status === 'done' ? 'badge success' : 'badge'}>{o.status === 'new' ? 'выдать' : o.status === 'done' ? 'выдан' : 'отменён'}</span>
+              </button>
+            ))}
+          </div>
+        )
       )}
 
       {tab === 'avatar' && (
@@ -160,7 +202,7 @@ export default function Workshop() {
 
       {tab === 'theme' && (
         <>
-          <p className="small muted" style={{ marginBottom: 12 }}>Темы и так открываются по уровням. Здесь — какие из них можно купить раньше за COIL. Сами 24 темы оформления фиксированы.</p>
+          <p className="small muted" style={{ marginBottom: 12 }}>Темы и так открываются по уровням. Здесь — какие из них можно купить раньше за COIL. Всего тем: {THEMES.length}, новые открываются с уровнем.</p>
           <div className="workshop-grid">
             {themes.map(it => {
               const t = THEMES.find(x => x.slug === it.ref) || {}
@@ -264,7 +306,7 @@ export default function Workshop() {
       )}
 
       {item && (
-        <Modal title={item.id ? ({ avatar: 'Аватарка', status: 'Статус', theme: 'Тема в магазине' }[item.kind]) : ({ avatar: 'Новая аватарка', status: 'Новый статус', theme: 'Тема в магазин' }[item.kind])}
+        <Modal title={item.id ? ({ avatar: 'Аватарка', status: 'Статус', theme: 'Тема в магазине', prize: 'Приз' }[item.kind]) : ({ avatar: 'Новая аватарка', status: 'Новый статус', theme: 'Тема в магазин', prize: 'Новый приз' }[item.kind])}
           onClose={() => setItem(null)} width={520}
           footer={<>
             {item.id && <button className="btn danger" style={{ marginRight: 'auto' }} onClick={deleteItem}><Icon.trash size={16} /></button>}
@@ -275,6 +317,9 @@ export default function Workshop() {
             {item.kind === 'avatar' && (
               <ImageUpload label="Картинка аватарки" shape="circle" maxMb={2} value={/^(\/|https?:)/.test(item.image || '') ? item.image : ''}
                 preview={item.image ? avatarSrc(item.image, 256) : ''} onChange={url => setItem(f => ({ ...f, image: url }))} />
+            )}
+            {item.kind === 'prize' && (
+              <ImageUpload label="Фото приза" shape="badge" maxMb={3} value={item.image} onChange={url => setItem(f => ({ ...f, image: url }))} />
             )}
             {item.kind === 'status' && (
               <ImageUpload label="Значок статуса (необязательно)" shape="badge" maxMb={1} value={item.image} onChange={url => setItem(f => ({ ...f, image: url }))} />
@@ -287,8 +332,24 @@ export default function Workshop() {
                 </select>
               </div>
             )}
-            <div className="field"><label>Название</label><input className="input" required value={item.title} onChange={e => setItem(f => ({ ...f, title: e.target.value }))} placeholder={item.kind === 'status' ? 'Знаток табака' : item.kind === 'avatar' ? 'Золотой кальян' : 'Неон'} /></div>
+            <div className="field"><label>Название</label><input className="input" required value={item.title} onChange={e => setItem(f => ({ ...f, title: e.target.value }))} placeholder={item.kind === 'status' ? 'Знаток табака' : item.kind === 'avatar' ? 'Золотой кальян' : item.kind === 'prize' ? 'Фирменная толстовка' : 'Неон'} /></div>
             {item.kind !== 'theme' && <div className="field"><label>Описание (необязательно)</label><input className="input" value={item.description || ''} onChange={e => setItem(f => ({ ...f, description: e.target.value }))} placeholder="Короткая подпись в магазине" /></div>}
+            {item.kind === 'prize' && (
+              <div className="form-grid two">
+                <div className="field"><label>Цена, COIL</label><input className="input" type="number" min="0" value={item.price} onChange={e => setItem(f => ({ ...f, price: e.target.value }))} /></div>
+                <div className="field"><label>Сколько в наличии</label><input className="input" type="number" min="0" placeholder="без ограничения" value={item.stock} onChange={e => setItem(f => ({ ...f, stock: e.target.value }))} /></div>
+              </div>
+            )}
+            {item.kind === 'prize' && (
+              <div className="field">
+                <label>В магазине</label>
+                <div className="segmented">
+                  <button type="button" className={item.purchaseable ? 'on' : ''} onClick={() => setItem(f => ({ ...f, purchaseable: true }))}>Показывать</button>
+                  <button type="button" className={!item.purchaseable ? 'on' : ''} onClick={() => setItem(f => ({ ...f, purchaseable: false }))}>Скрыть</button>
+                </div>
+                <span className="hint">Сотрудник заказывает приз, COIL списываются сразу. Вы выдаёте его лично и отмечаете во вкладке «Заказы». Отмена возвращает COIL</span>
+              </div>
+            )}
             {item.kind === 'status' && (
               <div className="field">
                 <label>Редкость</label>
@@ -297,7 +358,7 @@ export default function Workshop() {
                 </div>
               </div>
             )}
-            <div className="field">
+            {item.kind !== 'prize' && <><div className="field">
               <label>Как получить</label>
               <div className="segmented">
                 <button type="button" className={item.purchaseable ? 'on' : ''} onClick={() => setItem(f => ({ ...f, purchaseable: true }))}>Купить за COIL</button>
@@ -312,10 +373,32 @@ export default function Workshop() {
               </div>
             ) : item.kind !== 'theme' && (
               <p className="hint">В магазине будет с пометкой «Только за достижение». Привяжите к достижению (вкладка «Достижения» → «Вместе с ним») или выдайте вручную в разделе <Link to="/admin/grants">«Выдать награду»</Link>.</p>
-            )}
+            )}</>}
             {item.via?.length > 0 && <p className="small">Выдаётся за: <b>{item.via.join(', ')}</b></p>}
             {item.holders > 0 && <p className="hint">Уже есть у {item.holders} {plural(item.holders, 'человека', 'человек', 'человек')}{item.kind === 'avatar' ? '. Если замените картинку, она обновится и у них' : ''}</p>}
           </form>
+        </Modal>
+      )}
+      {order && (
+        <Modal title={order.title} onClose={() => setOrder(null)} width={460}
+          footer={order.status === 'new' ? <>
+            <button className="btn ghost" style={{ marginRight: 'auto' }} onClick={() => closeOrder('cancelled')}>Отменить</button>
+            <button className="btn" onClick={() => closeOrder('done')}><Icon.check size={16} />Приз выдан</button>
+          </> : <button className="btn ghost" onClick={() => setOrder(null)}>Закрыть</button>}>
+          <div className="col" style={{ gap: 10 }}>
+            {order.image && <img src={order.image} alt="" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: 14 }} />}
+            <div className="row between small"><span className="muted">Сотрудник</span><b>{order.user_name}</b></div>
+            {order.branch && <div className="row between small"><span className="muted">Филиал</span><b>{order.branch}</b></div>}
+            <div className="row between small"><span className="muted">Телефон</span><a href={`tel:${order.phone}`} className="bold">{order.phone}</a></div>
+            <div className="row between small"><span className="muted">Цена</span><b>{order.price} COIL</b></div>
+            <div className="row between small"><span className="muted">Заказан</span><b>{fmtDate(order.created_at, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</b></div>
+            {order.status === 'new' ? (
+              <div className="field"><label>Комментарий сотруднику (необязательно)</label>
+                <input className="input" value={order.note} onChange={e => setOrder(f => ({ ...f, note: e.target.value }))} placeholder="Заберите в филиале на Ленина в пятницу" />
+                <span className="hint">«Отменить» вернёт {order.price} COIL сотруднику</span>
+              </div>
+            ) : <p className="small muted">{order.status === 'done' ? 'Приз выдан' : 'Заказ отменён'}{order.note ? `: ${order.note}` : ''}</p>}
+          </div>
         </Modal>
       )}
       {confirmNode}

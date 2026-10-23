@@ -30,7 +30,7 @@ export default function Themes() {
 
   return (
     <main className="page wide">
-      <PageHead title="Оформление" sub={`Открыто ${open} из ${data.themes.length}. Новые темы открываются с уровнем — сейчас у тебя ${data.level}`} />
+      <PageHead title="Оформление" sub={`Открыто ${open} из ${data.themes.length}. Новые темы — с узорами и рисунками — открываются с уровнем. Сейчас у тебя ${data.level}`} />
 
       <div className="themes">
         {data.themes.map(t => {
@@ -39,21 +39,16 @@ export default function Themes() {
           return (
             <button key={t.slug} className={'theme-card' + (active ? ' on' : '') + (t.unlocked ? '' : ' locked')}
               onClick={() => apply(t)} aria-pressed={active} aria-label={`${t.name}${t.unlocked ? '' : ', закрыта'}`}>
-              <div className="theme-preview" style={{ background: m['bg-base'] }}>
-                <div className="tp-card" style={{ background: m['surface-1'], border: `1px solid ${m.border}` }}>
-                  <span className="tp-dot" style={{ background: m['brand-500'] }} />
-                  <span className="tp-dot" style={{ background: m['text-muted'], width: 30, opacity: .6 }} />
-                </div>
-                <div className="tp-card" style={{ background: m['surface-2'] }}>
-                  <span className="tp-dot" style={{ background: m['reward-500'], width: 12 }} />
-                  <span className="tp-dot" style={{ background: m['text-primary'], width: 24, opacity: .5 }} />
-                </div>
+              {/* Превью само берёт цвета, узор и рисунок своей темы через data-theme */}
+              <div className="theme-preview" data-theme={t.slug}>
+                <div className="tp-card"><span className="tp-dot brand" /><span className="tp-dot muted" /></div>
+                <div className="tp-card"><span className="tp-dot reward" /><span className="tp-dot text" /></div>
               </div>
               {!t.unlocked && <span className="badge lock-badge"><Icon.lock size={11} />{t.unlock === 'level' ? `${t.level} ур.` : 'награда'}</span>}
               <div className="theme-meta">
                 <span className="small bold">{t.name}</span>
                 {active ? <Icon.check size={17} style={{ color: 'var(--brand-text)' }} />
-                  : <span className="tiny muted">{t.dark ? 'тёмная' : 'светлая'}</span>}
+                  : <span className="tiny muted">{m.pattern ? 'с узором' : t.dark ? 'тёмная' : 'светлая'}</span>}
               </div>
             </button>
           )

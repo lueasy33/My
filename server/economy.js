@@ -179,7 +179,9 @@ export function checkAchievements(userId) {
   // Тесты на 100% считаем по тестам, а не по попыткам: пересдача одного теста
   // на 100% не должна давать «Пять отличных».
   const perfect = db.prepare('SELECT COUNT(DISTINCT test_id) c FROM attempts WHERE user_id = ? AND score = 100 AND passed = 1').get(userId).c
+  // Заказы призов тоже покупки (кроме отменённых)
   const purchased = db.prepare('SELECT COUNT(*) c FROM purchases WHERE user_id = ?').get(userId).c
+    + db.prepare("SELECT COUNT(*) c FROM prize_orders WHERE user_id = ? AND status != 'cancelled'").get(userId).c
   const owned = db.prepare('SELECT achievement_id FROM user_achievements WHERE user_id = ?').all(userId).map(r => r.achievement_id)
   const all = db.prepare("SELECT * FROM achievements WHERE kind = 'auto'").all()
 

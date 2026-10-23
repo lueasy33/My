@@ -723,3 +723,1533 @@
   --ease-out: cubic-bezier(.2,0,0,1);
   --ease-spring: cubic-bezier(.34,1.56,.64,1);
 }
+
+/* ═══ Темы с узорами и рисунками — сгенерировано scripts/gen-themes.mjs, руками не править ═══ */
+/* Сначала сброс: у обычных тем узора нет, и превью не наследует узор страницы */
+[data-theme] { --bg-pattern: none; --bg-pattern-size: auto; --bg-art: none; }
+/* Тёмная ещё раз под атрибутом — чтобы её превью работало внутри любой другой темы */
+[data-theme="dark"] {
+  --bg-base: #0C0A14;
+  --surface-1: #17142A;
+  --surface-2: #221D3A;
+  --border: #322B4F;
+  --text-primary: #F2EEFB;
+  --text-muted: #A29BBE;
+  --brand-500: #7C5CBF;
+  --brand-700: #5E429A;
+  --brand-soft: #241B42;
+  --brand-text: #B49CF0;
+  --focus-ring: #A88BEA;
+  --skeleton: #221D3A;
+  --reward-500: #C69E34;
+  --reward-300: #E8C96A;
+  --reward-text: #C69E34;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F25C55;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+}
+
+/* Восточный базар · узор «moroccan», рисунок «lamp» */
+[data-theme="bazaar"] {
+  --bg-base: #1A0F14;
+  --surface-1: #311F25;
+  --surface-2: #402C34;
+  --border: #513741;
+  --text-primary: #FCF6F7;
+  --text-muted: #A1999C;
+  --brand-500: #C2416B;
+  --brand-700: #923150;
+  --brand-soft: #421B29;
+  --brand-text: #D7829D;
+  --focus-ring: #D7829D;
+  --skeleton: #402C34;
+  --reward-500: #E0A63A;
+  --reward-300: #E9C175;
+  --reward-text: #E0A63A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F4736D;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'48'%20height%3D'48'%20viewBox%3D'0%200%2048%2048'%3E%3Cpath%20d%3D'M24%200c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12zM24%2024c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12z'%20fill%3D'none'%20stroke%3D'%23D17190'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.3'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 48px 48px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(206%2C103%2C137%2C0.13)'%3E%3Cpath%20d%3D'M70%20250c30%2026%20160%2030%20200%200%2010%2020-20%2040-100%2040S56%20270%2070%20250z'%2F%3E%3Cpath%20d%3D'M80%20248c0-36%2040-64%2090-64s90%2028%2090%2064z'%2F%3E%3Cpath%20d%3D'M260%20220c30-6%2056-30%2076-62-6%2040-30%2074-70%2086z'%2F%3E%3Cpath%20d%3D'M84%20226c-26-10-40-34-40-56%2014%2016%2030%2026%2046%2030z'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'180'%20rx%3D'18'%20ry%3D'8'%2F%3E%3Cpath%20d%3D'M166%20172c0-24%208-40%204-60%2010%2020%204%2040%204%2060z'%2F%3E%3Crect%20x%3D'130'%20y%3D'290'%20width%3D'80'%20height%3D'14'%20rx%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Лампа джинна · узор «stars», рисунок «lamp» */
+[data-theme="lamp"] {
+  --bg-base: #0F0B1E;
+  --surface-1: #241D38;
+  --surface-2: #332B47;
+  --border: #42385B;
+  --text-primary: #F8F5FE;
+  --text-muted: #9A97A4;
+  --brand-500: #8E5CF0;
+  --brand-700: #6B45B4;
+  --brand-soft: #2D1E50;
+  --brand-text: #AB86F4;
+  --focus-ring: #AB86F4;
+  --skeleton: #332B47;
+  --reward-500: #E8B93C;
+  --reward-300: #EFCE77;
+  --reward-text: #E8B93C;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'%23AA85F4'%20fill-opacity%3D'0.165'%3E%3Ccircle%20cx%3D'12'%20cy%3D'18'%20r%3D'1.2'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'40'%20r%3D'.9'%2F%3E%3Ccircle%20cx%3D'40'%20cy%3D'80'%20r%3D'1.4'%2F%3E%3Ccircle%20cx%3D'95'%20cy%3D'95'%20r%3D'1'%2F%3E%3Ccircle%20cx%3D'100'%20cy%3D'12'%20r%3D'.8'%2F%3E%3Cpath%20d%3D'M60%206l1.6%204.4L66%2012l-4.4%201.6L60%2018l-1.6-4.4L54%2012l4.4-1.6z'%2F%3E%3Cpath%20d%3D'M22%2098l1.2%203.3%203.3%201.2-3.3%201.2-1.2%203.3-1.2-3.3-3.3-1.2%203.3-1.2z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 120px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(165%2C125%2C243%2C0.13)'%3E%3Cpath%20d%3D'M70%20250c30%2026%20160%2030%20200%200%2010%2020-20%2040-100%2040S56%20270%2070%20250z'%2F%3E%3Cpath%20d%3D'M80%20248c0-36%2040-64%2090-64s90%2028%2090%2064z'%2F%3E%3Cpath%20d%3D'M260%20220c30-6%2056-30%2076-62-6%2040-30%2074-70%2086z'%2F%3E%3Cpath%20d%3D'M84%20226c-26-10-40-34-40-56%2014%2016%2030%2026%2046%2030z'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'180'%20rx%3D'18'%20ry%3D'8'%2F%3E%3Cpath%20d%3D'M166%20172c0-24%208-40%204-60%2010%2020%204%2040%204%2060z'%2F%3E%3Crect%20x%3D'130'%20y%3D'290'%20width%3D'80'%20height%3D'14'%20rx%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Ночное небо · узор «stars», рисунок «moon» */
+[data-theme="nightsky"] {
+  --bg-base: #070A18;
+  --surface-1: #181D33;
+  --surface-2: #262C44;
+  --border: #333A57;
+  --text-primary: #F4F6FF;
+  --text-muted: #9295A0;
+  --brand-500: #4D6CFA;
+  --brand-700: #3A51BC;
+  --brand-soft: #18224E;
+  --brand-text: #788FFB;
+  --focus-ring: #788FFB;
+  --skeleton: #262C44;
+  --reward-500: #F2C65A;
+  --reward-300: #F6D78C;
+  --reward-text: #F2C65A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36C66;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'%237A91FB'%20fill-opacity%3D'0.165'%3E%3Ccircle%20cx%3D'12'%20cy%3D'18'%20r%3D'1.2'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'40'%20r%3D'.9'%2F%3E%3Ccircle%20cx%3D'40'%20cy%3D'80'%20r%3D'1.4'%2F%3E%3Ccircle%20cx%3D'95'%20cy%3D'95'%20r%3D'1'%2F%3E%3Ccircle%20cx%3D'100'%20cy%3D'12'%20r%3D'.8'%2F%3E%3Cpath%20d%3D'M60%206l1.6%204.4L66%2012l-4.4%201.6L60%2018l-1.6-4.4L54%2012l4.4-1.6z'%2F%3E%3Cpath%20d%3D'M22%2098l1.2%203.3%203.3%201.2-3.3%201.2-1.2%203.3-1.2-3.3-3.3-1.2%203.3-1.2z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 120px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cpath%20d%3D'M250%2060a110%20110%200%201%200%2090%20170%2090%2090%200%201%201-90-170z'%20fill%3D'rgba(113%2C137%2C251%2C0.13)'%2F%3E%3Cg%20fill%3D'rgba(113%2C137%2C251%2C0.13)'%3E%3Cpath%20d%3D'M120%2070l5%2013%2013%205-13%205-5%2013-5-13-13-5%2013-5z'%2F%3E%3Ccircle%20cx%3D'80'%20cy%3D'150'%20r%3D'3'%2F%3E%3Ccircle%20cx%3D'170'%20cy%3D'40'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Пустыня · узор «waves», рисунок «dunes» */
+[data-theme="desert"] {
+  --bg-base: #F4E7D2;
+  --surface-1: #FBF7EF;
+  --surface-2: #E5D5BF;
+  --border: #CDBBA5;
+  --text-primary: #190C04;
+  --text-muted: #65594E;
+  --brand-500: #B5561F;
+  --brand-700: #884117;
+  --brand-soft: #EBD3B9;
+  --brand-text: #914519;
+  --focus-ring: #914519;
+  --skeleton: #E5D5BF;
+  --reward-500: #9A6A12;
+  --reward-300: #B89759;
+  --reward-text: #7B550E;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #216944;
+  --danger: #B1433E;
+  --danger-text: #9C3B37;
+  --warning: #886122;
+  --warning-text: #78551E;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'60'%20height%3D'32'%20viewBox%3D'0%200%2060%2032'%3E%3Cpath%20d%3D'M0%2020%20Q15%208%2030%2020%20T60%2020'%20fill%3D'none'%20stroke%3D'%23A34D1C'%20stroke-opacity%3D'0.14'%20stroke-width%3D'1.6'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 60px 32px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(181%2C86%2C31%2C0.11)'%3E%3Cpath%20d%3D'M0%20260c60-40%20120-40%20180%200s120%2040%20180%200v100H0z'%2F%3E%3Cpath%20d%3D'M0%20300c80-30%20160-20%20240%2010%2050%2018%2090%2018%20120%204v46H0z'%20fill-opacity%3D'.7'%2F%3E%3Ccircle%20cx%3D'260'%20cy%3D'110'%20r%3D'42'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Оазис · узор «leaves», рисунок «palm» */
+[data-theme="oasis"] {
+  --bg-base: #08201C;
+  --surface-1: #16342E;
+  --surface-2: #23423C;
+  --border: #2E514A;
+  --text-primary: #FFFFFF;
+  --text-muted: #A1AAAA;
+  --brand-500: #1FA383;
+  --brand-700: #177A62;
+  --brand-soft: #0E3F35;
+  --brand-text: #55B9A1;
+  --focus-ring: #55B9A1;
+  --skeleton: #23423C;
+  --reward-500: #E3B23C;
+  --reward-300: #EBC977;
+  --reward-text: #E3B23C;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F68A85;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'%2357BAA2'%20fill-opacity%3D'0.077'%3E%3Cpath%20d%3D'M20%2040%20C20%2020%2040%2010%2050%2010%20C50%2030%2036%2042%2020%2040Z'%2F%3E%3Cpath%20d%3D'M70%2090%20C70%2070%2090%2060%20100%2060%20C100%2080%2086%2092%2070%2090Z'%2F%3E%3Cpath%20d%3D'M84%2024%20C94%2030%2096%2042%2092%2050%20C82%2046%2078%2034%2084%2024Z'%2F%3E%3Cpath%20d%3D'M20%2096%20C30%20100%2034%20110%2030%20118%20C20%20114%2016%20104%2020%2096Z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 120px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(76%2C181%2C156%2C0.13)'%3E%3Cpath%20d%3D'M176%20340c-6-80%204-150%2024-210l12%204c-18%2060-26%20126-20%20206z'%2F%3E%3Cpath%20d%3D'M206%20130c-40-40-100-40-140-10%2050-6%2090%204%20140%2022z'%2F%3E%3Cpath%20d%3D'M206%20130c20-50%2080-70%20130-50-50%2010-90%2028-124%2058z'%2F%3E%3Cpath%20d%3D'M206%20130c-10-50%2010-90%2050-110-20%2040-30%2076-42%20112z'%2F%3E%3Cpath%20d%3D'M206%20130c-60%200-100%2030-120%2070%2040-30%2080-46%20122-58z'%2F%3E%3Cpath%20d%3D'M206%20130c50%200%2096%2030%20110%2080-36-34-72-52-112-64z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Кальянная · узор «smoke», рисунок «hookah» */
+[data-theme="hookahlounge"] {
+  --bg-base: #120E0C;
+  --surface-1: #2A201A;
+  --surface-2: #3B2E27;
+  --border: #4E3D32;
+  --text-primary: #FCF6F2;
+  --text-muted: #9E9995;
+  --brand-500: #D26A2E;
+  --brand-700: #9E5023;
+  --brand-soft: #402414;
+  --brand-text: #DA8554;
+  --focus-ring: #DA8554;
+  --skeleton: #3B2E27;
+  --reward-500: #E7B65A;
+  --reward-300: #EECC8C;
+  --reward-text: #E7B65A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F4736D;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'190'%20height%3D'130'%20viewBox%3D'0%200%20190%20130'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23DD8F62'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.4'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M20%20110%20C10%2090%2034%2080%2024%2060%20S30%2030%2044%2020'%2F%3E%3Cpath%20d%3D'M84%20120%20C74%2098%20100%2088%2090%2066%20S96%2038%20110%2026'%2F%3E%3Cpath%20d%3D'M150%20108%20C140%2086%20164%2076%20154%2054%20S160%2026%20174%2014'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 190px 130px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(219%2C136%2C88%2C0.13)'%3E%3Crect%20x%3D'150'%20y%3D'40'%20width%3D'60'%20height%3D'22'%20rx%3D'8'%2F%3E%3Cpath%20d%3D'M160%2062h40l-8%2030h-24z'%2F%3E%3Crect%20x%3D'174'%20y%3D'92'%20width%3D'12'%20height%3D'120'%2F%3E%3Cpath%20d%3D'M180%20212c-56%200-88%2034-88%2070s40%2052%2088%2052%2088-16%2088-52-32-70-88-70z'%2F%3E%3Cpath%20d%3D'M186%20150c50%2010%2090%2040%20110%2090l-12%206c-18-40-52-70-98-80z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Дымный джаз · узор «smoke», рисунок «moon» */
+[data-theme="smokeyjazz"] {
+  --bg-base: #101014;
+  --surface-1: #26232D;
+  --surface-2: #36323E;
+  --border: #484051;
+  --text-primary: #FCFAFE;
+  --text-muted: #9F9EA2;
+  --brand-500: #B07BE0;
+  --brand-700: #845CA8;
+  --brand-soft: #362A45;
+  --brand-text: #B98BE4;
+  --focus-ring: #B98BE4;
+  --skeleton: #36323E;
+  --reward-500: #D9A441;
+  --reward-300: #E4BF7A;
+  --reward-text: #D9A441;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47974;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'190'%20height%3D'130'%20viewBox%3D'0%200%20190%20130'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23C49CE8'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.4'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M20%20110%20C10%2090%2034%2080%2024%2060%20S30%2030%2044%2020'%2F%3E%3Cpath%20d%3D'M84%20120%20C74%2098%20100%2088%2090%2066%20S96%2038%20110%2026'%2F%3E%3Cpath%20d%3D'M150%20108%20C140%2086%20164%2076%20154%2054%20S160%2026%20174%2014'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 190px 130px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cpath%20d%3D'M250%2060a110%20110%200%201%200%2090%20170%2090%2090%200%201%201-90-170z'%20fill%3D'rgba(192%2C149%2C230%2C0.13)'%2F%3E%3Cg%20fill%3D'rgba(192%2C149%2C230%2C0.13)'%3E%3Cpath%20d%3D'M120%2070l5%2013%2013%205-13%205-5%2013-5-13-13-5%2013-5z'%2F%3E%3Ccircle%20cx%3D'80'%20cy%3D'150'%20r%3D'3'%2F%3E%3Ccircle%20cx%3D'170'%20cy%3D'40'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Табачный лист · узор «grain», рисунок «hookah» */
+[data-theme="tobacco"] {
+  --bg-base: #17120B;
+  --surface-1: #2D251B;
+  --surface-2: #3D3528;
+  --border: #4E4434;
+  --text-primary: #FFFEFE;
+  --text-muted: #A4A19E;
+  --brand-500: #B98A3E;
+  --brand-700: #8B682F;
+  --brand-soft: #3E2F17;
+  --brand-text: #C39A59;
+  --focus-ring: #C39A59;
+  --skeleton: #3D3528;
+  --reward-500: #E0B860;
+  --reward-300: #E9CD90;
+  --reward-text: #E0B860;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F57D77;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%20viewBox%3D'0%200%20160%20160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.796078431372549%200%200%200%200%200.6549019607843137%200%200%200%200%200.43137254901960786%200%200%200%200.275%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 160px 160px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(199%2C161%2C101%2C0.13)'%3E%3Crect%20x%3D'150'%20y%3D'40'%20width%3D'60'%20height%3D'22'%20rx%3D'8'%2F%3E%3Cpath%20d%3D'M160%2062h40l-8%2030h-24z'%2F%3E%3Crect%20x%3D'174'%20y%3D'92'%20width%3D'12'%20height%3D'120'%2F%3E%3Cpath%20d%3D'M180%20212c-56%200-88%2034-88%2070s40%2052%2088%2052%2088-16%2088-52-32-70-88-70z'%2F%3E%3Cpath%20d%3D'M186%20150c50%2010%2090%2040%20110%2090l-12%206c-18-40-52-70-98-80z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Мята · узор «leaves», рисунок «monstera» */
+[data-theme="mint"] {
+  --bg-base: #EAF7F1;
+  --surface-1: #F8FCFA;
+  --surface-2: #D4E6DE;
+  --border: #B7CBC3;
+  --text-primary: #03130E;
+  --text-muted: #586560;
+  --brand-500: #138A64;
+  --brand-700: #0E684B;
+  --brand-soft: #CCE8DD;
+  --brand-text: #107152;
+  --focus-ring: #107152;
+  --skeleton: #D4E6DE;
+  --reward-500: #8C6A10;
+  --reward-300: #AF9758;
+  --reward-text: #7B5D0E;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #247048;
+  --danger: #B1433E;
+  --danger-text: #AA403C;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'%23117C5A'%20fill-opacity%3D'0.098'%3E%3Cpath%20d%3D'M20%2040%20C20%2020%2040%2010%2050%2010%20C50%2030%2036%2042%2020%2040Z'%2F%3E%3Cpath%20d%3D'M70%2090%20C70%2070%2090%2060%20100%2060%20C100%2080%2086%2092%2070%2090Z'%2F%3E%3Cpath%20d%3D'M84%2024%20C94%2030%2096%2042%2092%2050%20C82%2046%2078%2034%2084%2024Z'%2F%3E%3Cpath%20d%3D'M20%2096%20C30%20100%2034%20110%2030%20118%20C20%20114%2016%20104%2020%2096Z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 120px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cmask%20id%3D'm'%3E%3Crect%20width%3D'360'%20height%3D'360'%20fill%3D'white'%2F%3E%3Cg%20stroke%3D'black'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M330%20330%20190%20190'%2F%3E%3Cpath%20d%3D'M250%20250%20210%20300M250%20250%20300%20210M210%20210%20160%20240M210%20210%20240%20160'%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3Cpath%20mask%3D'url(%23m)'%20d%3D'M350%20350C210%20340%20120%20260%20130%20130%20250%20110%20340%20190%20350%20350z'%20fill%3D'rgba(19%2C138%2C100%2C0.11)'%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Арбуз · узор «dots», рисунок «sun» */
+[data-theme="watermelon"] {
+  --bg-base: #FCEEEE;
+  --surface-1: #FEF9F9;
+  --surface-2: #EEDADB;
+  --border: #D5BCBF;
+  --text-primary: #1D070B;
+  --text-muted: #6C5C5D;
+  --brand-500: #D2344F;
+  --brand-700: #9E273B;
+  --brand-soft: #F6D4D8;
+  --brand-text: #B02C42;
+  --focus-ring: #B02C42;
+  --skeleton: #EEDADB;
+  --reward-500: #2E8A3E;
+  --reward-300: #6DAD78;
+  --reward-text: #256E32;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: radial-gradient(rgba(189,47,71,0.11200000000000002) 1.3px, transparent 1.8px);
+  --bg-pattern-size: 18px 18px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(210%2C52%2C79%2C0.11)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(210%2C52%2C79%2C0.11)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Черника · узор «bubbles», рисунок «planet» */
+[data-theme="blueberry"] {
+  --bg-base: #0C0D24;
+  --surface-1: #1E203C;
+  --surface-2: #2C2E4C;
+  --border: #393C5F;
+  --text-primary: #F5F6FE;
+  --text-muted: #999AA8;
+  --brand-500: #5B6CF0;
+  --brand-700: #4451B4;
+  --brand-soft: #1F2455;
+  --brand-text: #8692F4;
+  --focus-ring: #8692F4;
+  --skeleton: #2C2E4C;
+  --reward-500: #E5B54A;
+  --reward-300: #EDCB80;
+  --reward-text: #E5B54A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F4736D;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill%3D'none'%20stroke%3D'%238491F4'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Ccircle%20cx%3D'20'%20cy%3D'24'%20r%3D'10'%2F%3E%3Ccircle%20cx%3D'66'%20cy%3D'18'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'52'%20cy%3D'64'%20r%3D'14'%2F%3E%3Ccircle%20cx%3D'14'%20cy%3D'78'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'86'%20r%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(124%2C137%2C243%2C0.13)'%3E%3Ccircle%20cx%3D'200'%20cy%3D'190'%20r%3D'86'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'190'%20rx%3D'160'%20ry%3D'34'%20fill%3D'none'%20stroke%3D'rgba(124%2C137%2C243%2C0.13)'%20stroke-width%3D'12'%20transform%3D'rotate(-18%20200%20190)'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'70'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'320'%20cy%3D'320'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Персик · узор «bubbles», рисунок «sun» */
+[data-theme="peach"] {
+  --bg-base: #FFF1E8;
+  --surface-1: #FFFAF7;
+  --surface-2: #F0DED4;
+  --border: #D9C3B7;
+  --text-primary: #1F0E06;
+  --text-muted: #6E6059;
+  --brand-500: #E0662C;
+  --brand-700: #A84D21;
+  --brand-soft: #FBDECE;
+  --brand-text: #A14920;
+  --focus-ring: #A14920;
+  --skeleton: #F0DED4;
+  --reward-500: #A0600F;
+  --reward-300: #BD9057;
+  --reward-text: #8D540D;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #247048;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23CA5C28'%20stroke-opacity%3D'0.14'%20stroke-width%3D'1.2'%3E%3Ccircle%20cx%3D'20'%20cy%3D'24'%20r%3D'10'%2F%3E%3Ccircle%20cx%3D'66'%20cy%3D'18'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'52'%20cy%3D'64'%20r%3D'14'%2F%3E%3Ccircle%20cx%3D'14'%20cy%3D'78'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'86'%20r%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(224%2C102%2C44%2C0.11)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(224%2C102%2C44%2C0.11)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Виноград · узор «bubbles», рисунок «crystal» */
+[data-theme="grape"] {
+  --bg-base: #170A1F;
+  --surface-1: #2C1B37;
+  --surface-2: #3B2946;
+  --border: #4A3557;
+  --text-primary: #F9F4FD;
+  --text-muted: #9E96A4;
+  --brand-500: #A04BD6;
+  --brand-700: #7838A1;
+  --brand-soft: #381A4B;
+  --brand-text: #BD81E2;
+  --focus-ring: #BD81E2;
+  --skeleton: #3B2946;
+  --reward-500: #D9A441;
+  --reward-300: #E4BF7A;
+  --reward-text: #D9A441;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23B878E0'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Ccircle%20cx%3D'20'%20cy%3D'24'%20r%3D'10'%2F%3E%3Ccircle%20cx%3D'66'%20cy%3D'18'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'52'%20cy%3D'64'%20r%3D'14'%2F%3E%3Ccircle%20cx%3D'14'%20cy%3D'78'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'86'%20r%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(179%2C111%2C222%2C0.13)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Цитрус · узор «dots», рисунок «sun» */
+[data-theme="citrus"] {
+  --bg-base: #FBF8E3;
+  --surface-1: #FEFDF5;
+  --surface-2: #ECE6CD;
+  --border: #D3CAAF;
+  --text-primary: #1B1100;
+  --text-muted: #6A6454;
+  --brand-500: #C27A00;
+  --brand-700: #925C00;
+  --brand-soft: #F3E6C3;
+  --brand-text: #8C5800;
+  --focus-ring: #8C5800;
+  --skeleton: #ECE6CD;
+  --reward-500: #7A8F00;
+  --reward-300: #A2B14D;
+  --reward-text: #5A6A00;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #24734A;
+  --danger: #B1433E;
+  --danger-text: #AD423D;
+  --warning: #886122;
+  --warning-text: #835D21;
+  --text-on-brand: #120A14;
+  --bg-pattern: radial-gradient(rgba(175,110,0,0.11200000000000002) 1.3px, transparent 1.8px);
+  --bg-pattern-size: 18px 18px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(194%2C122%2C0%2C0.11)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(194%2C122%2C0%2C0.11)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Вишня · узор «confetti», рисунок «sakura» */
+[data-theme="cherry"] {
+  --bg-base: #1C070C;
+  --surface-1: #35171E;
+  --surface-2: #45252C;
+  --border: #563139;
+  --text-primary: #FDF4F5;
+  --text-muted: #A39497;
+  --brand-500: #E0405E;
+  --brand-700: #A83047;
+  --brand-soft: #4B1520;
+  --brand-text: #E87288;
+  --focus-ring: #E87288;
+  --skeleton: #45252C;
+  --reward-500: #E4B04A;
+  --reward-300: #ECC880;
+  --reward-text: #E4B04A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill-opacity%3D'0.165'%3E%3Crect%20x%3D'10'%20y%3D'14'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23E87086'%20transform%3D'rotate(30%2013%2015)'%2F%3E%3Crect%20x%3D'60'%20y%3D'40'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23E4B04A'%20transform%3D'rotate(-20%2063%2041)'%2F%3E%3Ccircle%20cx%3D'34'%20cy%3D'70'%20r%3D'2'%20fill%3D'%23E4B04A'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'16'%20r%3D'1.6'%20fill%3D'%23E87086'%2F%3E%3Crect%20x%3D'80'%20y%3D'80'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23E87086'%20transform%3D'rotate(60%2083%2081)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(230%2C102%2C126%2C0.13)'%3E%3Cpath%20d%3D'M360%2040C260%2080%20200%20160%20170%20260l-10-4c30-100%2096-184%20196-226z'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20250%20120)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20200%20190)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20300%2080)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20170%20260)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Матча · узор «grain», рисунок «monstera» */
+[data-theme="matcha"] {
+  --bg-base: #EEF2E2;
+  --surface-1: #F9FAF5;
+  --surface-2: #DBE0CE;
+  --border: #C1C7B3;
+  --text-primary: #0D1206;
+  --text-muted: #5D6054;
+  --brand-500: #5E7F2A;
+  --brand-700: #475F20;
+  --brand-soft: #DAE2C8;
+  --brand-text: #4D6822;
+  --focus-ring: #4D6822;
+  --skeleton: #DBE0CE;
+  --reward-500: #8A6A1E;
+  --reward-300: #AD9762;
+  --reward-text: #775B1A;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #226C45;
+  --danger: #B1433E;
+  --danger-text: #A33E39;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%20viewBox%3D'0%200%20160%20160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.3333333333333333%200%200%200%200%200.4470588235294118%200%200%200%200%200.14901960784313725%200%200%200%200.35000000000000003%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 160px 160px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cmask%20id%3D'm'%3E%3Crect%20width%3D'360'%20height%3D'360'%20fill%3D'white'%2F%3E%3Cg%20stroke%3D'black'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M330%20330%20190%20190'%2F%3E%3Cpath%20d%3D'M250%20250%20210%20300M250%20250%20300%20210M210%20210%20160%20240M210%20210%20240%20160'%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3Cpath%20mask%3D'url(%23m)'%20d%3D'M350%20350C210%20340%20120%20260%20130%20130%20250%20110%20340%20190%20350%20350z'%20fill%3D'rgba(94%2C127%2C42%2C0.11)'%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Эспрессо · узор «grain», рисунок «coffee» */
+[data-theme="espresso"] {
+  --bg-base: #140D09;
+  --surface-1: #2B2119;
+  --surface-2: #3B2F27;
+  --border: #4D3E34;
+  --text-primary: #FBF7F4;
+  --text-muted: #A09B98;
+  --brand-500: #C07A45;
+  --brand-700: #905C34;
+  --brand-soft: #3D2717;
+  --brand-text: #CA8F63;
+  --focus-ring: #CA8F63;
+  --skeleton: #3B2F27;
+  --reward-500: #E1B067;
+  --reward-300: #EAC895;
+  --reward-text: #E1B067;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F4736D;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%20viewBox%3D'0%200%20160%20160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.8156862745098039%200%200%200%200%200.6078431372549019%200%200%200%200%200.4549019607843137%200%200%200%200.275%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 160px 160px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(205%2C149%2C106%2C0.13)'%3E%3Cpath%20d%3D'M90%20180h180v40a90%2090%200%200%201-180%200z'%2F%3E%3Cpath%20d%3D'M270%20196h20a30%2030%200%200%201%200%2060h-26l6-16h20a14%2014%200%200%200%200-28h-20z'%2F%3E%3Crect%20x%3D'70'%20y%3D'310'%20width%3D'220'%20height%3D'12'%20rx%3D'6'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(205%2C149%2C106%2C0.13)'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M140%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M180%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M220%20150c-14-20%2014-30%200-50'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Латте · узор «dots», рисунок «coffee» */
+[data-theme="latte"] {
+  --bg-base: #F6EEE4;
+  --surface-1: #FCF9F6;
+  --surface-2: #E5DBD0;
+  --border: #CAC0B5;
+  --text-primary: #130D07;
+  --text-muted: #645F58;
+  --brand-500: #8A5A35;
+  --brand-700: #684428;
+  --brand-soft: #E7D9CC;
+  --brand-text: #825532;
+  --focus-ring: #825532;
+  --skeleton: #E5DBD0;
+  --reward-500: #9A6E1C;
+  --reward-300: #B89A60;
+  --reward-text: #7B5816;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #226C45;
+  --danger: #B1433E;
+  --danger-text: #A33E39;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: radial-gradient(rgba(124,81,48,0.11200000000000002) 1.3px, transparent 1.8px);
+  --bg-pattern-size: 18px 18px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(138%2C90%2C53%2C0.11)'%3E%3Cpath%20d%3D'M90%20180h180v40a90%2090%200%200%201-180%200z'%2F%3E%3Cpath%20d%3D'M270%20196h20a30%2030%200%200%201%200%2060h-26l6-16h20a14%2014%200%200%200%200-28h-20z'%2F%3E%3Crect%20x%3D'70'%20y%3D'310'%20width%3D'220'%20height%3D'12'%20rx%3D'6'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(138%2C90%2C53%2C0.11)'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M140%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M180%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M220%20150c-14-20%2014-30%200-50'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Северное сияние · узор «topo», рисунок «mountains» */
+[data-theme="aurora"] {
+  --bg-base: #05141A;
+  --surface-1: #142B30;
+  --surface-2: #223C3E;
+  --border: #2E4D4F;
+  --text-primary: #FFFFFF;
+  --text-muted: #9EA4A7;
+  --brand-500: #2FC4B2;
+  --brand-700: #239386;
+  --brand-soft: #0F3E3E;
+  --brand-text: #2FC4B2;
+  --focus-ring: #2FC4B2;
+  --skeleton: #223C3E;
+  --reward-500: #C9A5F5;
+  --reward-300: #D9C0F8;
+  --reward-text: #C9A5F5;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F5807A;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'200'%20height%3D'200'%20viewBox%3D'0%200%20200%20200'%3E%3Cg%20fill%3D'none'%20stroke%3D'%2363D3C5'%20stroke-opacity%3D'0.099'%20stroke-width%3D'1'%3E%3Cpath%20d%3D'M-10%2040%20C30%2010%2060%2070%20100%2040%20S170%2010%20210%2040'%2F%3E%3Cpath%20d%3D'M-10%2080%20C30%2050%2060%20110%20100%2080%20S170%2050%20210%2080'%2F%3E%3Cpath%20d%3D'M-10%20120%20C30%2090%2060%20150%20100%20120%20S170%2090%20210%20120'%2F%3E%3Cpath%20d%3D'M-10%20160%20C30%20130%2060%20190%20100%20160%20S170%20130%20210%20160'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 200px 200px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(89%2C208%2C193%2C0.13)'%3E%3Cpath%20d%3D'M0%20330%20110%20150l60%2090%2050-70%20140%20160z'%2F%3E%3Cpath%20d%3D'M80%20210l30-60%2030%2050-20-10-10%2020z'%20fill-opacity%3D'.6'%2F%3E%3Ccircle%20cx%3D'280'%20cy%3D'80'%20r%3D'30'%20fill-opacity%3D'.7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Ледник · узор «snow», рисунок «snowflake» */
+[data-theme="glacier"] {
+  --bg-base: #EAF3F8;
+  --surface-1: #F8FBFD;
+  --surface-2: #D5E1E8;
+  --border: #B8C6CE;
+  --text-primary: #051018;
+  --text-muted: #596268;
+  --brand-500: #2273A8;
+  --brand-700: #1A567E;
+  --brand-soft: #CEE1ED;
+  --brand-text: #1E6594;
+  --focus-ring: #1E6594;
+  --skeleton: #D5E1E8;
+  --reward-500: #8A6A1E;
+  --reward-300: #AD9762;
+  --reward-text: #795D1A;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'110'%20height%3D'100'%20viewBox%3D'0%200%20110%20100'%3E%3Cg%20stroke%3D'%231F6897'%20stroke-opacity%3D'0.168'%20stroke-width%3D'1.2'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M20%2012v16M12%2020h16M14%2014l12%2012M26%2014L14%2026'%2F%3E%3Cpath%20d%3D'M80%2062v10M75%2067h10'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'%231F6897'%20fill-opacity%3D'0.168'%3E%3Ccircle%20cx%3D'56'%20cy%3D'26'%20r%3D'1.4'%2F%3E%3Ccircle%20cx%3D'30'%20cy%3D'84'%20r%3D'1.8'%2F%3E%3Ccircle%20cx%3D'96'%20cy%3D'14'%20r%3D'1'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 110px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20stroke%3D'rgba(34%2C115%2C168%2C0.11)'%20stroke-width%3D'12'%20stroke-linecap%3D'round'%20fill%3D'none'%3E%3Cg%20transform%3D'rotate(0%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(60%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(120%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(180%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(240%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(300%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Метель · узор «snow», рисунок «snowflake» */
+[data-theme="blizzard"] {
+  --bg-base: #0B121A;
+  --surface-1: #1E2733;
+  --surface-2: #2C3743;
+  --border: #3A4856;
+  --text-primary: #FEFEFF;
+  --text-muted: #9EA1A5;
+  --brand-500: #6BA6E0;
+  --brand-700: #507DA8;
+  --brand-soft: #22364A;
+  --brand-text: #6BA6E0;
+  --focus-ring: #6BA6E0;
+  --skeleton: #2C3743;
+  --reward-500: #E2C064;
+  --reward-300: #EBD393;
+  --reward-text: #E2C064;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F57D77;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'110'%20height%3D'100'%20viewBox%3D'0%200%20110%20100'%3E%3Cg%20stroke%3D'%2390BCE8'%20stroke-opacity%3D'0.132'%20stroke-width%3D'1.2'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M20%2012v16M12%2020h16M14%2014l12%2012M26%2014L14%2026'%2F%3E%3Cpath%20d%3D'M80%2062v10M75%2067h10'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'%2390BCE8'%20fill-opacity%3D'0.132'%3E%3Ccircle%20cx%3D'56'%20cy%3D'26'%20r%3D'1.4'%2F%3E%3Ccircle%20cx%3D'30'%20cy%3D'84'%20r%3D'1.8'%2F%3E%3Ccircle%20cx%3D'96'%20cy%3D'14'%20r%3D'1'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 110px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20stroke%3D'rgba(137%2C184%2C230%2C0.13)'%20stroke-width%3D'12'%20stroke-linecap%3D'round'%20fill%3D'none'%3E%3Cg%20transform%3D'rotate(0%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(60%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(120%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(180%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(240%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3Cg%20transform%3D'rotate(300%20220%20200)'%3E%3Cpath%20d%3D'M220%20200V70'%2F%3E%3Cpath%20d%3D'M220%20110l-24-24M220%20110l24-24'%2F%3E%3Cpath%20d%3D'M220%20150l-18-18M220%20150l18-18'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Лава · узор «topo», рисунок «flame» */
+[data-theme="lava"] {
+  --bg-base: #160805;
+  --surface-1: #301914;
+  --surface-2: #412822;
+  --border: #55352D;
+  --text-primary: #FEF5F2;
+  --text-muted: #A19593;
+  --brand-500: #F0532A;
+  --brand-700: #B43E20;
+  --brand-soft: #4A1A0E;
+  --brand-text: #F26F4C;
+  --focus-ring: #F26F4C;
+  --skeleton: #412822;
+  --reward-500: #F2B33C;
+  --reward-300: #F6CA77;
+  --reward-text: #F2B33C;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36C66;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'200'%20height%3D'200'%20viewBox%3D'0%200%20200%20200'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23F47E5F'%20stroke-opacity%3D'0.099'%20stroke-width%3D'1'%3E%3Cpath%20d%3D'M-10%2040%20C30%2010%2060%2070%20100%2040%20S170%2010%20210%2040'%2F%3E%3Cpath%20d%3D'M-10%2080%20C30%2050%2060%20110%20100%2080%20S170%2050%20210%2080'%2F%3E%3Cpath%20d%3D'M-10%20120%20C30%2090%2060%20150%20100%20120%20S170%2090%20210%20120'%2F%3E%3Cpath%20d%3D'M-10%20160%20C30%20130%2060%20190%20100%20160%20S170%20130%20210%20160'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 200px 200px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(243%2C117%2C85%2C0.13)'%3E%3Cpath%20d%3D'M200%20340c-70%200-110-50-100-110%208-46%2050-70%2056-130%2040%2030%2070%2070%2066%20120%2016-12%2024-32%2024-52%2034%2030%2060%2070%2054%20110-8%2040-40%2062-100%2062z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Вулкан · узор «triangles», рисунок «mountains» */
+[data-theme="volcano"] {
+  --bg-base: #120A0A;
+  --surface-1: #2B1918;
+  --surface-2: #3C2625;
+  --border: #4F3231;
+  --text-primary: #FDF3F2;
+  --text-muted: #9C9393;
+  --brand-500: #D9362B;
+  --brand-700: #A32920;
+  --brand-soft: #421512;
+  --brand-text: #E4726B;
+  --focus-ring: #E4726B;
+  --skeleton: #3C2625;
+  --reward-500: #E99B3A;
+  --reward-300: #F0B975;
+  --reward-text: #E99B3A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36963;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'40'%20height%3D'68'%20viewBox%3D'0%200%2040%2068'%3E%3Cpath%20d%3D'M0%2034%20L20%200%20L40%2034%20Z'%20fill%3D'%23E36860'%20fill-opacity%3D'0.055'%2F%3E%3Cpath%20d%3D'M20%2034%20L40%2068%20L0%2068%20Z'%20fill%3D'%23E36860'%20fill-opacity%3D'0.0275'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 40px 68px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(225%2C94%2C85%2C0.13)'%3E%3Cpath%20d%3D'M0%20330%20110%20150l60%2090%2050-70%20140%20160z'%2F%3E%3Cpath%20d%3D'M80%20210l30-60%2030%2050-20-10-10%2020z'%20fill-opacity%3D'.6'%2F%3E%3Ccircle%20cx%3D'280'%20cy%3D'80'%20r%3D'30'%20fill-opacity%3D'.7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Глубина · узор «bubbles», рисунок «waves» */
+[data-theme="deepsea"] {
+  --bg-base: #03121C;
+  --surface-1: #122633;
+  --surface-2: #1F3542;
+  --border: #2A4454;
+  --text-primary: #F3F9FC;
+  --text-muted: #959EA4;
+  --brand-500: #1C8FC9;
+  --brand-700: #156B97;
+  --brand-soft: #093046;
+  --brand-text: #49A5D4;
+  --focus-ring: #49A5D4;
+  --skeleton: #1F3542;
+  --reward-500: #E5C05A;
+  --reward-300: #EDD38C;
+  --reward-text: #E5C05A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill%3D'none'%20stroke%3D'%2355ABD7'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Ccircle%20cx%3D'20'%20cy%3D'24'%20r%3D'10'%2F%3E%3Ccircle%20cx%3D'66'%20cy%3D'18'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'52'%20cy%3D'64'%20r%3D'14'%2F%3E%3Ccircle%20cx%3D'14'%20cy%3D'78'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'86'%20r%3D'7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(73%2C165%2C212%2C0.13)'%20stroke-width%3D'14'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M10%20220c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%2F%3E%3Cpath%20d%3D'M10%20270c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%20stroke-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M10%20320c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%20stroke-opacity%3D'.45'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Лагуна · узор «waves», рисунок «waves» */
+[data-theme="lagoon"] {
+  --bg-base: #E6F6F6;
+  --surface-1: #F6FCFC;
+  --surface-2: #D0E4E5;
+  --border: #B3C9CA;
+  --text-primary: #021213;
+  --text-muted: #566464;
+  --brand-500: #0B8288;
+  --brand-700: #086266;
+  --brand-soft: #C7E6E7;
+  --brand-text: #096D72;
+  --focus-ring: #096D72;
+  --skeleton: #D0E4E5;
+  --reward-500: #977214;
+  --reward-300: #B69C5B;
+  --reward-text: #7C5D10;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'60'%20height%3D'32'%20viewBox%3D'0%200%2060%2032'%3E%3Cpath%20d%3D'M0%2020%20Q15%208%2030%2020%20T60%2020'%20fill%3D'none'%20stroke%3D'%230A757A'%20stroke-opacity%3D'0.14'%20stroke-width%3D'1.6'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 60px 32px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(11%2C130%2C136%2C0.11)'%20stroke-width%3D'14'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M10%20220c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%2F%3E%3Cpath%20d%3D'M10%20270c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%20stroke-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M10%20320c40-40%2080-40%20120%200s80%2040%20120%200%2080-40%20100-20'%20stroke-opacity%3D'.45'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Джунгли · узор «leaves», рисунок «monstera» */
+[data-theme="jungle"] {
+  --bg-base: #071709;
+  --surface-1: #172C1A;
+  --surface-2: #243B28;
+  --border: #314B36;
+  --text-primary: #FDFEFE;
+  --text-muted: #9CA39D;
+  --brand-500: #3DA552;
+  --brand-700: #2E7C3E;
+  --brand-soft: #14391B;
+  --brand-text: #58B26A;
+  --focus-ring: #58B26A;
+  --skeleton: #243B28;
+  --reward-500: #E0B840;
+  --reward-300: #E9CD79;
+  --reward-text: #E0B840;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F57D77;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'%236EBC7D'%20fill-opacity%3D'0.077'%3E%3Cpath%20d%3D'M20%2040%20C20%2020%2040%2010%2050%2010%20C50%2030%2036%2042%2020%2040Z'%2F%3E%3Cpath%20d%3D'M70%2090%20C70%2070%2090%2060%20100%2060%20C100%2080%2086%2092%2070%2090Z'%2F%3E%3Cpath%20d%3D'M84%2024%20C94%2030%2096%2042%2092%2050%20C82%2046%2078%2034%2084%2024Z'%2F%3E%3Cpath%20d%3D'M20%2096%20C30%20100%2034%20110%2030%20118%20C20%20114%2016%20104%2020%2096Z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 120px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cmask%20id%3D'm'%3E%3Crect%20width%3D'360'%20height%3D'360'%20fill%3D'white'%2F%3E%3Cg%20stroke%3D'black'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M330%20330%20190%20190'%2F%3E%3Cpath%20d%3D'M250%20250%20210%20300M250%20250%20300%20210M210%20210%20160%20240M210%20210%20240%20160'%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3Cpath%20mask%3D'url(%23m)'%20d%3D'M350%20350C210%20340%20120%20260%20130%20130%20250%20110%20340%20190%20350%20350z'%20fill%3D'rgba(100%2C183%2C117%2C0.13)'%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Бамбук · узор «stripes», рисунок «monstera» */
+[data-theme="bamboo"] {
+  --bg-base: #F0F3E4;
+  --surface-1: #FAFBF6;
+  --surface-2: #DCE1D0;
+  --border: #C1C7B4;
+  --text-primary: #0B1105;
+  --text-muted: #5E6357;
+  --brand-500: #4E7A27;
+  --brand-700: #3B5C1D;
+  --brand-soft: #D9E2CA;
+  --brand-text: #456B22;
+  --focus-ring: #456B22;
+  --skeleton: #DCE1D0;
+  --reward-500: #8A6A1E;
+  --reward-300: #AD9762;
+  --reward-text: #795D1A;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: repeating-linear-gradient(45deg, rgba(70,110,35,0.07) 0 2px, transparent 2px 14px);
+  --bg-pattern-size: auto;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cmask%20id%3D'm'%3E%3Crect%20width%3D'360'%20height%3D'360'%20fill%3D'white'%2F%3E%3Cg%20stroke%3D'black'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M330%20330%20190%20190'%2F%3E%3Cpath%20d%3D'M250%20250%20210%20300M250%20250%20300%20210M210%20210%20160%20240M210%20210%20240%20160'%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3Cpath%20mask%3D'url(%23m)'%20d%3D'M350%20350C210%20340%20120%20260%20130%20130%20250%20110%20340%20190%20350%20350z'%20fill%3D'rgba(78%2C122%2C39%2C0.11)'%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Ночная сакура · узор «scales», рисунок «sakura» */
+[data-theme="sakuranight"] {
+  --bg-base: #180B16;
+  --surface-1: #311D2B;
+  --surface-2: #412C3A;
+  --border: #54394A;
+  --text-primary: #FDF7FA;
+  --text-muted: #A39AA0;
+  --brand-500: #E064A6;
+  --brand-700: #A84B7D;
+  --brand-soft: #482039;
+  --brand-text: #E477B1;
+  --focus-ring: #E477B1;
+  --skeleton: #412C3A;
+  --reward-500: #E7BD5A;
+  --reward-300: #EED18C;
+  --reward-text: #E7BD5A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'40'%20height%3D'40'%20viewBox%3D'0%200%2040%2040'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23E88BBC'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Cpath%20d%3D'M0%2020a20%2020%200%200%201%2040%200'%2F%3E%3Cpath%20d%3D'M8%2020a12%2012%200%200%201%2024%200'%2F%3E%3Cpath%20d%3D'M-20%2040a20%2020%200%200%201%2040%200M20%2040a20%2020%200%200%201%2040%200'%2F%3E%3Cpath%20d%3D'M-12%2040a12%2012%200%200%201%2024%200M28%2040a12%2012%200%200%201%2024%200'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 40px 40px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'340'%20viewBox%3D'0%200%20360%20340'%3E%3Cg%20fill%3D'rgba(230%2C131%2C184%2C0.13)'%3E%3Cpath%20d%3D'M360%2040C260%2080%20200%20160%20170%20260l-10-4c30-100%2096-184%20196-226z'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20250%20120)'%2F%3E%3Cellipse%20cx%3D'250'%20cy%3D'106'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20250%20120)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20200%20190)'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'176'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20200%20190)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20300%2080)'%2F%3E%3Cellipse%20cx%3D'300'%20cy%3D'66'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20300%2080)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(0%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(72%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(144%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(216%20170%20260)'%2F%3E%3Cellipse%20cx%3D'170'%20cy%3D'246'%20rx%3D'9'%20ry%3D'15'%20transform%3D'rotate(288%20170%20260)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Оригами · узор «triangles», рисунок «crystal» */
+[data-theme="origami"] {
+  --bg-base: #F7F4EF;
+  --surface-1: #FCFBF9;
+  --surface-2: #E9DFDA;
+  --border: #D0C3BD;
+  --text-primary: #1C0A06;
+  --text-muted: #6A5F5C;
+  --brand-500: #C8452D;
+  --brand-700: #963422;
+  --brand-soft: #F0DCD4;
+  --brand-text: #AC3B27;
+  --focus-ring: #AC3B27;
+  --skeleton: #E9DFDA;
+  --reward-500: #8F6A12;
+  --reward-300: #B19759;
+  --reward-text: #7E5D10;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'40'%20height%3D'68'%20viewBox%3D'0%200%2040%2068'%3E%3Cpath%20d%3D'M0%2034%20L20%200%20L40%2034%20Z'%20fill%3D'%23B43E29'%20fill-opacity%3D'0.07'%2F%3E%3Cpath%20d%3D'M20%2034%20L40%2068%20L0%2068%20Z'%20fill%3D'%23B43E29'%20fill-opacity%3D'0.035'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 40px 68px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(200%2C69%2C45%2C0.11)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Киото · узор «scales», рисунок «sun» */
+[data-theme="kyoto"] {
+  --bg-base: #14100E;
+  --surface-1: #2C201D;
+  --surface-2: #3C2D2A;
+  --border: #4E3936;
+  --text-primary: #FCF4F3;
+  --text-muted: #9F9897;
+  --brand-500: #C9473A;
+  --brand-700: #97352C;
+  --brand-soft: #3F1D19;
+  --brand-text: #DA8279;
+  --focus-ring: #DA8279;
+  --skeleton: #3C2D2A;
+  --reward-500: #D8B062;
+  --reward-300: #E4C891;
+  --reward-text: #D8B062;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'40'%20height%3D'40'%20viewBox%3D'0%200%2040%2040'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23D7756B'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Cpath%20d%3D'M0%2020a20%2020%200%200%201%2040%200'%2F%3E%3Cpath%20d%3D'M8%2020a12%2012%200%200%201%2024%200'%2F%3E%3Cpath%20d%3D'M-20%2040a20%2020%200%200%201%2040%200M20%2040a20%2020%200%200%201%2040%200'%2F%3E%3Cpath%20d%3D'M-12%2040a12%2012%200%200%201%2024%200M28%2040a12%2012%200%200%201%2024%200'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 40px 40px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(212%2C108%2C97%2C0.13)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(212%2C108%2C97%2C0.13)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Пиксели · узор «checks», рисунок «planet» */
+[data-theme="pixel"] {
+  --bg-base: #0D0B1A;
+  --surface-1: #1C252C;
+  --surface-2: #29353A;
+  --border: #354948;
+  --text-primary: #F3FCF7;
+  --text-muted: #999DA0;
+  --brand-500: #38D27C;
+  --brand-700: #2A9E5D;
+  --brand-soft: #173B32;
+  --brand-text: #38D27C;
+  --focus-ring: #38D27C;
+  --skeleton: #29353A;
+  --reward-500: #F5C543;
+  --reward-300: #F8D67B;
+  --reward-text: #F5C543;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: conic-gradient(rgba(106,221,157,0.033) 25%, transparent 0 50%, rgba(106,221,157,0.033) 0 75%, transparent 0);
+  --bg-pattern-size: 44px 44px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(96%2C219%2C150%2C0.13)'%3E%3Ccircle%20cx%3D'200'%20cy%3D'190'%20r%3D'86'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'190'%20rx%3D'160'%20ry%3D'34'%20fill%3D'none'%20stroke%3D'rgba(96%2C219%2C150%2C0.13)'%20stroke-width%3D'12'%20transform%3D'rotate(-18%20200%20190)'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'70'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'320'%20cy%3D'320'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Синтвейв · узор «grid», рисунок «sun» */
+[data-theme="synthwave"] {
+  --bg-base: #120626;
+  --surface-1: #2D163B;
+  --surface-2: #3E2449;
+  --border: #523159;
+  --text-primary: #FEF3FB;
+  --text-muted: #9F93A6;
+  --brand-500: #F03DBE;
+  --brand-700: #B42E8F;
+  --brand-soft: #47134A;
+  --brand-text: #F360CA;
+  --focus-ring: #F360CA;
+  --skeleton: #3E2449;
+  --reward-500: #F7B730;
+  --reward-300: #F9CD6E;
+  --reward-text: #F7B730;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36C66;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: linear-gradient(rgba(244,110,206,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(244,110,206,0.055) 1px, transparent 1px);
+  --bg-pattern-size: 28px 28px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(243%2C100%2C203%2C0.13)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(243%2C100%2C203%2C0.13)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Матрица · узор «rain», рисунок «crystal» */
+[data-theme="matrix"] {
+  --bg-base: #020A04;
+  --surface-1: #112316;
+  --surface-2: #1E3425;
+  --border: #2A4633;
+  --text-primary: #F2FCF5;
+  --text-muted: #929A94;
+  --brand-500: #22C55E;
+  --brand-700: #1A9447;
+  --brand-soft: #0A371A;
+  --brand-text: #22C55E;
+  --focus-ring: #22C55E;
+  --skeleton: #1E3425;
+  --reward-500: #C9D84A;
+  --reward-300: #D9E480;
+  --reward-text: #C9D84A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'80'%20height%3D'90'%20viewBox%3D'0%200%2080%2090'%3E%3Cg%20stroke%3D'%2359D486'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.2'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M10%200l-4%2014M40%2030l-4%2014M70%2010l-4%2014M26%2060l-4%2014M58%2070l-4%2014'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 80px 90px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(78%2C209%2C126%2C0.13)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Микросхема · узор «circuit», рисунок «planet» */
+[data-theme="circuit"] {
+  --bg-base: #06101A;
+  --surface-1: #142633;
+  --surface-2: #223543;
+  --border: #2C4656;
+  --text-primary: #F3FAFD;
+  --text-muted: #969EA4;
+  --brand-500: #22A8E0;
+  --brand-700: #1A7EA8;
+  --brand-soft: #0D344A;
+  --brand-text: #22A8E0;
+  --focus-ring: #22A8E0;
+  --skeleton: #223543;
+  --reward-500: #E5C35A;
+  --reward-300: #EDD58C;
+  --reward-text: #E5C35A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill%3D'none'%20stroke%3D'%2359BEE8'%20stroke-opacity%3D'0.11'%20stroke-width%3D'1.2'%3E%3Cpath%20d%3D'M0%2020h30l10%2010v30h40'%2F%3E%3Cpath%20d%3D'M60%200v20l10%2010h30'%2F%3E%3Cpath%20d%3D'M20%20100V70l10-10'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'%2359BEE8'%20fill-opacity%3D'0.165'%3E%3Ccircle%20cx%3D'80'%20cy%3D'60'%20r%3D'2.5'%2F%3E%3Ccircle%20cx%3D'100'%20cy%3D'30'%20r%3D'2.5'%2F%3E%3Ccircle%20cx%3D'30'%20cy%3D'60'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(78%2C185%2C230%2C0.13)'%3E%3Ccircle%20cx%3D'200'%20cy%3D'190'%20r%3D'86'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'190'%20rx%3D'160'%20ry%3D'34'%20fill%3D'none'%20stroke%3D'rgba(78%2C185%2C230%2C0.13)'%20stroke-width%3D'12'%20transform%3D'rotate(-18%20200%20190)'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'70'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'320'%20cy%3D'320'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Чертёж · узор «grid», рисунок «skyline» */
+[data-theme="blueprint"] {
+  --bg-base: #0A1A33;
+  --surface-1: #1C2E4A;
+  --surface-2: #2A3D59;
+  --border: #374C69;
+  --text-primary: #FFFFFF;
+  --text-muted: #A2A9B2;
+  --brand-500: #5AA0F0;
+  --brand-700: #4478B4;
+  --brand-soft: #1D3A60;
+  --brand-text: #71ADF2;
+  --focus-ring: #71ADF2;
+  --skeleton: #2A3D59;
+  --reward-500: #F0C75A;
+  --reward-300: #F5D88C;
+  --reward-text: #F0C75A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F68A85;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: linear-gradient(rgba(131,184,244,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(131,184,244,0.055) 1px, transparent 1px);
+  --bg-pattern-size: 28px 28px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(123%2C179%2C243%2C0.13)'%3E%3Cpath%20d%3D'M0%20360V280h40v-30h20v30h30V230a40%2040%200%200%201%2080%200v50h20V200l10-30%2010%2030v80h30v-60a30%2030%200%200%201%2060%200v60h40v80z'%2F%3E%3Ccircle%20cx%3D'130'%20cy%3D'186'%20r%3D'6'%2F%3E%3Cpath%20d%3D'M126%20186v-20h8v20z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Тетрадь · узор «grid», рисунок «crystal» */
+[data-theme="notebook"] {
+  --bg-base: #F6F7FB;
+  --surface-1: #FCFCFE;
+  --surface-2: #E0E3ED;
+  --border: #C3C7D4;
+  --text-primary: #070C1C;
+  --text-muted: #60646E;
+  --brand-500: #3557C9;
+  --brand-700: #284197;
+  --brand-soft: #DBE1F4;
+  --brand-text: #3557C9;
+  --focus-ring: #3557C9;
+  --skeleton: #E0E3ED;
+  --reward-500: #9A6E12;
+  --reward-300: #B89A59;
+  --reward-text: #815C0F;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #247048;
+  --danger: #B1433E;
+  --danger-text: #AA403C;
+  --warning: #886122;
+  --warning-text: #835D21;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: linear-gradient(rgba(48,78,181,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(48,78,181,0.07) 1px, transparent 1px);
+  --bg-pattern-size: 28px 28px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(53%2C87%2C201%2C0.11)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Крафт · узор «grain», рисунок «coffee» */
+[data-theme="kraft"] {
+  --bg-base: #EBDDC8;
+  --surface-1: #F8F3EC;
+  --surface-2: #DBCBB6;
+  --border: #C2B19D;
+  --text-primary: #130A05;
+  --text-muted: #5C5349;
+  --brand-500: #8B4A22;
+  --brand-700: #68381A;
+  --brand-soft: #DEC8B1;
+  --brand-text: #834620;
+  --focus-ring: #834620;
+  --skeleton: #DBCBB6;
+  --reward-500: #7A5B12;
+  --reward-300: #A28C59;
+  --reward-text: #6B5010;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #1E603E;
+  --danger: #B1433E;
+  --danger-text: #913733;
+  --warning: #886122;
+  --warning-text: #70501C;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%20viewBox%3D'0%200%20160%20160'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.49019607843137253%200%200%200%200%200.2627450980392157%200%200%200%200%200.12156862745098039%200%200%200%200.35000000000000003%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 160px 160px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(139%2C74%2C34%2C0.11)'%3E%3Cpath%20d%3D'M90%20180h180v40a90%2090%200%200%201-180%200z'%2F%3E%3Cpath%20d%3D'M270%20196h20a30%2030%200%200%201%200%2060h-26l6-16h20a14%2014%200%200%200%200-28h-20z'%2F%3E%3Crect%20x%3D'70'%20y%3D'310'%20width%3D'220'%20height%3D'12'%20rx%3D'6'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(139%2C74%2C34%2C0.11)'%20stroke-width%3D'9'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M140%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M180%20150c-14-20%2014-30%200-50'%2F%3E%3Cpath%20d%3D'M220%20150c-14-20%2014-30%200-50'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Мрамор · узор «topo», рисунок «crystal» */
+[data-theme="marble"] {
+  --bg-base: #F2F1EF;
+  --surface-1: #FAFAF9;
+  --surface-2: #DFDDDE;
+  --border: #C5C2C5;
+  --text-primary: #0F0D13;
+  --text-muted: #616062;
+  --brand-500: #6E5A8A;
+  --brand-700: #534468;
+  --brand-soft: #E0DCE1;
+  --brand-text: #6A5684;
+  --focus-ring: #6A5684;
+  --skeleton: #DFDDDE;
+  --reward-500: #8C6A16;
+  --reward-300: #AF975C;
+  --reward-text: #785B13;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #226C45;
+  --danger: #B1433E;
+  --danger-text: #A33E39;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'200'%20height%3D'200'%20viewBox%3D'0%200%20200%20200'%3E%3Cg%20fill%3D'none'%20stroke%3D'%2363517C'%20stroke-opacity%3D'0.12600000000000003'%20stroke-width%3D'1'%3E%3Cpath%20d%3D'M-10%2040%20C30%2010%2060%2070%20100%2040%20S170%2010%20210%2040'%2F%3E%3Cpath%20d%3D'M-10%2080%20C30%2050%2060%20110%20100%2080%20S170%2050%20210%2080'%2F%3E%3Cpath%20d%3D'M-10%20120%20C30%2090%2060%20150%20100%20120%20S170%2090%20210%20120'%2F%3E%3Cpath%20d%3D'M-10%20160%20C30%20130%2060%20190%20100%20160%20S170%20130%20210%20160'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 200px 200px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(110%2C90%2C138%2C0.11)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Бархат · узор «argyle», рисунок «moon» */
+[data-theme="velvet"] {
+  --bg-base: #160812;
+  --surface-1: #2C1724;
+  --surface-2: #3C2432;
+  --border: #4C3140;
+  --text-primary: #FBF3F6;
+  --text-muted: #9D9298;
+  --brand-500: #B5336E;
+  --brand-700: #882653;
+  --brand-soft: #3C1228;
+  --brand-text: #D07CA2;
+  --focus-ring: #D07CA2;
+  --skeleton: #3C2432;
+  --reward-500: #E2B45A;
+  --reward-300: #EBCB8C;
+  --reward-text: #E2B45A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F3665F;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: linear-gradient(45deg, rgba(200,102,146,0.0385) 25%, transparent 25%, transparent 75%, rgba(200,102,146,0.0385) 75%), linear-gradient(-45deg, rgba(200,102,146,0.0385) 25%, transparent 25%, transparent 75%, rgba(200,102,146,0.0385) 75%);
+  --bg-pattern-size: 36px 36px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cpath%20d%3D'M250%2060a110%20110%200%201%200%2090%20170%2090%2090%200%201%201-90-170z'%20fill%3D'rgba(196%2C92%2C139%2C0.13)'%2F%3E%3Cg%20fill%3D'rgba(196%2C92%2C139%2C0.13)'%3E%3Cpath%20d%3D'M120%2070l5%2013%2013%205-13%205-5%2013-5-13-13-5%2013-5z'%2F%3E%3Ccircle%20cx%3D'80'%20cy%3D'150'%20r%3D'3'%2F%3E%3Ccircle%20cx%3D'170'%20cy%3D'40'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Королевская · узор «argyle», рисунок «crystal» */
+[data-theme="royal"] {
+  --bg-base: #0E0A22;
+  --surface-1: #211A39;
+  --surface-2: #2F2848;
+  --border: #3D355A;
+  --text-primary: #F6F4FD;
+  --text-muted: #9794A3;
+  --brand-500: #6E48D6;
+  --brand-700: #5336A1;
+  --brand-soft: #25194D;
+  --brand-text: #9F86E4;
+  --focus-ring: #9F86E4;
+  --skeleton: #2F2848;
+  --reward-500: #E9BE4A;
+  --reward-300: #F0D280;
+  --reward-text: #E9BE4A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36963;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: linear-gradient(45deg, rgba(146,118,224,0.0385) 25%, transparent 25%, transparent 75%, rgba(146,118,224,0.0385) 75%), linear-gradient(-45deg, rgba(146,118,224,0.0385) 25%, transparent 25%, transparent 75%, rgba(146,118,224,0.0385) 75%);
+  --bg-pattern-size: 36px 36px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(139%2C109%2C222%2C0.13)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Изумрудный дворец · узор «moroccan», рисунок «skyline» */
+[data-theme="emeraldpalace"] {
+  --bg-base: #04140F;
+  --surface-1: #122922;
+  --surface-2: #1F382F;
+  --border: #2A483E;
+  --text-primary: #F5FBF8;
+  --text-muted: #97A09C;
+  --brand-500: #16A06C;
+  --brand-700: #117851;
+  --brand-soft: #083625;
+  --brand-text: #40B186;
+  --focus-ring: #40B186;
+  --skeleton: #1F382F;
+  --reward-500: #E2B848;
+  --reward-300: #EBCD7F;
+  --reward-text: #E2B848;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'48'%20height%3D'48'%20viewBox%3D'0%200%2048%2048'%3E%3Cpath%20d%3D'M24%200c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12zM24%2024c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12z'%20fill%3D'none'%20stroke%3D'%2350B891'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.3'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 48px 48px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(69%2C179%2C137%2C0.13)'%3E%3Cpath%20d%3D'M0%20360V280h40v-30h20v30h30V230a40%2040%200%200%201%2080%200v50h20V200l10-30%2010%2030v80h30v-60a30%2030%200%200%201%2060%200v60h40v80z'%2F%3E%3Ccircle%20cx%3D'130'%20cy%3D'186'%20r%3D'6'%2F%3E%3Cpath%20d%3D'M126%20186v-20h8v20z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Султан · узор «moroccan», рисунок «skyline» */
+[data-theme="sultan"] {
+  --bg-base: #1A0A08;
+  --surface-1: #311916;
+  --surface-2: #402723;
+  --border: #51332F;
+  --text-primary: #FBF3F2;
+  --text-muted: #9F9392;
+  --brand-500: #C23A2A;
+  --brand-700: #922C20;
+  --brand-soft: #421610;
+  --brand-text: #D77D72;
+  --focus-ring: #D77D72;
+  --skeleton: #402723;
+  --reward-500: #EDC152;
+  --reward-300: #F2D486;
+  --reward-text: #EDC152;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36C66;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'48'%20height%3D'48'%20viewBox%3D'0%200%2048%2048'%3E%3Cpath%20d%3D'M24%200c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12zM24%2024c4%208%2012%2012%2024%2012-12%200-20%204-24%2012-4-8-12-12-24-12%2012%200%2020-4%2024-12z'%20fill%3D'none'%20stroke%3D'%23D16B5F'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.3'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 48px 48px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(206%2C97%2C85%2C0.13)'%3E%3Cpath%20d%3D'M0%20360V280h40v-30h20v30h30V230a40%2040%200%200%201%2080%200v50h20V200l10-30%2010%2030v80h30v-60a30%2030%200%200%201%2060%200v60h40v80z'%2F%3E%3Ccircle%20cx%3D'130'%20cy%3D'186'%20r%3D'6'%2F%3E%3Cpath%20d%3D'M126%20186v-20h8v20z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Фонарики · узор «lanterns», рисунок «moon» */
+[data-theme="lantern"] {
+  --bg-base: #160B05;
+  --surface-1: #302014;
+  --surface-2: #402E22;
+  --border: #543E2E;
+  --text-primary: #FEF8F2;
+  --text-muted: #A39A95;
+  --brand-500: #E8862E;
+  --brand-700: #AE6523;
+  --brand-soft: #48290F;
+  --brand-text: #E8862E;
+  --focus-ring: #E8862E;
+  --skeleton: #402E22;
+  --reward-500: #F2C25A;
+  --reward-300: #F6D48C;
+  --reward-text: #F2C25A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F4736D;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'110'%20viewBox%3D'0%200%20120%20110'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23EEA462'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.3'%3E%3Cpath%20d%3D'M30%200v10'%2F%3E%3Cpath%20d%3D'M22%2014h16l4%2010-4%2018H22l-4-18z'%2F%3E%3Cpath%20d%3D'M26%2042v4h8v-4'%2F%3E%3Cpath%20d%3D'M90%2040v10'%2F%3E%3Cpath%20d%3D'M84%2054h12l3%208-3%2014H84l-3-14z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 110px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cpath%20d%3D'M250%2060a110%20110%200%201%200%2090%20170%2090%2090%200%201%201-90-170z'%20fill%3D'rgba(237%2C158%2C88%2C0.13)'%2F%3E%3Cg%20fill%3D'rgba(237%2C158%2C88%2C0.13)'%3E%3Cpath%20d%3D'M120%2070l5%2013%2013%205-13%205-5%2013-5-13-13-5%2013-5z'%2F%3E%3Ccircle%20cx%3D'80'%20cy%3D'150'%20r%3D'3'%2F%3E%3Ccircle%20cx%3D'170'%20cy%3D'40'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Полумесяц · узор «lanterns», рисунок «moon» */
+[data-theme="ramadan"] {
+  --bg-base: #08101E;
+  --surface-1: #182535;
+  --surface-2: #253344;
+  --border: #314355;
+  --text-primary: #F3F8FC;
+  --text-muted: #979DA5;
+  --brand-500: #3C8CC9;
+  --brand-700: #2D6997;
+  --brand-soft: #142E47;
+  --brand-text: #5FA1D3;
+  --focus-ring: #5FA1D3;
+  --skeleton: #253344;
+  --reward-500: #EFC85E;
+  --reward-300: #F4D98E;
+  --reward-text: #EFC85E;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47670;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'110'%20viewBox%3D'0%200%20120%20110'%3E%3Cg%20fill%3D'none'%20stroke%3D'%236DA9D7'%20stroke-opacity%3D'0.12100000000000001'%20stroke-width%3D'1.3'%3E%3Cpath%20d%3D'M30%200v10'%2F%3E%3Cpath%20d%3D'M22%2014h16l4%2010-4%2018H22l-4-18z'%2F%3E%3Cpath%20d%3D'M26%2042v4h8v-4'%2F%3E%3Cpath%20d%3D'M90%2040v10'%2F%3E%3Cpath%20d%3D'M84%2054h12l3%208-3%2014H84l-3-14z'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 120px 110px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cpath%20d%3D'M250%2060a110%20110%200%201%200%2090%20170%2090%2090%200%201%201-90-170z'%20fill%3D'rgba(99%2C163%2C212%2C0.13)'%2F%3E%3Cg%20fill%3D'rgba(99%2C163%2C212%2C0.13)'%3E%3Cpath%20d%3D'M120%2070l5%2013%2013%205-13%205-5%2013-5-13-13-5%2013-5z'%2F%3E%3Ccircle%20cx%3D'80'%20cy%3D'150'%20r%3D'3'%2F%3E%3Ccircle%20cx%3D'170'%20cy%3D'40'%20r%3D'2.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Вечеринка · узор «confetti», рисунок «planet» */
+[data-theme="party"] {
+  --bg-base: #12081E;
+  --surface-1: #2B1936;
+  --surface-2: #3D2745;
+  --border: #503456;
+  --text-primary: #FDF4FC;
+  --text-muted: #9E95A3;
+  --brand-500: #E04BD2;
+  --brand-700: #A8389E;
+  --brand-soft: #431849;
+  --brand-text: #E568D9;
+  --focus-ring: #E568D9;
+  --skeleton: #3D2745;
+  --reward-500: #F5C33B;
+  --reward-300: #F8D576;
+  --reward-text: #F5C33B;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F47069;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill-opacity%3D'0.165'%3E%3Crect%20x%3D'10'%20y%3D'14'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23E878DD'%20transform%3D'rotate(30%2013%2015)'%2F%3E%3Crect%20x%3D'60'%20y%3D'40'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23F5C33B'%20transform%3D'rotate(-20%2063%2041)'%2F%3E%3Ccircle%20cx%3D'34'%20cy%3D'70'%20r%3D'2'%20fill%3D'%23F5C33B'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'16'%20r%3D'1.6'%20fill%3D'%23E878DD'%2F%3E%3Crect%20x%3D'80'%20y%3D'80'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23E878DD'%20transform%3D'rotate(60%2083%2081)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(230%2C111%2C219%2C0.13)'%3E%3Ccircle%20cx%3D'200'%20cy%3D'190'%20r%3D'86'%2F%3E%3Cellipse%20cx%3D'200'%20cy%3D'190'%20rx%3D'160'%20ry%3D'34'%20fill%3D'none'%20stroke%3D'rgba(230%2C111%2C219%2C0.13)'%20stroke-width%3D'12'%20transform%3D'rotate(-18%20200%20190)'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'70'%20r%3D'4'%2F%3E%3Ccircle%20cx%3D'320'%20cy%3D'320'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Карамель · узор «confetti», рисунок «sun» */
+[data-theme="candy"] {
+  --bg-base: #FFF0F6;
+  --surface-1: #FFFAFC;
+  --surface-2: #F0DBE4;
+  --border: #D8BECA;
+  --text-primary: #1E0712;
+  --text-muted: #6E5C64;
+  --brand-500: #D63384;
+  --brand-700: #A12663;
+  --brand-soft: #F9D6E6;
+  --brand-text: #AF2A6C;
+  --focus-ring: #AF2A6C;
+  --skeleton: #F0DBE4;
+  --reward-500: #9A6A10;
+  --reward-300: #B89758;
+  --reward-text: #81590D;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'100'%20height%3D'100'%20viewBox%3D'0%200%20100%20100'%3E%3Cg%20fill-opacity%3D'0.21000000000000002'%3E%3Crect%20x%3D'10'%20y%3D'14'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23C12E77'%20transform%3D'rotate(30%2013%2015)'%2F%3E%3Crect%20x%3D'60'%20y%3D'40'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%239A6A10'%20transform%3D'rotate(-20%2063%2041)'%2F%3E%3Ccircle%20cx%3D'34'%20cy%3D'70'%20r%3D'2'%20fill%3D'%239A6A10'%2F%3E%3Ccircle%20cx%3D'88'%20cy%3D'16'%20r%3D'1.6'%20fill%3D'%23C12E77'%2F%3E%3Crect%20x%3D'80'%20y%3D'80'%20width%3D'6'%20height%3D'3'%20rx%3D'1'%20fill%3D'%23C12E77'%20transform%3D'rotate(60%2083%2081)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 100px 100px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(214%2C51%2C132%2C0.11)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(214%2C51%2C132%2C0.11)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Зигзаг · узор «zigzag», рисунок «crystal» */
+[data-theme="zigzag"] {
+  --bg-base: #F3F0FA;
+  --surface-1: #FBFAFD;
+  --surface-2: #E0DBEB;
+  --border: #C5BFD3;
+  --text-primary: #0F091B;
+  --text-muted: #625D6A;
+  --brand-500: #6A3FC4;
+  --brand-700: #502F93;
+  --brand-soft: #E0D7F2;
+  --brand-text: #6A3FC4;
+  --focus-ring: #6A3FC4;
+  --skeleton: #E0DBEB;
+  --reward-500: #8F6A12;
+  --reward-300: #B19759;
+  --reward-text: #7B5B0F;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #226C45;
+  --danger: #B1433E;
+  --danger-text: #A33E39;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: linear-gradient(135deg, rgba(95,57,176,0.07) 25%, transparent 25%) -12px 0, linear-gradient(225deg, rgba(95,57,176,0.07) 25%, transparent 25%) -12px 0, linear-gradient(315deg, rgba(95,57,176,0.07) 25%, transparent 25%), linear-gradient(45deg, rgba(95,57,176,0.07) 25%, transparent 25%);
+  --bg-pattern-size: 24px 24px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(106%2C63%2C196%2C0.11)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Соты · узор «hex», рисунок «sun» */
+[data-theme="honeycomb"] {
+  --bg-base: #FBF3DC;
+  --surface-1: #FEFBF3;
+  --surface-2: #EBE0C7;
+  --border: #D2C5AA;
+  --text-primary: #190F00;
+  --text-muted: #6A6251;
+  --brand-500: #B26B00;
+  --brand-700: #865000;
+  --brand-soft: #F1E0BD;
+  --brand-text: #8E5600;
+  --focus-ring: #8E5600;
+  --skeleton: #EBE0C7;
+  --reward-500: #7E6A10;
+  --reward-300: #A59758;
+  --reward-text: #715F0E;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #805B20;
+  --text-on-brand: #120A14;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'28'%20height%3D'48'%20viewBox%3D'0%200%2028%2048'%3E%3Cpath%20d%3D'M14%200l14%208v16l-14%208L0%2024V8z%20M14%2032v16'%20fill%3D'none'%20stroke%3D'%23A06000'%20stroke-opacity%3D'0.14'%20stroke-width%3D'1.2'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 28px 48px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(178%2C107%2C0%2C0.11)'%3E%3Ccircle%20cx%3D'240'%20cy%3D'240'%20r%3D'70'%2F%3E%3Cg%20stroke%3D'rgba(178%2C107%2C0%2C0.11)'%20stroke-width%3D'10'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M332%20240L364%20240'%2F%3E%3Cpath%20d%3D'M319.6743371481684%20286L347.38715006927043%20302'%2F%3E%3Cpath%20d%3D'M286%20319.6743371481683L302%20347.3871500692704'%2F%3E%3Cpath%20d%3D'M240%20332L240%20364'%2F%3E%3Cpath%20d%3D'M194.00000000000003%20319.6743371481684L178.00000000000003%20347.38715006927043'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20286L132.6128499307296%20302'%2F%3E%3Cpath%20d%3D'M148%20240L116%20240.00000000000003'%2F%3E%3Cpath%20d%3D'M160.32566285183162%20194.00000000000003L132.61284993072957%20178.00000000000003'%2F%3E%3Cpath%20d%3D'M193.99999999999994%20160.32566285183168L177.99999999999994%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M239.99999999999997%20148L239.99999999999997%20116'%2F%3E%3Cpath%20d%3D'M286%20160.32566285183165L302%20132.61284993072962'%2F%3E%3Cpath%20d%3D'M319.6743371481683%20193.99999999999994L347.3871500692704%20177.99999999999994'%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Карбон · узор «argyle», рисунок «crystal» */
+[data-theme="carbon"] {
+  --bg-base: #0A0A0C;
+  --surface-1: #1F1F22;
+  --surface-2: #2E2E31;
+  --border: #3E3E42;
+  --text-primary: #F8F8F9;
+  --text-muted: #989899;
+  --brand-500: #8A8F9C;
+  --brand-700: #686B75;
+  --brand-soft: #292A2F;
+  --brand-text: #9398A4;
+  --focus-ring: #9398A4;
+  --skeleton: #2E2E31;
+  --reward-500: #D9B24A;
+  --reward-300: #E4C980;
+  --reward-text: #D9B24A;
+  --ember: #E8833A;
+  --success: #3FBF7F;
+  --success-text: #3FBF7F;
+  --danger: #F25C55;
+  --danger-text: #F36C66;
+  --warning: #E0A33A;
+  --warning-text: #E0A33A;
+  --text-on-brand: #120A14;
+  --bg-pattern: linear-gradient(45deg, rgba(167,171,181,0.0385) 25%, transparent 25%, transparent 75%, rgba(167,171,181,0.0385) 75%), linear-gradient(-45deg, rgba(167,171,181,0.0385) 25%, transparent 25%, transparent 75%, rgba(167,171,181,0.0385) 75%);
+  --bg-pattern-size: 36px 36px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(161%2C165%2C176%2C0.13)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Минимал+ · узор «plus», рисунок «crystal» */
+[data-theme="plus"] {
+  --bg-base: #F5F5F7;
+  --surface-1: #FCFCFC;
+  --surface-2: #DFDFE1;
+  --border: #C2C2C4;
+  --text-primary: #060607;
+  --text-muted: #5F5F61;
+  --brand-500: #2C2C34;
+  --brand-700: #212127;
+  --brand-soft: #D9D9DC;
+  --brand-text: #2C2C34;
+  --focus-ring: #2C2C34;
+  --skeleton: #DFDFE1;
+  --reward-500: #8A6A16;
+  --reward-300: #AD975C;
+  --reward-text: #795D13;
+  --ember: #E8833A;
+  --success: #25754B;
+  --success-text: #236E47;
+  --danger: #B1433E;
+  --danger-text: #A63F3A;
+  --warning: #886122;
+  --warning-text: #7D591F;
+  --text-on-brand: #FFFFFF;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'30'%20height%3D'30'%20viewBox%3D'0%200%2030%2030'%3E%3Cpath%20d%3D'M15%209v12M9%2015h12'%20stroke%3D'%2328282F'%20stroke-opacity%3D'0.168'%20stroke-width%3D'1.6'%20stroke-linecap%3D'round'%2F%3E%3C%2Fsvg%3E");
+  --bg-pattern-size: 30px 30px;
+  --bg-art: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%20viewBox%3D'0%200%20360%20360'%3E%3Cg%20fill%3D'rgba(44%2C44%2C52%2C0.11)'%3E%3Cpath%20d%3D'M200%2040l60%2090-60%20210-60-210z'%2F%3E%3Cpath%20d%3D'M120%20120l40%2040-30%20130-50-120z'%20fill-opacity%3D'.7'%2F%3E%3Cpath%20d%3D'M290%20140l40%2050-50%20110-20-130z'%20fill-opacity%3D'.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}

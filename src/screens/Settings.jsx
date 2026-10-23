@@ -4,6 +4,7 @@ import { api } from '../api'
 import { useApp } from '../App'
 import { Icon, Avatar, PageHead, useToast, ROLE_LABEL } from '../ui'
 import { maskPhone } from './Login'
+import { NAV_STYLES, getNavStyle, setNavStyle } from '../navStyle'
 
 export default function Settings() {
   const { user, setUser, branch } = useApp()
@@ -14,6 +15,7 @@ export default function Settings() {
   const [next2, setNext2] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [navStyle, setNav] = useState(getNavStyle)
 
   async function savePassword(e) {
     e.preventDefault()
@@ -70,6 +72,21 @@ export default function Settings() {
         </Link>
         <Toggle label="Звук при получении награды" checked={user.sound} onChange={v => toggle('sound', v)} />
         <Toggle label="Меньше анимаций" hint="Награды показываются без конфетти и движения" checked={user.reduce_motion} onChange={v => toggle('reduce_motion', v)} />
+      </section>
+
+      <section className="card only-mobile" style={{ marginBottom: 14 }}>
+        <h3 style={{ fontSize: 16, marginBottom: 4 }}>Нижнее меню</h3>
+        <p className="small muted" style={{ marginBottom: 12 }}>Как выглядят кнопки разделов внизу экрана. Сохраняется на этом телефоне</p>
+        <div className="nav-picks">
+          {NAV_STYLES.map(st => (
+            <button key={st.id} type="button" className={"nav-pick" + (navStyle === st.id ? " on" : "")} aria-pressed={navStyle === st.id}
+              onClick={() => { setNavStyle(st.id); setNav(st.id) }}>
+              <span className={"nav-mini " + st.id} aria-hidden="true"><i /><i /><i /><i /><i /></span>
+              <b>{st.name}</b>
+              <span className="tiny muted">{st.hint}</span>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="card" style={{ marginBottom: 14 }}>

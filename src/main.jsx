@@ -5,6 +5,9 @@ import App from './App'
 import { ToastProvider } from './ui'
 import './tokens.css'
 import './styles.css'
+import { applyNavStyle } from './navStyle'
+
+applyNavStyle()
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

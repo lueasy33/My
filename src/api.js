@@ -60,6 +60,7 @@ export const api = {
   ranking: (scope, period) => req('/api/ranking' + q({ scope, period })),
   shop: () => req('/api/shop'),
   buy: (item_id) => req('/api/shop/buy', { method: 'POST', body: { item_id } }),
+  orderPrize: (item_id) => req('/api/shop/order', { method: 'POST', body: { item_id } }),
   select: (kind, ref) => req('/api/shop/select', { method: 'POST', body: { kind, ref } }),
 
   analytics: (params = {}) => req('/api/analytics' + q(params)),
@@ -114,6 +115,8 @@ export const api = {
     updateAchievement: (id, body) => req(`/api/admin/achievements/${id}`, { method: 'PATCH', body }),
     deleteAchievement: (id) => req(`/api/admin/achievements/${id}`, { method: 'DELETE' }),
     shopItems: () => req('/api/admin/shop'),
+    prizeOrders: () => req('/api/admin/prize-orders'),
+    closePrizeOrder: (id, status, note) => req(`/api/admin/prize-orders/${id}`, { method: 'PATCH', body: { status, note } }),
     freeAvatars: () => req('/api/admin/shop/free-avatars'),
     createShopItem: (body) => req('/api/admin/shop', { method: 'POST', body }),
     updateShopItem: (id, body) => req(`/api/admin/shop/${id}`, { method: 'PATCH', body }),

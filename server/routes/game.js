@@ -2,7 +2,7 @@ import { db } from '../db.js'
 import { requireAuth } from '../index.js'
 import {
   spendCoil, checkAchievements, levelProgress, queueReward, pendingRewards,
-  themeUnlocked, boughtThemes, ownedStatuses
+  themeUnlocked, boughtThemes, ownedStatuses, notify
 } from '../economy.js'
 import { courseFilterSql } from '../access.js'
 import { readFileSync } from 'node:fs'
@@ -218,6 +218,7 @@ export default async function gameRoutes(app) {
     const avatars = JSON.parse(u.earned_avatars || '[]')
     const statuses = ownedStatuses(u)
     const bought = boughtThemes(u.id)
+    const orders = db.prepare('SELECT item_id, status FROM prize_orders WHERE user_id = ?').all(u.id)
     const items = db.prepare('SELECT * FROM shop_items ORDER BY sort').all().map(i => {
       let has = owned.includes(i.id)
       if (i.kind === 'avatar' && avatars.includes(i.ref)) has = true
@@ -229,7 +230,10 @@ export default async function gameRoutes(app) {
         id: i.id, kind: i.kind, ref: i.ref, title: i.title, price: i.price,
         image: i.image, description: i.description, rarity: i.rarity,
         purchaseable: !!i.purchaseable,
-        owned: has,
+        // Приз можно заказывать снова; owned для него не бывает
+        owned: i.kind === 'prize' ? false : has,
+        stock: i.kind === 'prize' ? i.stock : null,
+        ordered: i.kind === 'prize' ? orders.filter(o => o.item_id === i.id && o.status !== 'cancelled').length : 0,
         selected: (i.kind === 'avatar' && u.avatar_id === i.ref) || (i.kind === 'status' && u.status_ref === i.ref)
           || (i.kind === 'theme' && u.theme === i.ref),
         swatch: theme ? [theme['bg-base'], theme['surface-1'], theme['brand-500']] : null,
@@ -237,12 +241,42 @@ export default async function gameRoutes(app) {
         missing: Math.max(0, i.price - u.coil)
       }
     })
-    reply.send({ balance: u.coil, items })
+    const myOrders = db.prepare(`SELECT o.id, o.title, o.price, o.status, o.note, o.created_at, o.closed_at, s.image
+      FROM prize_orders o LEFT JOIN shop_items s ON s.id = o.item_id WHERE o.user_id = ? ORDER BY o.id DESC LIMIT 30`).all(u.id)
+    reply.send({ balance: u.coil, items, orders: myOrders })
+  })
+
+  // Заказ приза: COIL списываются сразу, приз выдаёт администратор вживую
+  app.post('/api/shop/order', { preHandler: requireAuth }, async (req, reply) => {
+    const u = req.user
+    const item = db.prepare("SELECT * FROM shop_items WHERE id = ? AND kind = 'prize'").get(req.body?.item_id)
+    if (!item) return reply.code(404).send({ error: 'Приз не найден' })
+    if (!item.purchaseable) return reply.code(400).send({ error: 'Приз сейчас недоступен' })
+    let fail = null, orderId = null
+    try {
+      db.transaction(() => {
+        const fresh = db.prepare('SELECT stock FROM shop_items WHERE id = ?').get(item.id)
+        if (fresh.stock !== null && fresh.stock <= 0) { fail = [409, 'Приз закончился']; throw new Error('X') }
+        const coil = db.prepare('SELECT coil FROM users WHERE id = ?').get(u.id).coil
+        if (coil < item.price) { fail = [402, `Не хватает ${item.price - coil} COIL`]; throw new Error('X') }
+        orderId = db.prepare('INSERT INTO prize_orders(user_id, item_id, title, price) VALUES (?,?,?,?)').run(u.id, item.id, item.title, item.price).lastInsertRowid
+        spendCoil(u.id, item.price, 'prize', String(orderId))
+        if (fresh.stock !== null) db.prepare('UPDATE shop_items SET stock = stock - 1 WHERE id = ?').run(item.id)
+      })()
+    } catch (e) {
+      if (fail) return reply.code(fail[0]).send({ error: fail[1] })
+      throw e
+    }
+    const admins = db.prepare("SELECT id FROM users WHERE role = 'admin' AND archived_at IS NULL").all()
+    for (const a of admins) notify(a.id, 'prize', `Заказ приза: ${item.title}`, `${u.name} — выдайте приз и отметьте в Мастерской`, '/admin/workshop?tab=orders')
+    queueReward(u.id, { kind: 'prize', title: item.title, description: 'Заказ принят. Администратор выдаст приз и отметит это на сайте', image: item.image })
+    checkAchievements(u.id)
+    reply.send({ ok: true, order_id: orderId, balance: db.prepare('SELECT coil FROM users WHERE id = ?').get(u.id).coil })
   })
 
   app.post('/api/shop/buy', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
-    const item = db.prepare('SELECT * FROM shop_items WHERE id = ?').get(req.body?.item_id)
+    const item = db.prepare("SELECT * FROM shop_items WHERE id = ? AND kind != 'prize'").get(req.body?.item_id)
     if (!item) return reply.code(404).send({ error: 'Товар не найден' })
     if (!item.purchaseable) return reply.code(400).send({ error: 'Не продаётся — только за достижение или вручную' })
     if (db.prepare('SELECT 1 FROM purchases WHERE user_id = ? AND item_id = ?').get(u.id, item.id)) {

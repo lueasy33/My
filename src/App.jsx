@@ -235,20 +235,26 @@ function TabBar() {
     { to: '/', label: 'Главная', icon: Icon.home, end: true },
     { to: '/library', label: 'Обучение', icon: Icon.book },
     staff
-      ? { to: '/admin', label: 'Управление', icon: Icon.grid }
+      ? { to: '/admin', label: 'Админка', icon: Icon.grid }
       : { to: '/ranking', label: 'Рейтинг', icon: Icon.trophy },
     { to: '/shop', label: 'Магазин', icon: Icon.bag },
     { to: '/profile', label: 'Профиль', icon: Icon.user }
   ]
+  // Индекс активного раздела двигает подсветку — она плавно переезжает между вкладками
+  const { pathname } = useLocation()
+  const active = tabs.findIndex(t => t.end ? pathname === t.to : pathname.startsWith(t.to))
   return (
     <nav className="tabbar" aria-label="Основная навигация">
-      {tabs.map(t => (
-        <NavLink key={t.to} to={t.to} end={t.end}
-          className={({ isActive }) => 'tab' + (isActive ? ' active' : '')}>
-          <t.icon size={22} />
-          <span>{t.label}</span>
-        </NavLink>
-      ))}
+      <div className="tabbar-inner" style={{ '--i': Math.max(active, 0), '--n': tabs.length }} data-active={active >= 0 ? '' : undefined}>
+        <span className="tab-indicator" aria-hidden="true" />
+        {tabs.map((t, i) => (
+          <NavLink key={t.to} to={t.to} end={t.end}
+            className={({ isActive }) => 'tab' + (isActive ? ' active' : '') + (i === 2 ? ' center' : '')}>
+            <span className="tab-icon"><t.icon size={22} /></span>
+            <span className="tab-label">{t.label}</span>
+          </NavLink>
+        ))}
+      </div>
     </nav>
   )
 }

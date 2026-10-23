@@ -375,7 +375,53 @@ db.exec('UPDATE branches SET head_user_id = NULL WHERE head_user_id IS NOT NULL'
   }
 }
 
+// Призы в магазине: настоящие товары (мерч, подарки, выходной), которые админ
+// выдаёт руками. Тип 'prize' добавляется в CHECK пересборкой таблицы — один раз.
+{
+  const row = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'shop_items'").get()
+  if (row && !row.sql.includes("'prize'")) {
+    const cols = 'id, kind, ref, title, price, purchaseable, sort, image, description, rarity'
+    db.exec('PRAGMA foreign_keys = OFF')
+    db.exec(`
+      BEGIN;
+      CREATE TABLE shop_items_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL CHECK (kind IN ('avatar','status','theme','prize')),
+        ref TEXT NOT NULL,
+        title TEXT NOT NULL,
+        price INTEGER NOT NULL DEFAULT 0,
+        purchaseable INTEGER NOT NULL DEFAULT 1,
+        sort INTEGER NOT NULL DEFAULT 0,
+        image TEXT NOT NULL DEFAULT '',
+        description TEXT NOT NULL DEFAULT '',
+        rarity TEXT NOT NULL DEFAULT 'common',
+        stock INTEGER
+      );
+      INSERT INTO shop_items_new (${cols}) SELECT ${cols} FROM shop_items;
+      DROP TABLE shop_items;
+      ALTER TABLE shop_items_new RENAME TO shop_items;
+      COMMIT;
+    `)
+    db.exec('PRAGMA foreign_keys = ON')
+  }
+}
+
 db.exec(`
+-- Заказы призов: COIL списаны сразу, админ выдаёт приз вживую и отмечает.
+-- Отмена возвращает COIL сотруднику.
+CREATE TABLE IF NOT EXISTS prize_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  item_id INTEGER NOT NULL REFERENCES shop_items(id),
+  title TEXT NOT NULL,
+  price INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new','done','cancelled')),
+  note TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  closed_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_prize_orders_status ON prize_orders(status, created_at);
+
 -- Очередь наград: один механизм показа для всех типов (спецификация 5.13).
 -- Начисление уже произошло; здесь только то, что сотрудник ещё не видел.
 CREATE TABLE IF NOT EXISTS pending_rewards (

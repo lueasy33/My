@@ -118,7 +118,7 @@ export default function AdminFlavors() {
 
             {list.length === 0 ? <Empty icon={<Icon.target size={26} />} title={q ? 'Ничего не нашли' : 'В бренде пока нет вкусов'} /> : (
               <div className="table-wrap">
-                <table className="dtable">
+                <table className="dtable stack">
                   <thead><tr><th>Вкус</th><th>Крепость</th><th>Холод</th><th>Тренировка</th><th>Ошибок</th><th></th></tr></thead>
                   <tbody>
                     {list.map(f => (
@@ -132,11 +132,11 @@ export default function AdminFlavors() {
                             </div>
                           </div>
                         </td>
-                        <td className="small">{f.strength || '—'}</td>
-                        <td>{f.cold ? '❄' : '—'}</td>
-                        <td>{!f.published ? <span className="badge">скрыт</span> : f.in_quiz ? <span className="badge success">да</span> : <span className="badge warn">нет</span>}</td>
-                        <td className="mono small">{f.correct + f.wrong ? `${Math.round(f.wrong / (f.correct + f.wrong) * 100)}%` : '—'}</td>
-                        <td><Icon.edit size={15} style={{ color: 'var(--text-muted)' }} /></td>
+                        <td className="small" data-label="Крепость">{f.strength || '—'}</td>
+                        <td data-label="Холод">{f.cold ? '❄' : '—'}</td>
+                        <td data-label="Тренировка">{!f.published ? <span className="badge">скрыт</span> : f.in_quiz ? <span className="badge success">да</span> : <span className="badge warn">нет</span>}</td>
+                        <td className="mono small" data-label="Ошибок">{f.correct + f.wrong ? `${Math.round(f.wrong / (f.correct + f.wrong) * 100)}%` : '—'}</td>
+                        <td className="stack-hide"><Icon.edit size={15} style={{ color: 'var(--text-muted)' }} /></td>
                       </tr>
                     ))}
                   </tbody>
