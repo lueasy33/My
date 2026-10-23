@@ -180,6 +180,37 @@ for (const { t } of built) if (slugs.has(t.slug)) throw new Error('Повтор 
 // legend — особая тема-награда — остаётся последней
 const legend = base.filter(t => t.unlock === 'manual')
 const all = [...base.filter(t => t.unlock !== 'manual'), ...built.map(b => b.t), ...legend]
+
+// ─── Как сотрудник получает тему ────────────────────────────
+// С начала открыты только «Тёмная» и «Светлая». Остальное нужно заслужить:
+//   • LEVELS — открываются уровнем (порядок — от простых к редким, до 30 уровня);
+//   • SHOP — только покупка за COIL в магазине (сами попадают в магазин);
+//   • «Легенда» — особая награда от администратора.
+const SHOP = {
+  bazaar: 450, lamp: 500, hookahlounge: 400, smokeyjazz: 350, watermelon: 300, peach: 300, citrus: 300,
+  cherry: 350, latte: 300, espresso: 350, synthwave: 450, pixel: 400, party: 450, candy: 300,
+  velvet: 500, royal: 600, sultan: 600, emeraldpalace: 600, lantern: 400, ramadan: 450, carbon: 350, gold: 550
+}
+const LEVELS = ['vintage', 'sepia', 'midnight', 'emerald', 'coffee', 'mint', 'smoke', 'ocean', 'desert', 'nightsky',
+  'neon', 'sunset', 'forest', 'matcha', 'notebook', 'copper', 'kraft', 'oasis', 'sakura', 'arctic',
+  'terracotta', 'tobacco', 'blueberry', 'grape', 'cyberpunk', 'lagoon', 'bamboo', 'glacier', 'marble', 'origami',
+  'honeycomb', 'zigzag', 'plus', 'mono', 'nightneon', 'arcade', 'deepsea', 'jungle', 'blueprint', 'circuit',
+  'aurora', 'blizzard', 'kyoto', 'sakuranight', 'glass', 'matrix', 'lava', 'volcano', 'cosmos']
+// Уровни 2–11 — по две темы, 12–21 — по две, дальше по одной до 30-го
+const levelOf = (i) => i < 40 ? 2 + Math.floor(i / 2) : 22 + (i - 40)
+for (const t of all) {
+  if (t.unlock === 'default' || t.unlock === 'manual') continue
+  if (SHOP[t.slug]) { t.unlock = 'shop'; t.price = SHOP[t.slug]; delete t.level; continue }
+  const i = LEVELS.indexOf(t.slug)
+  if (i < 0) throw new Error('Тема без способа получения: ' + t.slug)
+  t.unlock = 'level'; t.level = levelOf(i); delete t.price
+}
+const missing = [...Object.keys(SHOP), ...LEVELS].filter(s => !all.some(t => t.slug === s))
+if (missing.length) throw new Error('Нет таких тем: ' + missing.join(', '))
+all.sort((a, b) => {
+  const rank = (t) => t.unlock === 'default' ? 0 : t.unlock === 'level' ? 1 : t.unlock === 'shop' ? 2 : 3
+  return rank(a) - rank(b) || (a.level || 0) - (b.level || 0) || (a.price || 0) - (b.price || 0)
+})
 writeFileSync(THEMES_FILE, JSON.stringify(all, null, 2) + '\n')
 
 let tokens = readFileSync(TOKENS_FILE, 'utf8')

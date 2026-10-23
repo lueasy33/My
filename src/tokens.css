@@ -1,4 +1,4 @@
-/* Aladdin LMS · design tokens · 24 themes · сгенерировано из content/themes.json
+/* Aladdin LMS · design tokens · основные темы; темы с узорами — в конце файла, из scripts/gen-themes.mjs
    ПРАВИЛО: *-text токены — только для ТЕКСТА. Заливки и рамки берут базовые цвета.
    Контраст: все текстовые пары ≥ 4.5:1 на bg-base, surface-1 и surface-2 (WCAG AA). */
 

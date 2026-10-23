@@ -328,7 +328,7 @@ export default function Workshop() {
               <div className="field">
                 <label>Тема</label>
                 <select className="select" value={item.ref} onChange={e => setItem(f => ({ ...f, ref: e.target.value, title: f.title || THEMES.find(t => t.slug === e.target.value)?.name || '' }))}>
-                  {THEMES.filter(t => t.unlock !== 'default').map(t => <option key={t.slug} value={t.slug} disabled={themes.some(s => s.ref === t.slug)}>{t.name}{t.unlock === 'level' ? ` — бесплатно с ${t.level} ур.` : ' — особая'}</option>)}
+                  {THEMES.filter(t => t.unlock !== 'default').map(t => <option key={t.slug} value={t.slug} disabled={themes.some(s => s.ref === t.slug)}>{t.name}{t.unlock === 'level' ? ` — бесплатно с ${t.level} ур.` : t.unlock === 'shop' ? ' — только магазин' : ' — особая'}</option>)}
                 </select>
               </div>
             )}

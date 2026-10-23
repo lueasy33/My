@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
 import { useApp } from '../App'
 import { Icon, PageSkeleton, LoadError, Modal, Tabs, PageHead, Empty, useLoad, useToast, avatarSrc, fmtDate, RARITY } from '../ui'
@@ -20,7 +20,8 @@ export default function Shop() {
   const nav = useNavigate()
   const toast = useToast()
   const { data, error, reload } = useLoad(() => api.shop(), [])
-  const [tab, setTab] = useState(null)
+  const [params] = useSearchParams()
+  const [tab, setTab] = useState(() => params.get('tab'))
   const [confirm, setConfirm] = useState(null)
   const [busy, setBusy] = useState(false)
 

@@ -39,6 +39,22 @@ export function initDatabase() {
     items.forEach((it, i) => ins.run(...it, i + 1))
   }
 
+  // Темы «только из магазина» сами появляются в магазине — один раз для каждой.
+  // Если админ потом уберёт такую тему из продажи, при перезапуске она не вернётся.
+  {
+    const themes = content('themes.json')
+    const meta = db.prepare("SELECT value FROM meta WHERE key = 'theme_shop_synced'").get()
+    const synced = new Set(meta ? JSON.parse(meta.value) : [])
+    const has = db.prepare("SELECT 1 FROM shop_items WHERE kind = 'theme' AND ref = ?")
+    const ins = db.prepare("INSERT INTO shop_items(kind, ref, title, price, purchaseable, sort, description) VALUES ('theme', ?, ?, ?, 1, ?, ?)")
+    let sort = db.prepare('SELECT COALESCE(MAX(sort), 0) m FROM shop_items').get().m
+    for (const t of themes.filter(t => t.unlock === 'shop' && !synced.has(t.slug))) {
+      if (!has.get(t.slug)) ins.run(t.slug, t.name, t.price || 400, ++sort, t.pattern ? 'С узором и рисунком' : '')
+      synced.add(t.slug)
+    }
+    setMeta('theme_shop_synced', [...synced])
+  }
+
   if (!db.prepare('SELECT COUNT(*) c FROM categories').get().c) {
     const ins = db.prepare('INSERT INTO categories(title, icon, sort) VALUES (?,?,?)')
     ;['Кальяны', 'Табак', 'Вейпы', 'Жидкости', 'Одноразовые устройства', 'Продажи', 'Стандарты']

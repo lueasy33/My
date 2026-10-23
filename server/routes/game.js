@@ -40,12 +40,15 @@ export default async function gameRoutes(app) {
   app.get('/api/themes', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
     const bought = boughtThemes(u.id)
+    // Цена — если тему можно купить в магазине (у тем «за уровень» это способ открыть раньше)
+    const prices = Object.fromEntries(db.prepare("SELECT ref, price FROM shop_items WHERE kind = 'theme' AND purchaseable = 1").all().map(r => [r.ref, r.price]))
     reply.send({
       active: u.theme,
       level: u.level,
       themes: THEMES.map(t => ({
         slug: t.slug, name: t.name, dark: t.dark, unlock: t.unlock, level: t.level,
         unlocked: themeUnlocked(u, t, bought),
+        price: prices[t.slug] ?? null,
         swatch: [t['bg-base'], t['surface-1'], t['brand-500'], t['reward-500']]
       }))
     })

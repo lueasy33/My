@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import { THEMES } from '../theme'
 import { useApp } from '../App'
 import { Icon, Avatar, PageSkeleton, ProgressBar, LevelRing, LoadError, Modal, Tabs, useLoad, useToast, plural, fmtDate, fmtAgo, ROLE_LABEL, avatarSrc, iconSrc, RARITY } from '../ui'
 
@@ -228,7 +229,7 @@ export default function Profile() {
       )}
 
       <div className="col" style={{ gap: 8, marginTop: 26 }}>
-        <Link to="/themes" className="list-row"><span className="list-ico"><Icon.palette size={19} /></span><span className="list-main"><b>Оформление</b><span>24 темы, открываются по уровням</span></span><Icon.chevR size={18} /></Link>
+        <Link to="/themes" className="list-row"><span className="list-ico"><Icon.palette size={19} /></span><span className="list-main"><b>Оформление</b><span>{THEMES.length} тем: за уровни и в магазине</span></span><Icon.chevR size={18} /></Link>
         <Link to="/settings" className="list-row"><span className="list-ico"><Icon.settings size={19} /></span><span className="list-main"><b>Настройки</b><span>Пароль, звук, анимации, обучение заново</span></span><Icon.chevR size={18} /></Link>
       </div>
 
