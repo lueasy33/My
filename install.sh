@@ -65,7 +65,7 @@ if [ ! -f .env ]; then
     domain="${domain#https://}"; domain="${domain#http://}"; domain="${domain%%/*}"
     if [ -z "$domain" ]; then domain="${ip//./-}.sslip.io"; break; fi
     # Домен должен уже указывать на этот сервер, иначе HTTPS не получится
-    dns="$(getent ahostsv4 "$domain" 2>/dev/null | awk 'NR==1{print $1}')"
+    dns="$(getent ahostsv4 "$domain" 2>/dev/null | awk 'NR==1{print $1}' || true)"
     if [ "$dns" = "$ip" ]; then break; fi
     echo "  Домен $domain не указывает на этот сервер ($ip)."
     echo "  Если своего домена нет — просто нажмите Enter."
