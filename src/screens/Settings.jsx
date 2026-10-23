@@ -5,6 +5,7 @@ import { useApp } from '../App'
 import { Icon, Avatar, PageHead, useToast, ROLE_LABEL } from '../ui'
 import { maskPhone } from './Login'
 import { NAV_STYLES, getNavStyle, setNavStyle } from '../navStyle'
+import PushSettings from './PushSettings'
 
 export default function Settings() {
   const { user, setUser, branch } = useApp()
@@ -63,6 +64,8 @@ export default function Settings() {
           </div>
         </div>
       </section>
+
+      <PushSettings />
 
       <section className="card" style={{ marginBottom: 14 }}>
         <h3 style={{ fontSize: 16, marginBottom: 6 }}>Оформление и звук</h3>

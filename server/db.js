@@ -300,6 +300,9 @@ addColumn('achievements', 'reward_avatar', "reward_avatar TEXT NOT NULL DEFAULT 
 addColumn('achievements', 'reward_status', "reward_status TEXT NOT NULL DEFAULT ''")
 addColumn('users', 'earned_statuses', "earned_statuses TEXT NOT NULL DEFAULT '[]'")
 addColumn('users', 'best_streak', 'best_streak INTEGER NOT NULL DEFAULT 0')
+// Push: что присылать и часовой пояс телефона (для тихих часов)
+addColumn('users', 'push_prefs', "push_prefs TEXT NOT NULL DEFAULT '{}'")
+addColumn('users', 'tz', "tz TEXT NOT NULL DEFAULT ''")
 
 // Вкусы: бренды — отдельная сущность (логотип, описание), у вкуса — картинка,
 // совет продавцу, с чем миксуют, линейка. Всё это ведёт администратор.
@@ -421,6 +424,30 @@ CREATE TABLE IF NOT EXISTS prize_orders (
   closed_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_prize_orders_status ON prize_orders(status, created_at);
+
+-- Push-уведомления: подписки браузеров (у человека может быть телефон и компьютер)
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  device TEXT NOT NULL DEFAULT '',
+  fails INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  last_sent_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);
+
+-- Очередь отправки: в тихие часы push ждёт утра, а не будит человека
+CREATE TABLE IF NOT EXISTS push_queue (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  payload TEXT NOT NULL,
+  send_after TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_push_queue_due ON push_queue(send_after);
 
 -- Очередь наград: один механизм показа для всех типов (спецификация 5.13).
 -- Начисление уже произошло; здесь только то, что сотрудник ещё не видел.

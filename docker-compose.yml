@@ -10,6 +10,8 @@ services:
       ADMIN_PHONE: ${ADMIN_PHONE:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_NAME: ${ADMIN_NAME:-Администратор}
+      # Адрес сайта — контакт отправителя push-уведомлений
+      DOMAIN: ${DOMAIN:-}
     volumes:
       - ./data:/app/data
 

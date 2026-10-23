@@ -1,4 +1,5 @@
 import { db, getMeta } from './db.js'
+import { queuePush } from './push.js'
 
 // ─────────────────────────────────────────────────────────────
 // Экономика. Числа — стартовая настройка из спецификации (раздел 7),
@@ -55,9 +56,11 @@ export function levelProgress(xp) {
 }
 
 // ─── Уведомления и очередь наград ────────────────────────────────────────────
+// Каждое уведомление на сайте заодно уходит push-ом на телефон (если человек подписан)
 export function notify(userId, kind, title, body = '', link = '') {
   db.prepare('INSERT INTO notifications(user_id, kind, title, body, link) VALUES (?,?,?,?,?)')
     .run(userId, kind, title, body, link)
+  queuePush(userId, { kind, title, body, link })
 }
 
 // Любая награда показывается одним окном (спецификация 5.13). Сюда кладём то,

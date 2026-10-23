@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export const THEMES = JSON.parse(readFileSync(join(__dirname, '..', 'content', 'themes.json'), 'utf8'))
 
 function clear() {
-  const tables = ['prize_orders', 'pending_rewards', 'video_positions', 'sent_reminders', 'overdue_notes', 'uploads', 'media',
+  const tables = ['push_queue', 'push_subscriptions', 'prize_orders', 'pending_rewards', 'video_positions', 'sent_reminders', 'overdue_notes', 'uploads', 'media',
     'flavor_sessions', 'flavor_progress', 'flavors', 'flavor_brands', 'purchases', 'shop_items', 'notifications', 'audit_log',
     'user_achievements', 'achievements', 'coil_tx', 'xp_tx', 'progress', 'attempts', 'questions',
     'tests', 'blocks', 'lessons', 'courses', 'categories', 'users', 'branches', 'meta']

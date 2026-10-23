@@ -941,3 +941,7 @@ button.order-row { cursor: pointer; } button.order-row:hover { background: var(-
   .dtable.stack td.stack-actions > .row { justify-content: flex-start !important; flex-wrap: wrap; }
   .dtable.stack td.stack-hide { display: none; }
 }
+
+/* ─── Предложение включить push на главной ─── */
+.push-prompt { display: flex; gap: 14px; align-items: flex-start; margin-top: 14px; border-color: color-mix(in srgb, var(--brand-500) 45%, var(--border)); background: linear-gradient(135deg, var(--brand-soft), var(--surface-1) 70%); }
+.push-ico { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 14px; background: var(--brand-500); color: var(--text-on-brand); }

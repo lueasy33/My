@@ -61,6 +61,11 @@ export const api = {
   shop: () => req('/api/shop'),
   buy: (item_id) => req('/api/shop/buy', { method: 'POST', body: { item_id } }),
   orderPrize: (item_id) => req('/api/shop/order', { method: 'POST', body: { item_id } }),
+  push: () => req('/api/push'),
+  pushSubscribe: (subscription, device, tz) => req('/api/push/subscribe', { method: 'POST', body: { subscription, device, tz } }),
+  pushUnsubscribe: (endpoint) => req('/api/push/unsubscribe', { method: 'POST', body: { endpoint } }),
+  pushTest: () => req('/api/push/test', { method: 'POST' }),
+  pushPrefs: (body) => req('/api/push/prefs', { method: 'PATCH', body }),
   select: (kind, ref) => req('/api/shop/select', { method: 'POST', body: { kind, ref } }),
 
   analytics: (params = {}) => req('/api/analytics' + q(params)),

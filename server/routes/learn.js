@@ -1,6 +1,6 @@
 import { db } from '../db.js'
 import { requireAuth } from '../index.js'
-import { awardXp, awardCoil, checkAchievements, finishLesson, XP, COIL } from '../economy.js'
+import { awardXp, awardCoil, checkAchievements, finishLesson, notify, XP, COIL } from '../economy.js'
 import { canSeeCourse, courseFilterSql, lessonLocks, isStaff } from '../access.js'
 
 // ─────────────────────────────────────────────────────────────
@@ -285,10 +285,7 @@ export default async function learnRoutes(app) {
     if (pending) {
       // Администраторам — сигнал, что есть что проверить
       const heads = db.prepare(`SELECT id FROM users WHERE archived_at IS NULL AND status = 'active' AND role = 'admin'`).all()
-      for (const h of heads) {
-        db.prepare('INSERT INTO notifications(user_id, kind, title, body, link) VALUES (?,?,?,?,?)')
-          .run(h.id, 'review', 'Открытый ответ ждёт проверки', u.name, '/admin/reviews')
-      }
+      for (const h of heads) notify(h.id, 'review', 'Открытый ответ ждёт проверки', u.name, '/admin/reviews')
     }
 
     const fresh = db.prepare('SELECT xp, coil, level FROM users WHERE id = ?').get(u.id)

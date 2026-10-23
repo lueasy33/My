@@ -13,6 +13,8 @@ import {
 } from './economy.js'
 import { courseFilterSql } from './access.js'
 import { initDatabase, startBackups } from './init.js'
+import { startPushWorker, pushPublicKey, subscribe, unsubscribe, sendNow, prefsOf, devicesOf } from './push.js'
+import { startReminders, deadlineReminders } from './reminders.js'
 import learnRoutes from './routes/learn.js'
 import gameRoutes, { statusTitle } from './routes/game.js'
 import adminRoutes from './routes/admin.js'
@@ -292,15 +294,9 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
     ORDER BY l.deadline ASC LIMIT 3
   `).all(u.id, ...f.params).map(d => ({ ...d, days_left: Math.round((Date.parse(d.deadline) - Date.parse(today)) / 86400000) }))
 
-  // Напоминания о дедлайнах (спецификация 5.12): за 2 дня и при просрочке — по одному разу
-  const remind = db.prepare('INSERT OR IGNORE INTO sent_reminders(user_id, lesson_id, kind) VALUES (?,?,?)')
-  for (const d of deadlines) {
-    const kind = d.days_left < 0 ? 'overdue' : d.days_left <= 2 ? 'soon' : null
-    if (kind && remind.run(u.id, d.id, kind).changes) {
-      if (kind === 'soon') notify(u.id, 'deadline', d.days_left === 0 ? 'Дедлайн сегодня' : `До дедлайна ${d.days_left} ${plural(d.days_left, 'день', 'дня', 'дней')}`, `${d.course}: ${d.title}`, '/lesson/' + d.id)
-      else notify(u.id, 'deadline', `Урок просрочен на ${-d.days_left} ${plural(-d.days_left, 'день', 'дня', 'дней')}`, `${d.course}: ${d.title}`, '/lesson/' + d.id)
-    }
-  }
+  // Напоминания о дедлайнах (спецификация 5.12): за 2 дня и при просрочке — по одному разу.
+  // Та же функция раз в 30 минут работает и по расписанию — для тех, кто не заходит
+  deadlineReminders(u)
 
   const recent = db.prepare(`
     SELECT a.id, a.title, a.icon, a.description, ua.granted_at FROM user_achievements ua
@@ -390,6 +386,39 @@ await app.register(gameRoutes)
 await app.register(flavorRoutes)
 await app.register(adminRoutes)
 
+// ─── Push-уведомления ───────────────────────────────────────────
+app.get('/api/push', { preHandler: requireAuth }, async (req) => ({
+  key: pushPublicKey(), prefs: prefsOf(req.user), devices: devicesOf(req.user.id)
+}))
+
+app.post('/api/push/subscribe', { preHandler: requireAuth }, async (req, reply) => {
+  const { subscription, device, tz } = req.body || {}
+  if (!pushPublicKey()) return reply.code(503).send({ error: 'Push-уведомления на сервере выключены' })
+  if (!subscribe(req.user.id, subscription, device, tz)) return reply.code(400).send({ error: 'Браузер прислал некорректную подписку' })
+  reply.send({ ok: true, devices: devicesOf(req.user.id) })
+})
+
+app.post('/api/push/unsubscribe', { preHandler: requireAuth }, async (req, reply) => {
+  unsubscribe(req.user.id, req.body?.endpoint)
+  reply.send({ ok: true, devices: devicesOf(req.user.id) })
+})
+
+// Проверка: сразу, без тихих часов — человек сам нажал кнопку
+app.post('/api/push/test', { preHandler: requireAuth }, async (req, reply) => {
+  const sent = await sendNow(req.user.id, { title: 'Уведомления работают 🎉', body: 'Так будут приходить дедлайны, награды и новости обучения', url: '/settings', tag: 'test' })
+  if (!sent) return reply.code(400).send({ error: 'Не удалось отправить: подписка не найдена или браузер её отклонил. Включите уведомления заново' })
+  reply.send({ ok: true, sent })
+})
+
+app.patch('/api/push/prefs', { preHandler: requireAuth }, async (req, reply) => {
+  const cur = prefsOf(req.user), b = req.body || {}
+  const next = { ...cur }
+  for (const k of ['learning', 'rewards', 'streak', 'admin']) if (typeof b[k] === 'boolean') next[k] = b[k]
+  if (Array.isArray(b.quiet) && b.quiet.length === 2 && b.quiet.every(h => Number.isInteger(h) && h >= 0 && h <= 23)) next.quiet = b.quiet
+  db.prepare('UPDATE users SET push_prefs = ? WHERE id = ?').run(JSON.stringify(next), req.user.id)
+  reply.send({ ok: true, prefs: next })
+})
+
 // ─── SPA fallback и PWA ────────────────────────────────────────
 const dist = join(root, 'build')
 
@@ -419,6 +448,8 @@ const startedAt = new Date().toISOString()
 
 initDatabase()
 if (process.env.BACKUPS !== '0') startBackups()
+startPushWorker()
+if (process.env.REMINDERS !== '0') startReminders()
 
 // Проверка живости: какой процесс отвечает. Нужна, чтобы тесты не гонялись
 // против устаревшей копии на другом порту.

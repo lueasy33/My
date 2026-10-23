@@ -10,7 +10,7 @@
 //                 отправленные «потом», путают человека и могут списать COIL дважды.
 //   /uploads/   → только сеть (видео отдаётся частями, кэшировать его нельзя)
 
-const VERSION = 'v3'
+const VERSION = 'v4'
 const SHELL = `shell-${VERSION}`
 const ASSETS = `assets-${VERSION}`
 const API = `api-${VERSION}`
@@ -89,26 +89,45 @@ self.addEventListener('fetch', (event) => {
   }
 })
 
-// ─── Push (на будущее: сервер пока не рассылает) ────────────────
+// ─── Push: уведомления приходят, даже когда сайт закрыт ─────────
+// Сервер присылает { title, body, url, tag }. Одинаковый tag заменяет прошлое
+// уведомление того же типа, а не копит стопку.
 self.addEventListener('push', (event) => {
-  let data = { title: 'Аладдин', body: 'Новое уведомление', url: '/' }
+  let data = { title: 'Аладдин', body: 'Новое уведомление', url: '/', tag: 'aladdin' }
   try { if (event.data) data = { ...data, ...event.data.json() } } catch {}
   event.waitUntil(self.registration.showNotification(data.title, {
     body: data.body,
-    icon: '/assets/png-512/ava_01_ugolek.png',
+    icon: '/assets/png-256/ava_01_ugolek.png',
     badge: '/assets/png-256/ava_01_ugolek.png',
-    data: { url: data.url }
+    tag: data.tag,
+    renotify: true,
+    lang: 'ru',
+    data: { url: data.url || '/' }
   }))
 })
 
+// Нажатие открывает нужную страницу: в уже открытой вкладке сайта или в новой
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const target = event.notification.data?.url || '/'
+  const target = new URL(event.notification.data?.url || '/', self.location.origin).href
   event.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
     for (const c of all) {
-      if (c.url.includes(self.location.origin)) { c.navigate(target); return c.focus() }
+      if (c.url.startsWith(self.location.origin)) {
+        await c.focus()
+        return c.navigate(target).catch(() => self.clients.openWindow(target))
+      }
     }
     return self.clients.openWindow(target)
+  })())
+})
+
+// Браузер сам обновил подписку — отдаём новую серверу, чтобы push не потерялись
+self.addEventListener('pushsubscriptionchange', (event) => {
+  event.waitUntil((async () => {
+    try {
+      const sub = event.newSubscription || await self.registration.pushManager.subscribe(event.oldSubscription.options)
+      await fetch('/api/push/subscribe', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), device: 'обновлено браузером' }) })
+    } catch {}
   })())
 })

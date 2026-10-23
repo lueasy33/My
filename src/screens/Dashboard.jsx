@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useApp } from '../App'
+import { PushPrompt } from './PushSettings'
 import { Icon, PageSkeleton, ProgressBar, LevelRing, LoadError, useLoad, plural, daysLabel, IMPORTANCE, iconSrc } from '../ui'
 
 export { plural }
@@ -46,6 +47,8 @@ export default function Dashboard() {
           <div className="stat"><div className="v reward"><Icon.flame size={17} />{user.streak}</div><div className="k">{plural(user.streak, 'день', 'дня', 'дней')} подряд</div></div>
         </div>
       </section>
+
+      <PushPrompt />
 
       {data.continue ? (
         <Link to={`/lesson/${data.continue.id}`} className="continue-card">
