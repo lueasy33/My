@@ -21,6 +21,17 @@ asks() { local v; read -r -s -p "  $1" v </dev/tty; echo >/dev/tty; printf '%s' 
 
 [ "$(id -u)" -eq 0 ] || fail "Запустите от администратора: sudo bash install.sh"
 
+# ─── 0. Подкачка ─────────────────────────────────────────────
+# На самом дешёвом сервере (1 ГБ памяти) сборке сайта не хватает памяти.
+# Файл подкачки на 2 ГБ решает это; на больших серверах шаг пропускается.
+mem_mb=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
+if [ "$mem_mb" -lt 1900 ] && ! swapon --show | grep -q .; then
+  say "Памяти ${mem_mb} МБ — добавляю подкачку 2 ГБ…"
+  fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048 status=none
+  chmod 600 /swapfile && mkswap /swapfile >/dev/null && swapon /swapfile
+  grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
 # ─── 1. Docker ───────────────────────────────────────────────
 if ! command -v docker >/dev/null 2>&1; then
   say "Ставлю Docker (2–3 минуты)…"
