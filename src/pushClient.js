@@ -30,12 +30,24 @@ function deviceName() {
   return `${os} · ${br}${isStandalone() ? ' (приложение)' : ''}`
 }
 
+// Разрешение спрашиваем ПЕРВЫМ действием, прямо в нажатии. Мобильные браузеры
+// (Яндекс Браузер на Android) молча отвечают «запрещено», если до запроса успел
+// пройти сетевой запрос: для них это уже не действие человека.
+// Старый Safari возвращает ответ через колбэк, а не промис — поддерживаем оба.
+function askPermission() {
+  if (Notification.permission === 'granted') return Promise.resolve('granted')
+  return new Promise(resolve => {
+    const p = Notification.requestPermission(resolve)
+    if (p && p.then) p.then(resolve)
+  })
+}
+
 // Включение: разрешение → подписка в браузере → адрес подписки на сервер
 export async function enablePush() {
+  const perm = await askPermission()
+  if (perm !== 'granted') throw new Error(perm === 'denied' ? 'Браузер запретил уведомления — ниже написано, как это исправить' : 'Вы не дали разрешение. Нажмите «Включить» ещё раз и выберите «Разрешить»')
   const { key } = await api.push()
   if (!key) throw new Error('На сервере push-уведомления выключены')
-  const perm = await Notification.requestPermission()
-  if (perm !== 'granted') throw new Error(perm === 'denied' ? 'Уведомления запрещены. Разрешите их в настройках браузера для этого сайта' : 'Разрешение не дано')
   const reg = await navigator.serviceWorker.register('/sw.js')
   await navigator.serviceWorker.ready
   let sub = await reg.pushManager.getSubscription()
