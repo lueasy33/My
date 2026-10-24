@@ -6,6 +6,8 @@ services:
   app:
     build: .
     restart: unless-stopped
+    # Потолок памяти: если сайт «распухнет», перезапустится только он, а не повиснет весь сервер
+    mem_limit: 512m
     environment:
       ADMIN_PHONE: ${ADMIN_PHONE:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
@@ -18,6 +20,7 @@ services:
   caddy:
     image: caddy:2
     restart: unless-stopped
+    mem_limit: 128m
     ports:
       - "80:80"
       - "443:443"

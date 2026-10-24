@@ -6,7 +6,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-RUN npm run build
+# Сборке хватает 512 МБ; без потолка Node берёт больше и на маленьком сервере вытесняет всё остальное
+RUN NODE_OPTIONS=--max-old-space-size=512 npm run build
 
 FROM node:24-slim
 ENV NODE_ENV=production \
