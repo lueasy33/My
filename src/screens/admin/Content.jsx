@@ -48,7 +48,16 @@ export default function Content() {
 
   async function removeCourse(c) {
     if (!(await ask({ title: `Удалить «${c.title}»?`, text: 'Курс и все его уроки удалятся без возможности восстановления.', ok: 'Удалить', danger: true }))) return
-    run(() => api.admin.deleteCourse(c.id), 'Курс удалён')
+    try {
+      await api.admin.deleteCourse(c.id)
+    } catch (e) {
+      if (!e.data?.needs_confirm) return toast(e.message, 'error')
+      // По курсу уже учились — второе, явное подтверждение с последствиями
+      if (!(await ask({ title: `Курс проходили ${e.data.learners} ${plural(e.data.learners, 'сотрудник', 'сотрудника', 'сотрудников')}`, text: 'Их прогресс и результаты тестов по этому курсу удалятся навсегда и пропадут из аналитики. Уже начисленные XP, COIL и достижения останутся у сотрудников.', ok: 'Удалить вместе с прогрессом', danger: true }))) return
+      try { await api.admin.deleteCourse(c.id, true) } catch (e2) { return toast(e2.message, 'error') }
+    }
+    toast('Курс удалён', 'success')
+    await reload()
   }
 
   async function move(c, i, dir) {

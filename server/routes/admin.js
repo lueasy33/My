@@ -421,13 +421,15 @@ export default async function adminRoutes(app) {
     reply.send({ ok: true })
   })
 
-  // Удаление курса без истории. Если кто-то уже учился — только снять с публикации,
-  // чтобы не потерять статистику.
+  // Удаление курса. Если по нему уже учились, сначала отвечаем, сколько людей это
+  // затронет, и удаляем только с явным подтверждением (?force=1): прогресс по курсу
+  // пропадёт, а уже начисленные XP и COIL у сотрудников останутся.
   app.delete('/api/admin/courses/:id', staff, async (req, reply) => {
     const course = loadCourse(req.params.id)
+    if (!course) return reply.code(404).send({ error: 'Курс не найден' })
     if (!canEditCourse(req.user, course)) return reply.code(403).send({ error: 'Нет прав на этот курс' })
-    const used = db.prepare('SELECT COUNT(*) c FROM progress p JOIN lessons l ON l.id = p.lesson_id WHERE l.course_id = ?').get(course.id).c
-    if (used) return reply.code(409).send({ error: 'По курсу уже есть прогресс сотрудников. Снимите его с публикации — статистика сохранится' })
+    const learners = db.prepare('SELECT COUNT(DISTINCT p.user_id) c FROM progress p JOIN lessons l ON l.id = p.lesson_id WHERE l.course_id = ?').get(course.id).c
+    if (learners && req.query.force !== '1') return reply.code(409).send({ error: `Курс уже проходили ${learners} чел.`, needs_confirm: true, learners })
     db.transaction(() => {
       for (const l of db.prepare('SELECT id FROM lessons WHERE course_id = ?').all(course.id)) deleteLesson(l.id)
       db.prepare('DELETE FROM courses WHERE id = ?').run(course.id)
@@ -528,6 +530,7 @@ export default async function adminRoutes(app) {
     db.prepare('DELETE FROM blocks WHERE lesson_id = ?').run(id)
     db.prepare('DELETE FROM progress WHERE lesson_id = ?').run(id)
     db.prepare('DELETE FROM overdue_notes WHERE lesson_id = ?').run(id)
+    db.prepare('DELETE FROM sent_reminders WHERE lesson_id = ?').run(id)
     db.prepare('DELETE FROM lessons WHERE id = ?').run(id)
   }
 
@@ -535,8 +538,8 @@ export default async function adminRoutes(app) {
     const { lesson, course } = lessonWithCourse(req.params.id)
     if (!lesson) return reply.code(404).send({ error: 'Не найден' })
     if (!canEditCourse(req.user, course)) return reply.code(403).send({ error: 'Нет прав на этот урок' })
-    const used = db.prepare("SELECT COUNT(*) c FROM progress WHERE lesson_id = ? AND status != 'in_progress'").get(lesson.id).c
-    if (used) return reply.code(409).send({ error: 'Урок уже проходили. Снимите его с публикации — статистика сохранится' })
+    const learners = db.prepare("SELECT COUNT(DISTINCT user_id) c FROM progress WHERE lesson_id = ? AND status != 'in_progress'").get(lesson.id).c
+    if (learners && req.query.force !== '1') return reply.code(409).send({ error: `Урок уже проходили ${learners} чел.`, needs_confirm: true, learners })
     db.transaction(() => deleteLesson(lesson.id))()
     audit(req.user.id, 'lesson.delete', 'lesson', lesson.id, { title: lesson.title })
     reply.send({ ok: true })

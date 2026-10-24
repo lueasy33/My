@@ -315,7 +315,14 @@ function Settings({ lesson, editable, onSaved, onDeleted, ask }) {
 
   async function remove() {
     if (!(await ask({ title: 'Удалить урок?', text: 'Урок, его материалы и тест удалятся без возможности восстановления.', ok: 'Удалить', danger: true }))) return
-    try { await api.admin.deleteLesson(lesson.id); toast('Урок удалён', 'success'); onDeleted() } catch (e) { toast(e.message, 'error') }
+    try {
+      await api.admin.deleteLesson(lesson.id)
+    } catch (e) {
+      if (!e.data?.needs_confirm) return toast(e.message, 'error')
+      if (!(await ask({ title: `Урок проходили ${e.data.learners} чел.`, text: 'Их прогресс и результаты теста по этому уроку удалятся навсегда. Уже начисленные XP и COIL останутся.', ok: 'Удалить вместе с прогрессом', danger: true }))) return
+      try { await api.admin.deleteLesson(lesson.id, true) } catch (e2) { return toast(e2.message, 'error') }
+    }
+    toast('Урок удалён', 'success'); onDeleted()
   }
 
   return (
