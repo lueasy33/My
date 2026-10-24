@@ -42,8 +42,10 @@ export default function PushSettings() {
       await api.pushTest().catch(() => {})
     } catch (e) {
       // Если запретил сам браузер, ниже сразу появится пошаговая подсказка — короткого сообщения хватит
-      toast(Notification.permission === 'denied' ? 'Браузер запретил уведомления — ниже написано, где их включить' : e.message, 'error')
+      toast(e.message, 'error')
       await load()
+      // Браузер мог отказать, не показав окно и не записав запрет, — подсказку показываем всё равно
+      if (typeof Notification !== 'undefined' && Notification.permission !== 'granted' && /запретил/.test(e.message)) setState('denied')
     } finally { setBusy(false) }
   }
   async function turnOff() {

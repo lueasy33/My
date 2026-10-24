@@ -410,6 +410,14 @@ app.post('/api/push/test', { preHandler: requireAuth }, async (req, reply) => {
   reply.send({ ok: true, sent })
 })
 
+// Технические данные о неудачном включении push — в журнал сервера (docker compose logs app)
+app.post('/api/push/diag', { preHandler: requireAuth }, async (req) => {
+  const d = req.body || {}
+  const clip = (v) => String(v ?? '').slice(0, 300)
+  console.log('[push-diag]', JSON.stringify({ user: req.user.id, name: req.user.name, at: new Date().toISOString(), stage: clip(d.stage), before: clip(d.before), answer: clip(d.answer), permission: clip(d.permission), query: clip(d.query), standalone: !!d.standalone, secure: !!d.secure, sw: !!d.sw, error: clip(d.error), ua: clip(d.ua) }))
+  return { ok: true }
+})
+
 app.patch('/api/push/prefs', { preHandler: requireAuth }, async (req, reply) => {
   const cur = prefsOf(req.user), b = req.body || {}
   const next = { ...cur }

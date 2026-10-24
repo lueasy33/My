@@ -65,6 +65,7 @@ export const api = {
   pushSubscribe: (subscription, device, tz) => req('/api/push/subscribe', { method: 'POST', body: { subscription, device, tz } }),
   pushUnsubscribe: (endpoint) => req('/api/push/unsubscribe', { method: 'POST', body: { endpoint } }),
   pushTest: () => req('/api/push/test', { method: 'POST' }),
+  pushDiag: (diag) => req('/api/push/diag', { method: 'POST', body: diag }),
   pushPrefs: (body) => req('/api/push/prefs', { method: 'PATCH', body }),
   select: (kind, ref) => req('/api/shop/select', { method: 'POST', body: { kind, ref } }),
 

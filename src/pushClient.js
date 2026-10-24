@@ -43,15 +43,32 @@ function askPermission() {
 }
 
 // Включение: разрешение → подписка в браузере → адрес подписки на сервер
+// Что именно ответил браузер — уходит на сервер в журнал, чтобы разбирать сбои на чужих телефонах
+async function reportDiag(stage, extra = {}) {
+  let query = ''
+  try { query = (await navigator.permissions?.query({ name: 'notifications' }))?.state || '' } catch {}
+  const diag = {
+    stage, ...extra, permission: Notification.permission, query,
+    standalone: isStandalone(), secure: window.isSecureContext, ua: navigator.userAgent,
+    sw: !!navigator.serviceWorker?.controller
+  }
+  api.pushDiag(diag).catch(() => {})
+}
+
 export async function enablePush() {
+  const before = Notification.permission
   const perm = await askPermission()
+  if (perm !== 'granted') reportDiag('permission', { before, answer: perm })
   if (perm !== 'granted') throw new Error(perm === 'denied' ? 'Браузер запретил уведомления — ниже написано, как это исправить' : 'Вы не дали разрешение. Нажмите «Включить» ещё раз и выберите «Разрешить»')
   const { key } = await api.push()
   if (!key) throw new Error('На сервере push-уведомления выключены')
   const reg = await navigator.serviceWorker.register('/sw.js')
   await navigator.serviceWorker.ready
   let sub = await reg.pushManager.getSubscription()
-  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) })
+  if (!sub) {
+    try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) }) }
+    catch (e) { reportDiag('subscribe', { error: String(e?.message || e) }); throw new Error('Браузер не смог подписаться на уведомления: ' + (e?.message || e)) }
+  }
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
   return api.pushSubscribe(sub.toJSON(), deviceName(), tz)
 }
