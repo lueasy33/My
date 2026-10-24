@@ -349,6 +349,9 @@ export function ProgressBar({ percent, gold, thin }) {
 
 // Вкладки-категории. Подсветка выбранной плавно переезжает, а сама вкладка
 // прокручивается в видимую область, если их больше, чем помещается.
+// Позицию считаем по реальному положению кнопки на экране (а не offsetLeft —
+// он зависит от того, какой предок спозиционирован) и пересчитываем,
+// когда догрузились шрифты или поменялась ширина любой кнопки.
 export function Tabs({ value, onChange, items, size }) {
   const ref = useRef(null)
   const [pos, setPos] = useState(null)
@@ -358,20 +361,25 @@ export function Tabs({ value, onChange, items, size }) {
     const measure = () => {
       const el = box.querySelector('button[aria-selected="true"]')
       if (!el) return setPos(null)
-      setPos({ x: el.offsetLeft, w: el.offsetWidth })
+      const b = box.getBoundingClientRect(), r = el.getBoundingClientRect()
+      const x = r.left - b.left - box.clientLeft + box.scrollLeft
+      setPos(p => (p && Math.abs(p.x - x) < 0.5 && Math.abs(p.w - r.width) < 0.5) ? p : { x, w: r.width })
     }
     measure()
     const el = box.querySelector('button[aria-selected="true"]')
     if (el && box.scrollWidth > box.clientWidth) {
-      box.scrollTo({ left: el.offsetLeft - (box.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' })
+      const b = box.getBoundingClientRect(), r = el.getBoundingClientRect()
+      box.scrollTo({ left: box.scrollLeft + r.left - b.left - (box.clientWidth - r.width) / 2, behavior: 'smooth' })
     }
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
-    ro?.observe(box)
-    return () => ro?.disconnect()
+    if (ro) { ro.observe(box); box.querySelectorAll('button').forEach(btn => ro.observe(btn)) }
+    document.fonts?.ready.then(measure).catch(() => {})
+    window.addEventListener('resize', measure)
+    return () => { ro?.disconnect(); window.removeEventListener('resize', measure) }
   }, [value, items.length])
   return (
     <div ref={ref} className={'segmented' + (size === 'sm' ? ' sm' : '') + (pos ? ' slide' : '')} role="tablist">
-      {pos && <span className="seg-indicator" aria-hidden="true" style={{ '--x': pos.x - 4 + 'px', '--w': pos.w + 'px', left: 4 }} />}
+      {pos && <span className="seg-indicator" aria-hidden="true" style={{ '--x': pos.x + 'px', '--w': pos.w + 'px' }} />}
       {items.map(([k, label, count]) => (
         <button key={k} role="tab" aria-selected={value === k} className={value === k ? 'on' : ''} onClick={() => onChange(k)}>
           {label}{count !== undefined && count !== null && <span className="count">{count}</span>}
