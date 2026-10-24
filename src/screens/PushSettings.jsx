@@ -40,7 +40,11 @@ export default function PushSettings() {
       toast('Уведомления включены', 'success')
       await load()
       await api.pushTest().catch(() => {})
-    } catch (e) { toast(e.message, 'error'); await load() } finally { setBusy(false) }
+    } catch (e) {
+      // Если запретил сам браузер, ниже сразу появится пошаговая подсказка — короткого сообщения хватит
+      toast(Notification.permission === 'denied' ? 'Браузер запретил уведомления — ниже написано, где их включить' : e.message, 'error')
+      await load()
+    } finally { setBusy(false) }
   }
   async function turnOff() {
     setBusy(true)
@@ -76,7 +80,9 @@ export default function PushSettings() {
         <p className="hint">Этот браузер не умеет присылать уведомления. Откройте сайт в Chrome, Яндекс Браузере или Safari (iPhone — через экран «Домой»)</p>
       ) : state === 'denied' ? (
         <div className="card flat tight small">
-          <b>Уведомления запрещены в браузере.</b> Нажмите на значок замка слева от адреса сайта → «Уведомления» → «Разрешить», затем обновите страницу.
+          <b>Браузер запретил уведомления для этого сайта.</b>
+          <DeniedHelp />
+          <button className="btn soft sm" style={{ marginTop: 10 }} onClick={() => location.reload()}><Icon.refresh size={15} />Я разрешил — проверить</button>
         </div>
       ) : state === 'off' ? (
         <button className="btn block" disabled={busy} onClick={turnOn}><Icon.bell size={17} />{busy ? 'Включаем…' : 'Включить уведомления'}</button>
@@ -113,6 +119,30 @@ export default function PushSettings() {
         </>
       )}
     </section>
+  )
+}
+
+// Где включить уведомления, если браузер их запретил — по конкретному браузеру и системе
+function DeniedHelp() {
+  const ua = navigator.userAgent
+  const android = /android/i.test(ua)
+  const yandex = /yabrowser/i.test(ua)
+  const browser = yandex ? 'Яндекс Браузер' : /samsungbrowser/i.test(ua) ? 'Samsung Internet' : /edg//i.test(ua) ? 'Edge' : /firefox/i.test(ua) ? 'Firefox' : 'Chrome'
+  const steps = android ? [
+    <>Настройки телефона → <b>Приложения</b> → <b>{browser}</b> → <b>Уведомления</b> → включить</>,
+    yandex
+      ? <>В Яндекс Браузере: <b>⋮</b> → <b>Настройки</b> → <b>Уведомления</b> → включить <b>«От сайтов»</b>; в списке сайтов уберите запрет у этого адреса</>
+      : <>В браузере: <b>⋮</b> → <b>Настройки</b> → <b>Настройки сайтов</b> → <b>Уведомления</b> → включить, у этого сайта — «Разрешить»</>,
+    <>Обновите страницу и снова нажмите «Включить уведомления»</>
+  ] : [
+    <>Нажмите на значок замка или настроек слева от адреса сайта</>,
+    <><b>Уведомления</b> → <b>Разрешить</b></>,
+    <>Обновите страницу и снова нажмите «Включить уведомления»</>
+  ]
+  return (
+    <ol style={{ margin: '8px 0 0', paddingLeft: 18, lineHeight: 1.65 }}>
+      {steps.map((s, i) => <li key={i}>{s}</li>)}
+    </ol>
   )
 }
 
