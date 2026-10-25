@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Переезд сайта «Аладдин» на новый сервер вместе с данными.
-# Запускается на НОВОМ сервере, адрес старого — аргументом:
-#   curl -fsSL https://raw.githubusercontent.com/lueasy33/My/main/migrate.sh | bash -s 83.217.203.60
+# Запускается на НОВОМ сервере. Аргумент — откуда взять данные:
+#   IP старого сервера:   bash migrate.sh 83.217.203.60
+#   или архив с данными:  bash migrate.sh /root/aladdin-data.tar.gz
+#     (архив из папки «Резервная копия» на компьютере: папка data и файл .env;
+#      так сайт восстанавливается, даже если старого сервера уже нет)
 #
 # Что делает:
 #   1. Ставит Docker и скачивает проект в /opt/aladdin.
@@ -18,7 +21,7 @@ DIR=/opt/aladdin
 say()  { printf '\n\033[1;35m▸ %s\033[0m\n' "$*"; }
 fail() { printf '\n\033[1;31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 
-[ -n "$OLD" ] || fail "Укажите IP старого сервера: bash migrate.sh 83.217.203.60"
+[ -n "$OLD" ] || fail "Укажите IP старого сервера или путь к архиву: bash migrate.sh /root/aladdin-data.tar.gz"
 [ "$(id -u)" -eq 0 ] || fail "Запустите от root"
 [ ! -f "$DIR/data/aladdin.db" ] || fail "На этом сервере уже есть база ($DIR/data). Переезд остановлен, чтобы ничего не затереть"
 
@@ -34,12 +37,17 @@ if [ ! -d "$DIR/.git" ]; then
 fi
 cd "$DIR"
 
-say "Забираю данные со старого сервера $OLD"
-echo "  Сейчас спросит пароль root СТАРОГО сервера (символы не видны)."
-echo "  Сайт на старом сервере остановится, чтобы данные не разошлись."
-ssh -o StrictHostKeyChecking=accept-new "root@$OLD" \
-  'cd /opt/aladdin && docker compose stop app >/dev/null 2>&1; tar czf - data .env' \
-  | tar xzf - -C "$DIR"
+if [ -f "$OLD" ]; then
+  say "Распаковываю данные из архива $OLD"
+  tar xzf "$OLD" -C "$DIR"
+else
+  say "Забираю данные со старого сервера $OLD"
+  echo "  Сейчас спросит пароль root СТАРОГО сервера (символы не видны)."
+  echo "  Сайт на старом сервере остановится, чтобы данные не разошлись."
+  ssh -o StrictHostKeyChecking=accept-new "root@$OLD" \
+    'cd /opt/aladdin && docker compose stop app >/dev/null 2>&1; tar czf - data .env' \
+    | tar xzf - -C "$DIR"
+fi
 [ -f data/aladdin.db ] || fail "База не перенеслась. Сайт на старом сервере можно вернуть: cd /opt/aladdin && docker compose start app"
 echo "  Перенесено: $(du -sh data | cut -f1), сотрудников в базе — смотрите после запуска"
 
