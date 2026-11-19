@@ -118,7 +118,7 @@ const b1 = block(l1, 'text', { blocks: [
   ] },
   { t: 'note', tone: 'tip', text: 'Скажите клиенту простую фразу: «Четыре части — колба, шахта, чаша, шланг. Всё остальное — удобство». Это работает лучше, чем перечисление брендов.' }
 ]}, 1)
-const l1b2 = block(l1, 'photo', { src: '/assets/webp-512/l1_scheme.webp', alt: 'Схема устройства кальяна', caption: 'Четыре части кальяна: колба, шахта, чаша, шланг' }, 2)
+const l1b2 = block(l1, 'photo', { src: '/assets/webp-256/ach_13_osnovy-kalyana.webp', alt: 'Кальян', caption: 'Четыре части кальяна: колба, шахта, чаша, шланг' }, 2)
 block(l1, 'text', { blocks: [
   { t: 'h', text: 'Вода в колбе' },
   { t: 'p', text: 'Вода охлаждает дым и задерживает часть взвесей. Чем меньше воды, тем крепче и суше дым; чем больше — тем мягче тяга. Оптимально — на 2–3 см выше нижнего среза шахты, не больше.' },
@@ -420,7 +420,30 @@ setMeta('themes', THEMES)
 setMeta('seeded_at', new Date().toISOString())
 
 // ─── Пересчёт уровней по XP ────────────────────────────────────
-const { levelForXp } = await import('./economy.js')
+const { levelForXp, checkAchievements } = await import('./economy.js')
+
+for (const u of db.prepare('SELECT id, xp FROM users').all()) {
+  db.prepare('UPDATE users SET level = ? WHERE id = ?').run(levelForXp(u.xp), u.id)
+}
+
+// ─── Положенные авто-достижения ────────────────────────────────
+// Демо-данные не должны спорить сами с собой: серия 12 дней — значит «Серия 3»
+// и «Серия 7» уже получены. Проверяем по тем же правилам, что и сервер.
+// Награды за них уже входят в заданные выше балансы, поэтому начисляем ноль
+// (иначе COIL лягут поверх), а окна наград и уведомления не создаём:
+// для демо это прошлое, а не новое событие.
+const achRewards = db.prepare("SELECT id, xp, coil FROM achievements WHERE kind = 'auto'").all()
+const lastNotif = db.prepare('SELECT COALESCE(MAX(id),0) m FROM notifications').get().m
+db.prepare("UPDATE achievements SET xp = 0, coil = 0 WHERE kind = 'auto'").run()
+for (const u of db.prepare('SELECT id FROM users').all()) checkAchievements(u.id)
+const restoreA = db.prepare('UPDATE achievements SET xp = ?, coil = ? WHERE id = ?')
+for (const a of achRewards) restoreA.run(a.xp, a.coil, a.id)
+db.prepare('DELETE FROM pending_rewards').run()
+db.prepare('DELETE FROM notifications WHERE id > ?').run(lastNotif)
+db.prepare('UPDATE user_achievements SET seen = 1').run()
+// «В команде» не короче серии: дата регистрации — до начала текущей серии
+db.prepare(`UPDATE users SET best_streak = MAX(best_streak, streak),
+  created_at = datetime('now', '-' || (streak + 30) || ' days') WHERE last_active_day IS NOT NULL`).run()
 
 // Баланс в users — кэш для чтения. Источник правды — журнал.
 // Стартовые суммы пишем в журнал как opening, иначе баланс не сходится
@@ -437,10 +460,6 @@ const insOX = db.prepare("INSERT OR IGNORE INTO xp_tx(user_id, amount, reason, r
 for (const u of db.prepare('SELECT id, xp FROM users').all()) {
   const seen = db.prepare("SELECT COALESCE(SUM(amount),0) s FROM xp_tx WHERE user_id = ?").get(u.id).s
   insOX.run(u.id, u.xp - seen)
-}
-
-for (const u of db.prepare('SELECT id, xp FROM users').all()) {
-  db.prepare('UPDATE users SET level = ? WHERE id = ?').run(levelForXp(u.xp), u.id)
 }
 
 console.log('✓ База заполнена')

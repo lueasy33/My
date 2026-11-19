@@ -315,6 +315,10 @@ CREATE TRIGGER IF NOT EXISTS users_logout_on_block AFTER UPDATE OF status ON use
   WHEN NEW.status = 'blocked' AND OLD.status IS NOT 'blocked'
   BEGIN UPDATE users SET session_version = session_version + 1 WHERE id = NEW.id; END;
 `)
+// Демо-урок 1 ссылался на несуществующую картинку — в уже заполненных базах
+// меняем только этот путь (и только если блок его ещё содержит).
+db.prepare(`UPDATE blocks SET content = replace(content, '/assets/webp-512/l1_scheme.webp', '/assets/webp-256/ach_13_osnovy-kalyana.webp')
+  WHERE type = 'photo' AND content LIKE '%/assets/webp-512/l1_scheme.webp%'`).run()
 
 // Вкусы: бренды — отдельная сущность (логотип, описание), у вкуса — картинка,
 // совет продавцу, с чем миксуют, линейка. Всё это ведёт администратор.
