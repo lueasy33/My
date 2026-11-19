@@ -557,7 +557,9 @@ export default async function adminRoutes(app) {
     const badUrl = (v) => {
       const s = String(v ?? '').trim()
       if (!s) return false
-      return !(/^https?:\/\//i.test(s) || (s.startsWith('/') && !s.startsWith('//')))
+      // «//site» и «/\site» браузер открывает как ЧУЖОЙ сайт (обратный слэш он читает как /),
+      // поэтому путём своего сайта считаем только «/» и дальше не слэш любого вида.
+      return !(/^https?:\/\//i.test(s) || /^\/(?![/\\])/.test(s))
     }
     const URL_FIELDS = { photo: ['src'], file: ['href'], video: ['src'] }
     for (const [i, b] of blocks.entries()) {

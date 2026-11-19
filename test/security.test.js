@@ -5,7 +5,7 @@ import { test, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { startServer, makeToken, root } from './helpers.js'
+import { startServer, makeToken, root, DEMO_PASSWORD } from './helpers.js'
 
 const ADMIN = '+79101234567'
 const EMPLOYEE = '+79103334455'     // Алексей, филиал №1
@@ -128,6 +128,39 @@ test('лимит входа: после 5 ошибок блок даже с ве
   const blocked = await S.login(LIMIT_VICTIM)
   assert.equal(blocked.status, 429)
   assert.equal(blocked.cookie, '')
+})
+
+test('лимит по номеру: 10 ошибок с разных адресов → номер закрыт для всех адресов', async () => {
+  const phone = '+79106667788' // в других проверках этого файла не участвует
+  const from = (ip, password) => S.call('/api/auth/login', {
+    method: 'POST', body: { phone, password }, headers: { 'x-forwarded-for': ip }
+  })
+  for (let i = 0; i < 10; i++) {
+    const r = await from(`10.0.0.${i + 1}`, 'неверный-' + i)
+    assert.equal(r.status, 401, `попытка ${i + 1}`)
+  }
+  // 11-я с нового адреса и с верным паролем — всё равно закрыто
+  const blocked = await from('10.0.1.1', DEMO_PASSWORD)
+  assert.equal(blocked.status, 429)
+  assert.match(blocked.json.error, /Слишком много попыток\. Повторите через \d+ мин\./)
+  assert.equal(blocked.headers.get('set-cookie'), null)
+  // Другой номер с того же адреса не задет
+  const other = await S.call('/api/auth/login', {
+    method: 'POST', body: { phone: '+79101112233', password: DEMO_PASSWORD }, headers: { 'x-forwarded-for': '10.0.1.1' }
+  })
+  assert.equal(other.status, 200)
+})
+
+test('успешный вход сбрасывает счётчик по номеру', async () => {
+  const phone = '+79107778899'
+  const from = (ip, password) => S.call('/api/auth/login', {
+    method: 'POST', body: { phone, password }, headers: { 'x-forwarded-for': ip }
+  })
+  for (let i = 0; i < 9; i++) assert.equal((await from(`10.1.0.${i + 1}`, 'нет-' + i)).status, 401)
+  assert.equal((await from('10.1.1.1', DEMO_PASSWORD)).status, 200)
+  // После успеха счёт с нуля: ещё 9 ошибок не закрывают номер
+  for (let i = 0; i < 9; i++) assert.equal((await from(`10.1.2.${i + 1}`, 'нет-' + i)).status, 401)
+  assert.equal((await from('10.1.3.1', DEMO_PASSWORD)).status, 200)
 })
 
 test('несуществующий номер — тот же ответ, что и неверный пароль', async () => {
@@ -255,6 +288,22 @@ test('ссылка javascript: в уроке не сохраняется', async
   assert.equal(bad.status, 400)
   const good = await S.call(`/api/admin/lessons/${L.lesson}/blocks`, { cookie: adm.cookie, method: 'PUT', body: { blocks: [{ type: 'file', content: { href: '/uploads/x.pdf', name: 'x.pdf' } }] } })
   assert.equal(good.status, 200)
+})
+
+test('ссылки «//сайт» и «/\\сайт» (уводят на чужой сайт) не сохраняются, пути и https — сохраняются', async () => {
+  const L = makeOwnCourseWithTest()
+  const adm = await S.login(ADMIN)
+  const save = (type, field, url) => S.call(`/api/admin/lessons/${L.lesson}/blocks`, {
+    cookie: adm.cookie, method: 'PUT', body: { blocks: [{ type, content: { [field]: url, name: 'x' } }] }
+  })
+  for (const url of ['/\\evil.example', '/\\\\evil.example', '//evil.example', ' /\\evil.example', 'data:text/html,x', 'https:\\\\evil.example']) {
+    for (const [type, field] of [['file', 'href'], ['photo', 'src'], ['video', 'src']]) {
+      assert.equal((await save(type, field, url)).status, 400, `${type}.${field} = ${url}`)
+    }
+  }
+  for (const url of ['/uploads/a.pdf', '/course/1', 'https://example.com/a\\b.pdf', 'http://example.com/x']) {
+    assert.equal((await save('file', 'href', url)).status, 200, url)
+  }
 })
 
 test('CSP-заголовок закрывает чужие скрипты', async () => {
