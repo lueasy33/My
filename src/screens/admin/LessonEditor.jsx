@@ -414,7 +414,8 @@ function TestEditor({ lessonId, initial, editable, onSaved }) {
               <option value="single">Один правильный ответ</option>
               <option value="multi">Несколько правильных</option>
               <option value="boolean">Верно / неверно</option>
-              <option value="open">Открытый ответ — проверит администратор</option>
+              {/* Открытые вопросы отключены; вариант виден только у старого вопроса, чтобы его заменить */}
+              {q.type === 'open' && <option value="open" disabled>Открытый ответ — отключён, выберите другой тип</option>}
             </select>
             <textarea className="textarea" rows={2} placeholder={q.type === 'boolean' ? 'Утверждение, например: «Жидкости можно смешивать без ограничений»' : 'Формулировка вопроса'}
               value={q.prompt} onChange={e => upd(i, { prompt: e.target.value })} />
@@ -468,7 +469,6 @@ function TestEditor({ lessonId, initial, editable, onSaved }) {
         <div className="row wrap" style={{ gap: 8 }}>
           <button type="button" className="btn ghost sm" onClick={() => addQ('single')}><Icon.plus size={15} />Вопрос</button>
           <button type="button" className="btn ghost sm" onClick={() => addQ('boolean')}><Icon.plus size={15} />Верно / неверно</button>
-          <button type="button" className="btn ghost sm" onClick={() => addQ('open')}><Icon.plus size={15} />Открытый</button>
           <button type="button" className="btn sm" style={{ marginLeft: 'auto' }} onClick={save} disabled={!dirty}>{dirty ? 'Сохранить тест' : 'Тест сохранён'}</button>
         </div>
       )}

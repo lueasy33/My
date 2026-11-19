@@ -584,7 +584,10 @@ export default async function adminRoutes(app) {
     for (const [i, q] of questions.entries()) {
       const prompt = String(q.prompt || '').trim()
       if (!prompt) continue
-      const type = ['single', 'multi', 'boolean', 'open'].includes(q.type) ? q.type : 'single'
+      // Открытые вопросы отключены (решение 10.2026): тест проверяется только автоматически.
+      // Старые открытые ответы в «Проверках» по-прежнему можно оценить.
+      if (q.type === 'open') return reply.code(400).send({ error: `Вопрос ${i + 1}: открытые вопросы отключены — замените на вопрос с вариантами` })
+      const type = ['single', 'multi', 'boolean'].includes(q.type) ? q.type : 'single'
       let options = []
       let correct = []
       if (type === 'boolean') {

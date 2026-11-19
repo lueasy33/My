@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
   phone TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   password_hash TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('employee','manager','admin')),
+  role TEXT NOT NULL CHECK (role IN ('employee','admin')),
   branch_id INTEGER REFERENCES branches(id),
   xp INTEGER NOT NULL DEFAULT 0,
   coil INTEGER NOT NULL DEFAULT 0,
