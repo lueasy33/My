@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext, useCallback, useRef } from 'react'
+import { useEffect, useState, createContext, useContext, useCallback, useRef, lazy, Suspense } from 'react'
 import { Routes, Route, NavLink, useLocation, Navigate, Link } from 'react-router-dom'
 import { api } from './api'
 import { Icon, Avatar, PageSkeleton, RewardWindow } from './ui'
@@ -19,7 +19,8 @@ import Flavors from './screens/Flavors'
 import FlavorSession from './screens/FlavorSession'
 import FlavorBrand from './screens/FlavorBrand'
 import Analytics from './screens/Analytics'
-import Admin from './screens/admin/Admin'
+// Админка — отдельным файлом: продавцы её код не скачивают, первая загрузка на телефоне меньше
+const Admin = lazy(() => import('./screens/admin/Admin'))
 import { THEMES } from './theme'
 
 const Ctx = createContext(null)
@@ -125,7 +126,7 @@ export default function App() {
             <Route path="/flavors/session" element={<FlavorSession />} />
             <Route path="/flavors/brand/:id" element={<FlavorBrand />} />
             <Route path="/analytics" element={staff ? <Analytics /> : <Navigate to="/" />} />
-            <Route path="/admin/*" element={staff ? <Admin /> : <Navigate to="/" />} />
+            <Route path="/admin/*" element={staff ? <Suspense fallback={<PageSkeleton />}><Admin /></Suspense> : <Navigate to="/" />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>

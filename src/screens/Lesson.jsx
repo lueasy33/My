@@ -263,7 +263,7 @@ function fmtTime(s) {
 /* ─── Рендер блоков контента ────────────────────────────────── */
 // Ссылки в уроках заполняет администратор, открывает сотрудник. Пропускаем только
 // http(s) и пути сайта: javascript:, data: и прочие схемы не должны стать href (XSS).
-function safeHref(value) {
+export function safeHref(value) {
   const s = String(value || '').trim()
   if (!s) return ''
   if (/^https?:\/\//i.test(s)) return s

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { api } from '../../api'
 import { Icon, PageSkeleton, LoadError, Tabs, useToast, useConfirm, fmtSize } from '../../ui'
-import { Block, videoEmbed } from '../Lesson'
+import { Block, videoEmbed, safeHref } from '../Lesson'
 
 const TYPES = [
   { k: 'text', label: 'Текст', icon: Icon.text, hint: 'Абзацы, заголовки, списки, врезки' },
@@ -260,10 +260,13 @@ function BlockForm({ block, onChange }) {
 
 function LinkField({ label, value, onChange }) {
   const external = value && !String(value).startsWith('/uploads/') ? value : ''
+  // Пока человек печатает «htt…» — не ругаемся; иначе ссылка должна быть http(s), как в safeHref урока
+  const bad = !!external && !safeHref(external) && !'https://'.startsWith(external.toLowerCase())
   return (
     <div className="field">
       <label>{label}</label>
-      <input className="input" value={external} onChange={e => onChange(e.target.value.trim())} placeholder="https://…" inputMode="url" />
+      <input className="input" value={external} onChange={e => onChange(e.target.value.trim())} placeholder="https://…" inputMode="url" aria-invalid={bad || undefined} />
+      {bad && <span className="hint" style={{ color: 'var(--danger-text)' }}>Ссылка должна начинаться с https:// — иначе сотрудники её не увидят</span>}
     </div>
   )
 }
