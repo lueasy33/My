@@ -109,7 +109,12 @@ self.addEventListener('push', (event) => {
 // Нажатие открывает нужную страницу: в уже открытой вкладке сайта или в новой
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const target = new URL(event.notification.data?.url || '/', self.location.origin).href
+  // Только свой сайт: чужой адрес из push не должен уводить вкладку приложения.
+  let target = '/'
+  try {
+    const u = new URL(event.notification.data?.url || '/', self.location.origin)
+    if (u.origin === self.location.origin) target = u.href
+  } catch { /* битый адрес — открываем главную */ }
   event.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
     for (const c of all) {

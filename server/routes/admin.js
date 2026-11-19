@@ -552,6 +552,20 @@ export default async function adminRoutes(app) {
     if (!lesson) return reply.code(404).send({ error: 'Не найден' })
     if (!canEditCourse(req.user, course)) return reply.code(403).send({ error: 'Нет прав на этот урок' })
     const blocks = Array.isArray(req.body?.blocks) ? req.body.blocks : []
+    // Ссылки урока открываются у сотрудников: пускаем только http(s) и пути сайта,
+    // иначе javascript:-ссылка из редактора выполнится в браузере сотрудника.
+    const badUrl = (v) => {
+      const s = String(v ?? '').trim()
+      if (!s) return false
+      return !(/^https?:\/\//i.test(s) || (s.startsWith('/') && !s.startsWith('//')))
+    }
+    const URL_FIELDS = { photo: ['src'], file: ['href'], video: ['src'] }
+    for (const [i, b] of blocks.entries()) {
+      const c = b.content || {}
+      for (const f of URL_FIELDS[b.type] || []) {
+        if (badUrl(c[f])) return reply.code(400).send({ error: `Блок ${i + 1}: ссылка должна начинаться с http://, https:// или /` })
+      }
+    }
     const TYPES = ['text', 'photo', 'video', 'file']
     db.transaction(() => {
       const keep = blocks.map(b => Number(b.id)).filter(Boolean)

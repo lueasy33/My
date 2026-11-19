@@ -212,3 +212,56 @@ test('в репозитории нет секретов и базы', () => {
     assert.ok(!/privateKey\s*:\s*['"`][A-Za-z0-9_-]{20,}/.test(src), `${f}: ключ push в коде`)
   }
 })
+
+// ─── Решения 19.11.2026: ответы после сдачи, ссылки в уроках, CSP ────────────
+
+function makeOwnCourseWithTest() {
+  const branch = S.db.prepare('SELECT branch_id FROM users WHERE phone = ?').get(EMPLOYEE).branch_id
+  const course = S.db.prepare("INSERT INTO courses(title, branch_id, published) VALUES ('Свой курс для проверок', ?, 1)").run(branch).lastInsertRowid
+  const lesson = S.db.prepare("INSERT INTO lessons(course_id, title, sort, published) VALUES (?, 'Урок для проверок', 1, 1)").run(course).lastInsertRowid
+  S.db.prepare("INSERT INTO blocks(lesson_id, type, content) VALUES (?, 'text', '{\"text\":\"текст\"}')").run(lesson)
+  const t = S.db.prepare('INSERT INTO tests(lesson_id, show_answers) VALUES (?, 1)').run(lesson).lastInsertRowid
+  const q = S.db.prepare("INSERT INTO questions(test_id, type, prompt, options, correct, explanation) VALUES (?, 'single', 'Вопрос', '[\"а\",\"б\"]', '[1]', 'Потому что б')").run(t).lastInsertRowid
+  return { course: Number(course), lesson: Number(lesson), test: Number(t), question: Number(q) }
+}
+
+test('при провале сервер не присылает правильные ответы и пояснения', async () => {
+  const L = makeOwnCourseWithTest()
+  const { cookie } = await S.login(EMPLOYEE)
+  const r = await S.call(`/api/test/${L.test}/attempt`, { cookie, method: 'POST', body: { answers: { [L.question]: [0] } } })
+  assert.equal(r.status, 200)
+  assert.equal(r.json.attempt.passed, false)
+  const item = r.json.review.find(x => x.id === L.question)
+  assert.equal(item.ok, false)
+  assert.ok(!('correct' in item) || item.correct === null, 'правильный ответ утёк при провале')
+  assert.equal(item.explanation || '', '', 'пояснение утекло при провале')
+})
+
+test('после успешной сдачи ответы и пояснения показываются', async () => {
+  const L = makeOwnCourseWithTest()
+  const { cookie } = await S.login(EMPLOYEE)
+  const r = await S.call(`/api/test/${L.test}/attempt`, { cookie, method: 'POST', body: { answers: { [L.question]: [1] } } })
+  assert.equal(r.status, 200)
+  assert.equal(r.json.attempt.passed, true)
+  const item = r.json.review.find(x => x.id === L.question)
+  assert.deepEqual(item.correct, [1])
+  assert.equal(item.explanation, 'Потому что б')
+})
+
+test('ссылка javascript: в уроке не сохраняется', async () => {
+  const L = makeOwnCourseWithTest()
+  const adm = await S.login(ADMIN)
+  const bad = await S.call(`/api/admin/lessons/${L.lesson}/blocks`, { cookie: adm.cookie, method: 'PUT', body: { blocks: [{ type: 'file', content: { href: 'javascript:alert(1)', name: 'x.pdf' } }] } })
+  assert.equal(bad.status, 400)
+  const good = await S.call(`/api/admin/lessons/${L.lesson}/blocks`, { cookie: adm.cookie, method: 'PUT', body: { blocks: [{ type: 'file', content: { href: '/uploads/x.pdf', name: 'x.pdf' } }] } })
+  assert.equal(good.status, 200)
+})
+
+test('CSP-заголовок закрывает чужие скрипты', async () => {
+  const r = await S.call('/')
+  const csp = r.headers.get('content-security-policy') || ''
+  assert.ok(/default-src 'self'/.test(csp), 'нет default-src в CSP')
+  assert.ok(/script-src 'self'/.test(csp), 'нет script-src в CSP')
+  assert.ok(!/unsafe-eval/.test(csp), 'в CSP разрешён eval')
+  assert.ok(/frame-ancestors 'self'/.test(csp), 'нет frame-ancestors')
+})

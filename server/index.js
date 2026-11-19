@@ -39,6 +39,22 @@ app.addHook('onSend', async (req, reply, payload) => {
   reply.header('X-Frame-Options', 'SAMEORIGIN')
   reply.header('Referrer-Policy', 'strict-origin-when-cross-origin')
   reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  // CSP: скрипты только свои, встраивание чужих сайтов и вызов eval закрыты.
+  // YouTube/Rutube/VK разрешены только во frame-src — уроки их встраивают.
+  reply.header('Content-Security-Policy', [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: blob:",
+    "media-src 'self' blob:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self'",
+    "frame-src https://www.youtube-nocookie.com https://rutube.ru https://vk.com",
+    "frame-ancestors 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'"
+  ].join('; '))
   if (req.protocol === 'https') reply.header('Strict-Transport-Security', 'max-age=31536000')
   if (req.url.startsWith('/api/')) reply.header('Cache-Control', 'no-store')
   return payload

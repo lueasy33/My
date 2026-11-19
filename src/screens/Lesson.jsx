@@ -261,6 +261,17 @@ function fmtTime(s) {
 }
 
 /* ─── Рендер блоков контента ────────────────────────────────── */
+// Ссылки в уроках заполняет администратор, открывает сотрудник. Пропускаем только
+// http(s) и пути сайта: javascript:, data: и прочие схемы не должны стать href (XSS).
+function safeHref(value) {
+  const s = String(value || '').trim()
+  if (!s) return ''
+  if (/^https?:\/\//i.test(s)) return s
+  if (s.startsWith('/') && !s.startsWith('//')) return s
+  return ''
+}
+
+/* ─── Рендер блоков контента (продолжение) ──────────────────── */
 export function Block({ block }) {
   const c = block.content || {}
   if (block.type === 'photo') {
@@ -276,9 +287,10 @@ export function Block({ block }) {
   }
   if (block.type === 'video') return <Video block={block} />
   if (block.type === 'file') {
-    if (!c.href) return null
+    const href = safeHref(c.href)
+    if (!href) return null
     return (
-      <a href={c.href} className="file-card" target="_blank" rel="noopener noreferrer" download={c.href.startsWith('/uploads/') ? (c.name || true) : undefined}>
+      <a href={href} className="file-card" target="_blank" rel="noopener noreferrer" download={href.startsWith('/uploads/') ? (c.name || true) : undefined}>
         <span className="list-ico"><Icon.file size={20} /></span>
         <span className="list-main">
           <b>{c.title || c.name || 'Файл'}</b>

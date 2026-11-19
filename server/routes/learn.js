@@ -245,11 +245,9 @@ export default async function learnRoutes(app) {
         ok = Array.isArray(given) && Number(given[0]) === Number(right[0])
       }
       if (ok) correct += 1
-      review.push({
-        id: q.id, prompt: q.prompt, type: q.type, given: given ?? null, ok,
-        correct: test.show_answers ? right : null,
-        explanation: test.show_answers ? q.explanation : ''
-      })
+      // Правильные варианты и пояснения не уходят вместе с провалом:
+      // их добавляем ниже и только после успешной сдачи (решение 19.11.2026).
+      review.push({ id: q.id, prompt: q.prompt, type: q.type, given: given ?? null, ok })
     }
 
     const auto = questions.length - open
@@ -257,6 +255,19 @@ export default async function learnRoutes(app) {
     const pending = open > 0 && (auto === 0 || score >= test.pass_score)
     const passed = !pending && open === 0 && score >= test.pass_score
     const status = pending ? 'pending' : (passed ? 'passed' : 'failed')
+
+    // Решение Евгения 19.11.2026: правильные ответы и пояснения — только после сдачи.
+    // При провале видно лишь, какие вопросы неверные, без правильного варианта.
+    if (passed && test.show_answers) {
+      const byId = new Map(questions.map(q => [q.id, q]))
+      for (const r of review) {
+        if (r.open) continue
+        const q = byId.get(r.id)
+        if (!q) continue
+        r.correct = JSON.parse(q.correct)
+        r.explanation = q.explanation || ''
+      }
+    }
 
     const ins = db.prepare('INSERT INTO attempts(user_id, test_id, answers, score, passed, pending) VALUES (?,?,?,?,?,?)')
       .run(u.id, test.id, JSON.stringify(answers), score, passed ? 1 : 0, pending ? 1 : 0)
