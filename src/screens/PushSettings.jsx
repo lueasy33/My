@@ -129,7 +129,7 @@ function DeniedHelp() {
   const ua = navigator.userAgent
   const android = /android/i.test(ua)
   const yandex = /yabrowser/i.test(ua)
-  const browser = yandex ? 'Яндекс Браузер' : /samsungbrowser/i.test(ua) ? 'Samsung Internet' : /edg//i.test(ua) ? 'Edge' : /firefox/i.test(ua) ? 'Firefox' : 'Chrome'
+  const browser = yandex ? 'Яндекс Браузер' : /samsungbrowser/i.test(ua) ? 'Samsung Internet' : /edg\//i.test(ua) ? 'Edge' : /firefox/i.test(ua) ? 'Firefox' : 'Chrome'
   const steps = android ? [
     <><b>Главное:</b> настройки телефона → <b>Приложения</b> → <b>{browser}</b> → <b>Уведомления</b> → включить «Разрешить уведомления» и все категории внутри, особенно <b>«Сайты»</b>. Без этого браузер отклоняет запрос любого сайта, даже не показывая окно</>,
     yandex
