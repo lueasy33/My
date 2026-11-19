@@ -18,6 +18,21 @@ function clear() {
   db.prepare("DELETE FROM sqlite_sequence").run()
 }
 
+// Защита рабочей базы: seed стирает ВСЁ (сотрудников, прогресс, COIL). На базе, где уже
+// есть люди, он работает только с явным FORCE=1. start.bat/start.command зовут seed,
+// только когда файла базы ещё нет, — им защита не мешает.
+const people = db.prepare('SELECT COUNT(*) c FROM users').get().c
+if (people > 0 && String(process.env.FORCE || '').trim() !== '1') {
+  console.log('')
+  console.log(`  ОСТАНОВЛЕНО: в базе уже есть пользователи (${people}).`)
+  console.log('  Демо-данные сотрут их вместе с прогрессом и COIL.')
+  console.log('  Если это точно нужно, сначала сделайте резервную копию data/, затем:')
+  console.log('    Windows:      set FORCE=1 && npm run seed')
+  console.log('    Mac / Linux:  FORCE=1 npm run seed')
+  console.log('')
+  process.exit(1)
+}
+
 clear()
 
 // ─── Филиалы ───────────────────────────────────────────────────

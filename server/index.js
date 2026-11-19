@@ -88,6 +88,9 @@ app.addHook('onRequest', async (req, reply) => {
   if (!session) return
   let user = db.prepare('SELECT * FROM users WHERE id = ? AND archived_at IS NULL').get(session.uid)
   if (!user || user.status === 'blocked') return
+  // Пароль сменили или сотрудника блокировали после этого входа — вход недействителен.
+  // У cookie, выданных до появления версии, v нет: считаем их версией 0.
+  if ((session.v ?? 0) !== (user.session_version ?? 0)) return
   // Серия дней считается по заходам, а не по вводу пароля: сессия живёт 30 дней,
   // и раньше у того, кто не выходил из аккаунта, серия навсегда оставалась на месте.
   if (req.url.startsWith('/api/') && user.last_active_day !== TZ_DAY(Date.now())) {
@@ -127,6 +130,18 @@ function publicUser(u) {
 // ─── Авторизация ───────────────────────────────────────────────
 const attempts = new Map()
 
+function setSessionCookie(req, reply, user) {
+  const token = signSession({ uid: user.id, v: user.session_version ?? 0 })
+  reply.setCookie(COOKIE, token, {
+    httpOnly: true, sameSite: 'lax', path: '/',
+    // ВАЖНО: secure только при реальном HTTPS. Раньше флаг ставился по NODE_ENV,
+    // и при запуске на http://localhost браузер просто не отправлял cookie:
+    // человек входил и его сразу выбрасывало обратно на экран входа.
+    secure: req.protocol === 'https',
+    maxAge: 60 * 60 * 24 * 30
+  })
+}
+
 app.post('/api/auth/login', async (req, reply) => {
   const { phone, password } = req.body || {}
   const norm = normalisePhone(phone)
@@ -150,15 +165,7 @@ app.post('/api/auth/login', async (req, reply) => {
   }
 
   attempts.delete(key)
-  const token = signSession({ uid: user.id })
-  reply.setCookie(COOKIE, token, {
-    httpOnly: true, sameSite: 'lax', path: '/',
-    // ВАЖНО: secure только при реальном HTTPS. Раньше флаг ставился по NODE_ENV,
-    // и при запуске на http://localhost браузер просто не отправлял cookie:
-    // человек входил и его сразу выбрасывало обратно на экран входа.
-    secure: req.protocol === 'https',
-    maxAge: 60 * 60 * 24 * 30
-  })
+  setSessionCookie(req, reply, user)
   bumpStreak(user)
   reply.send({ user: publicUser(db.prepare('SELECT * FROM users WHERE id = ?').get(user.id)) })
 })
@@ -257,6 +264,9 @@ app.post('/api/me/password', async (req, reply) => {
   if (!next || String(next).length < 6) return reply.code(400).send({ error: 'Минимум 6 символов' })
   db.prepare('UPDATE users SET password_hash = ?, must_change_password = 0 WHERE id = ?')
     .run(hashPassword(next), req.user.id)
+  // Триггер в базе уже сделал недействительными все прошлые входы (в том числе
+  // на чужом телефоне, если пароль меняли из-за утечки). Этому телефону — новый вход.
+  setSessionCookie(req, reply, db.prepare('SELECT id, session_version FROM users WHERE id = ?').get(req.user.id))
   reply.send({ ok: true })
 })
 

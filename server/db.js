@@ -303,6 +303,18 @@ addColumn('users', 'best_streak', 'best_streak INTEGER NOT NULL DEFAULT 0')
 // Push: что присылать и часовой пояс телефона (для тихих часов)
 addColumn('users', 'push_prefs', "push_prefs TEXT NOT NULL DEFAULT '{}'")
 addColumn('users', 'tz', "tz TEXT NOT NULL DEFAULT ''")
+// Версия входа: номер зашит в cookie. Смена пароля (кем угодно — сам, админ, npm run admin)
+// и блокировка увеличивают номер, и все старые входы на других телефонах перестают работать.
+// Триггер в базе, а не в коде маршрутов, — чтобы не забыть ни одно место, где меняется пароль.
+addColumn('users', 'session_version', 'session_version INTEGER NOT NULL DEFAULT 0')
+db.exec(`
+CREATE TRIGGER IF NOT EXISTS users_logout_on_password AFTER UPDATE OF password_hash ON users
+  WHEN NEW.password_hash IS NOT OLD.password_hash
+  BEGIN UPDATE users SET session_version = session_version + 1 WHERE id = NEW.id; END;
+CREATE TRIGGER IF NOT EXISTS users_logout_on_block AFTER UPDATE OF status ON users
+  WHEN NEW.status = 'blocked' AND OLD.status IS NOT 'blocked'
+  BEGIN UPDATE users SET session_version = session_version + 1 WHERE id = NEW.id; END;
+`)
 
 // Вкусы: бренды — отдельная сущность (логотип, описание), у вкуса — картинка,
 // совет продавцу, с чем миксуют, линейка. Всё это ведёт администратор.

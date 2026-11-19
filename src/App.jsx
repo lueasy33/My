@@ -101,7 +101,7 @@ export default function App() {
   }
 
   const focus = location.pathname.startsWith('/lesson/') || location.pathname === '/flavors/session'
-  const staff = user.role !== 'employee'
+  const staff = user.role === 'admin'
 
   return (
     <Ctx.Provider value={{ user, setUser, reload: load, refresh, checkRewards, branch }}>
@@ -139,7 +139,7 @@ export default function App() {
 }
 
 function navItems(user) {
-  const staff = user.role !== 'employee'
+  const staff = user.role === 'admin'
   const main = [
     { to: '/', label: 'Главная', icon: Icon.home, end: true },
     { to: '/library', label: 'Обучение', icon: Icon.book },
@@ -230,7 +230,7 @@ function TopBar() {
 
 function TabBar() {
   const { user } = useApp()
-  const staff = user.role !== 'employee'
+  const staff = user.role === 'admin'
   const tabs = [
     { to: '/', label: 'Главная', icon: Icon.home, end: true },
     { to: '/library', label: 'Обучение', icon: Icon.book },
