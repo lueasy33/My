@@ -63,9 +63,10 @@ await app.register(fastifyStatic, {
   prefix: '/',
   decorateReply: false,
   // index.html не кэшируем: иначе после обновления сайта браузер держит старую версию
-  setHeaders: (res, path) => {
-    if (path.endsWith('.html') || path.endsWith('sw.js')) res.setHeader('Cache-Control', 'no-cache')
-    else res.setHeader('Cache-Control', 'public, max-age=2592000')
+  // С @fastify/static 10 сюда приходит reply Fastify (метод header), а не сырой ответ Node
+  setHeaders: (reply, path) => {
+    if (path.endsWith('.html') || path.endsWith('sw.js')) reply.header('Cache-Control', 'no-cache')
+    else reply.header('Cache-Control', 'public, max-age=2592000')
   }
 })
 

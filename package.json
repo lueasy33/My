@@ -14,10 +14,10 @@
     "admin": "node server/create-admin.js"
   },
   "dependencies": {
-    "@fastify/cookie": "^9.3.1",
-    "@fastify/multipart": "^8.3.1",
-    "@fastify/static": "^7.0.4",
-    "fastify": "^4.28.1",
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/multipart": "^10.1.9",
+    "@fastify/static": "^10.1.12",
+    "fastify": "^5.12.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
