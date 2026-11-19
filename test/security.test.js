@@ -12,9 +12,12 @@ const EMPLOYEE = '+79103334455'     // Алексей, филиал №1
 const OTHER = '+79105556677'        // Анна, филиал №2
 const LIMIT_VICTIM = '+79108889900' // Тимур — на нём проверяем лимит входа
 
-let S
-before(async () => { S = await startServer() })
-after(() => S?.stop())
+let S // сайт открыт напрямую (настройки по умолчанию)
+let P // сайт «за прокси»: прокси на этом же компьютере, ему разрешено передавать адрес клиента
+before(async () => {
+  [S, P] = await Promise.all([startServer(), startServer({ TRUST_PROXY: '127.0.0.1' })])
+})
+after(() => { S?.stop(); P?.stop() })
 
 // Курс только для филиала Анны: урок с тестом. Алексей (другой филиал) не должен его видеть.
 function makeBranchCourse() {
@@ -130,9 +133,42 @@ test('лимит входа: после 5 ошибок блок даже с ве
   assert.equal(blocked.cookie, '')
 })
 
+test('прямое подключение: подставной X-Forwarded-For и X-Forwarded-Proto не принимаются', async () => {
+  const phone = '+79104445566' // в других проверках этого файла не участвует
+  // Каждая попытка «с нового адреса» — раньше это обходило лимит 5 ошибок по адресу
+  for (let i = 0; i < 5; i++) {
+    const r = await S.call('/api/auth/login', {
+      method: 'POST', body: { phone, password: 'неверный-' + i }, headers: { 'x-forwarded-for': `203.0.113.${i + 1}` }
+    })
+    assert.equal(r.status, 401, `попытка ${i + 1}`)
+  }
+  const blocked = await S.call('/api/auth/login', {
+    method: 'POST', body: { phone, password: DEMO_PASSWORD }, headers: { 'x-forwarded-for': '203.0.113.99' }
+  })
+  assert.equal(blocked.status, 429, 'подставной адрес обошёл лимит входа')
+
+  // Подставной «https» не выдаёт себя за защищённое соединение
+  const r = await S.call('/api/auth/login', {
+    method: 'POST', body: { phone: '+79102223344', password: DEMO_PASSWORD }, headers: { 'x-forwarded-proto': 'https' }
+  })
+  assert.equal(r.status, 200)
+  assert.doesNotMatch(r.headers.get('set-cookie') || '', /Secure/i)
+  assert.equal(r.headers.get('strict-transport-security'), null)
+})
+
+test('за своим прокси: адрес клиента и https от прокси принимаются', async () => {
+  const r = await P.call('/api/auth/login', {
+    method: 'POST', body: { phone: '+79102223344', password: DEMO_PASSWORD }, headers: { 'x-forwarded-proto': 'https', 'x-forwarded-for': '198.51.100.7' }
+  })
+  assert.equal(r.status, 200)
+  assert.match(r.headers.get('set-cookie') || '', /Secure/i, 'за HTTPS-прокси cookie должна быть Secure')
+  assert.ok(r.headers.get('strict-transport-security'), 'за HTTPS-прокси нужен HSTS')
+})
+
 test('лимит по номеру: 10 ошибок с разных адресов → номер закрыт для всех адресов', async () => {
   const phone = '+79106667788' // в других проверках этого файла не участвует
-  const from = (ip, password) => S.call('/api/auth/login', {
+  // Разные адреса клиентов реально бывают только за прокси — поэтому сервер P
+  const from = (ip, password) => P.call('/api/auth/login', {
     method: 'POST', body: { phone, password }, headers: { 'x-forwarded-for': ip }
   })
   for (let i = 0; i < 10; i++) {
@@ -145,7 +181,7 @@ test('лимит по номеру: 10 ошибок с разных адресо
   assert.match(blocked.json.error, /Слишком много попыток\. Повторите через \d+ мин\./)
   assert.equal(blocked.headers.get('set-cookie'), null)
   // Другой номер с того же адреса не задет
-  const other = await S.call('/api/auth/login', {
+  const other = await P.call('/api/auth/login', {
     method: 'POST', body: { phone: '+79101112233', password: DEMO_PASSWORD }, headers: { 'x-forwarded-for': '10.0.1.1' }
   })
   assert.equal(other.status, 200)
@@ -153,7 +189,7 @@ test('лимит по номеру: 10 ошибок с разных адресо
 
 test('успешный вход сбрасывает счётчик по номеру', async () => {
   const phone = '+79107778899'
-  const from = (ip, password) => S.call('/api/auth/login', {
+  const from = (ip, password) => P.call('/api/auth/login', {
     method: 'POST', body: { phone, password }, headers: { 'x-forwarded-for': ip }
   })
   for (let i = 0; i < 9; i++) assert.equal((await from(`10.1.0.${i + 1}`, 'нет-' + i)).status, 401)

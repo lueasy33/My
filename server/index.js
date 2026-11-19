@@ -26,9 +26,30 @@ const root = join(__dirname, '..')
 // trustProxy: в интернете сайт работает за HTTPS-прокси (Caddy/nginx).
 // Без этого сервер не узнает, что запрос пришёл по https, и cookie не получит флаг secure,
 // а лимит попыток входа считался бы по IP прокси — один на всех.
+// Но доверять заголовкам X-Forwarded-* можно только от самого прокси: раньше (true)
+// им верили от кого угодно, и подставной X-Forwarded-For обходил лимит входа по адресу.
+//   по умолчанию — прокси из внутренних сетей 10/8, 172.16/12, 192.168/16, fc00::/7
+//                  (Caddy в docker compose ходит к сайту из сети Docker 172.x);
+//   TRUST_PROXY=0 — не доверять никому (сайт открыт напрямую, без прокси);
+//   TRUST_PROXY=127.0.0.1 или список через запятую (IP, CIDR, loopback, uniquelocal) — только им.
+// Число («столько прокси») Fastify 5 намеренно не поддерживает: оно не проверяет, КТО
+// прислал заголовок, и превращается в «никому не доверять». Поэтому его тут не принимаем.
+export function trustProxySetting(raw = process.env.TRUST_PROXY) {
+  const v = String(raw ?? '').trim()
+  if (!v) return 'uniquelocal'
+  if (v === '0' || v.toLowerCase() === 'false') return false
+  // Старое поведение «верить всем» — только если явно попросили; небезопасно без прокси
+  if (v.toLowerCase() === 'true') return true
+  if (/^\d+$/.test(v)) {
+    console.warn(`TRUST_PROXY=${v}: число не поддерживается — укажите адрес прокси (например 127.0.0.1) или 0. Беру внутренние сети.`)
+    return 'uniquelocal'
+  }
+  return v
+}
+
 export const app = Fastify({
   logger: { level: process.env.LOG_LEVEL || 'warn' },
-  trustProxy: process.env.TRUST_PROXY !== '0',
+  trustProxy: trustProxySetting(),
   bodyLimit: 2 * 1024 * 1024
 })
 
