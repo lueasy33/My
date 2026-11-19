@@ -206,12 +206,22 @@ function ResultView({ result, lesson, questions, onBack, next }) {
             </div>
           ) : (
             <div className="col" style={{ gap: 10 }}>
-              {review.filter(r => r.ok === false).map(r => (
+              {/* Не сдал — правильные ответы не показываем (решение Евгения): только где ошибка */}
+              {!attempt.passed && (
+                <div className={'callout ' + (attempts_left === 0 ? 'danger' : 'tip')} role="status">
+                  <span className="ico">{attempts_left === 0 ? <Icon.alert size={18} /> : <Icon.book size={18} />}</span>
+                  <div>{attempts_left === 0
+                    ? 'Попытки закончились, обратись к администратору.'
+                    : 'Правильные ответы покажем, когда сдашь тест. Перечитай урок и попробуй снова.'}</div>
+                </div>
+              )}
+              {wrong.map(r => (
                 <div key={r.id} className="review-item bad">
+                  {!attempt.passed && <span className="badge danger" style={{ marginBottom: 8 }}>Ошибка</span>}
                   <div className="bold" style={{ marginBottom: 8, fontSize: 14.5 }}>{r.prompt}</div>
                   <div className="small" style={{ color: 'var(--danger-text)' }}>Твой ответ: {fmtAnswer(r.given, opts(r.id))}</div>
-                  {r.correct && <div className="small" style={{ color: 'var(--success-text)', marginTop: 3 }}>Верно: {fmtAnswer(r.correct, opts(r.id))}</div>}
-                  {r.explanation && <p className="small muted" style={{ marginTop: 8, lineHeight: 1.6 }}>{r.explanation}</p>}
+                  {attempt.passed && r.correct && <div className="small" style={{ color: 'var(--success-text)', marginTop: 3 }}>Верно: {fmtAnswer(r.correct, opts(r.id))}</div>}
+                  {attempt.passed && r.explanation && <p className="small muted" style={{ marginTop: 8, lineHeight: 1.6 }}>{r.explanation}</p>}
                 </div>
               ))}
             </div>
@@ -224,10 +234,10 @@ function ResultView({ result, lesson, questions, onBack, next }) {
         {attempt.passed && !next && <Link to={`/course/${lesson.course_id}`} className="btn block">К курсу</Link>}
         {!attempt.passed && attempts_left > 0 && (
           <div className="card tight center small muted">
-            Перечитай урок — особенно места из разбора. Новая попытка откроется через {pause_minutes} мин · осталось попыток: {attempts_left}
+            Новая попытка откроется через {pause_minutes} мин · осталось попыток: {attempts_left}
           </div>
         )}
-        {!attempt.passed && attempts_left === 0 && (
+        {!attempt.passed && attempts_left === 0 && !wrong.length && (
           <div className="card tight center small muted">Попытки закончились. Обратись к администратору — он поможет.</div>
         )}
         <button className="btn ghost block" onClick={onBack}>Вернуться к уроку</button>
