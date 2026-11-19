@@ -36,6 +36,19 @@ test('главная, внутренние адреса и сборка отда
   assert.equal(mf.status, 200)
 })
 
+test('нет такого файла — 404, а страницы приложения — index.html', { skip: !built && 'нет build/ — сначала npm run build' }, async () => {
+  for (const p of ['/assets/net-takogo.png', '/uploads/net.jpg', '/net-takogo.js', '/assets/net.css?v=1']) {
+    const r = await fetch(S.base + p)
+    assert.equal(r.status, 404, p)
+    assert.ok(!(await r.text()).includes('<div id="root">'), `${p}: отдана страница вместо 404`)
+  }
+  for (const p of ['/ranking', '/lesson/1', '/course/2?from=push']) {
+    const r = await fetch(S.base + p)
+    assert.equal(r.status, 200, p)
+    assert.match(await r.text(), /<div id="root">/, p)
+  }
+})
+
 test('неизвестный адрес API — 404 в JSON, а не страница', async () => {
   const r = await S.call('/api/nichego-net')
   assert.equal(r.status, 404)

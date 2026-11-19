@@ -145,6 +145,14 @@ function publicUser(u) {
 
 // ─── Авторизация ───────────────────────────────────────────────
 const attempts = new Map()
+// Лимит по номеру: 10 неверных паролей за 15 минут с любых адресов → номер закрыт на 15 минут
+const phoneAttempts = new Map()
+const PHONE_LIMIT = 10
+const PHONE_WINDOW_MS = 15 * 60000
+function pruneAttempts(now) {
+  for (const [k, v] of phoneAttempts) if (v.until <= now && now - v.first > PHONE_WINDOW_MS) phoneAttempts.delete(k)
+  for (const [k, v] of attempts) if (v.until <= now && v.n === 0) attempts.delete(k)
+}
 
 function setSessionCookie(req, reply, user) {
   const token = signSession({ uid: user.id, v: user.session_version ?? 0 })
@@ -163,9 +171,15 @@ app.post('/api/auth/login', async (req, reply) => {
   const norm = normalisePhone(phone)
   const key = norm + ':' + (req.ip || '')
   const rec = attempts.get(key) || { n: 0, until: 0 }
+  // Второй счётчик — только по номеру, с любых адресов: сменой IP (мобильный интернет)
+  // первый лимит обходится, а этот — нет.
+  const now = Date.now()
+  let byPhone = phoneAttempts.get(norm)
+  if (!byPhone || (byPhone.until <= now && now - byPhone.first > PHONE_WINDOW_MS)) byPhone = { n: 0, first: now, until: 0 }
 
-  if (rec.until > Date.now()) {
-    const mins = Math.ceil((rec.until - Date.now()) / 60000)
+  const blockedUntil = Math.max(rec.until, byPhone.until)
+  if (blockedUntil > now) {
+    const mins = Math.ceil((blockedUntil - now) / 60000)
     return reply.code(429).send({ error: `Слишком много попыток. Повторите через ${mins} мин.` })
   }
 
@@ -176,11 +190,16 @@ app.post('/api/auth/login', async (req, reply) => {
     rec.n += 1
     if (rec.n >= 5) { rec.until = Date.now() + 15 * 60000; rec.n = 0 }
     attempts.set(key, rec)
+    byPhone.n += 1
+    if (byPhone.n >= PHONE_LIMIT) { byPhone.until = now + PHONE_WINDOW_MS; byPhone.n = 0; byPhone.first = now }
+    if (phoneAttempts.size > 5000) pruneAttempts(now) // перебор множества номеров не раздувает память
+    phoneAttempts.set(norm, byPhone)
     // Одно сообщение на оба случая — не подсказываем, что именно неверно
     return reply.code(401).send({ error: 'Неверный номер или пароль' })
   }
 
   attempts.delete(key)
+  phoneAttempts.delete(norm)
   setSessionCookie(req, reply, user)
   bumpStreak(user)
   reply.send({ user: publicUser(db.prepare('SELECT * FROM users WHERE id = ?').get(user.id)) })
@@ -470,8 +489,15 @@ app.get('/manifest.webmanifest', (req, reply) => {
 
 try {
   // Фронтенд уже зарегистрирован выше (staticRoot = build). Здесь — только fallback на SPA.
+  // Нет такого файла (картинки, скрипта, загрузки) — честный 404, а не главная страница:
+  // иначе браузер получает HTML вместо картинки и молча показывает пустоту.
+  const FILE_EXT = /\.(png|jpe?g|webp|gif|svg|ico|js|css|map|json|txt|woff2?|mp4|pdf)$/i
   app.setNotFoundHandler((req, reply) => {
     if (req.url.startsWith('/api')) return reply.code(404).send({ error: 'Не найдено' })
+    const path = req.url.split(/[?#]/)[0]
+    if (path.startsWith('/assets/') || path.startsWith('/uploads/') || FILE_EXT.test(path)) {
+      return reply.code(404).type('text/plain; charset=utf-8').send('Не найдено')
+    }
     reply.type('text/html').send(readFileSync(join(staticRoot, 'index.html'), 'utf8'))
   })
 } catch {
