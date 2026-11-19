@@ -327,6 +327,18 @@ CREATE TABLE IF NOT EXISTS flavor_sessions (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_flavor_sessions_user ON flavor_sessions(user_id, day);
+-- Каждый ответ тренажёра (кроме повтора ошибки). Итог тренировки и бонусы за неё
+-- считаются отсюда, а не по цифрам из браузера. session_id ставится при завершении.
+CREATE TABLE IF NOT EXISTS flavor_answers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  flavor_id INTEGER NOT NULL REFERENCES flavors(id) ON DELETE CASCADE,
+  ok INTEGER NOT NULL,
+  day TEXT NOT NULL,
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_flavor_answers_open ON flavor_answers(user_id, day, session_id);
 `)
 addColumn('flavors', 'brand_id', 'brand_id INTEGER REFERENCES flavor_brands(id)')
 addColumn('flavors', 'image', "image TEXT NOT NULL DEFAULT ''")

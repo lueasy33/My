@@ -128,11 +128,17 @@ export default async function flavorRoutes(app) {
   app.post('/api/flavors/answer', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
     const { flavor_id, type, choice, retry } = req.body || {}
-    const flavor = db.prepare('SELECT f.*, b.name AS brand FROM flavors f JOIN flavor_brands b ON b.id = f.brand_id WHERE f.id = ?').get(flavor_id)
+    // Только опубликованные вкусы тренажёра: скрытый вкус не должен давать COIL
+    const flavor = db.prepare(`SELECT f.*, b.name AS brand FROM flavors f JOIN flavor_brands b ON b.id = f.brand_id
+      WHERE f.id = ? AND f.published = 1 AND b.published = 1 AND f.in_quiz = 1`).get(flavor_id)
     if (!flavor) return reply.code(404).send({ error: 'Вкус не найден' })
 
     const right = correctChoice(flavor, type)
     const ok = String(choice) === String(right)
+    if (!retry) {
+      db.prepare('INSERT INTO flavor_answers(user_id, flavor_id, ok, day) VALUES (?,?,?,?)')
+        .run(u.id, flavor.id, ok ? 1 : 0, dayMsk(Date.now()))
+    }
     // Повтор ошибки в конце сессии не двигает ящик: иначе ошибку можно «отыграть» сразу
     if (!retry) {
       const cur = db.prepare('SELECT * FROM flavor_progress WHERE user_id = ? AND flavor_id = ?').get(u.id, flavor.id)
@@ -156,18 +162,32 @@ export default async function flavorRoutes(app) {
   app.post('/api/flavors/session/finish', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
     const day = dayMsk(Date.now())
-    const correct = Math.max(0, Number(req.body?.correct) || 0)
-    const total = Math.max(0, Number(req.body?.total) || 0)
-    db.prepare('INSERT INTO flavor_sessions(user_id, correct, total, day) VALUES (?,?,?,?)').run(u.id, correct, total, day)
-    // Бонус за первую тренировку дня и отдельно — за тренировку без ошибок
-    let xp = awardXp(u.id, XP.flavorTrain, 'flavor_train', day)
-    let coil = awardCoil(u.id, COIL.flavorTrain, 'flavor_train', day)
-    const perfect = total >= 5 && correct === total
-    if (perfect) {
-      xp += awardXp(u.id, 10, 'flavor_perfect', day)
-      coil += awardCoil(u.id, 10, 'flavor_perfect', day)
-    }
-    reply.send({ gained: { xp, coil }, perfect })
+    // Итог считаем по ответам, которые сервер сам проверил сегодня и которые ещё
+    // не вошли в прошлую тренировку. Цифры correct/total из браузера не используются:
+    // раньше бонус можно было получить, прислав {correct: 5, total: 5} без ответов.
+    const finish = db.transaction(() => {
+      const row = db.prepare(`SELECT COUNT(*) total, COALESCE(SUM(ok), 0) correct FROM flavor_answers
+        WHERE user_id = ? AND day = ? AND session_id IS NULL`).get(u.id, day)
+      const total = Number(row.total)
+      const correct = Number(row.correct)
+      if (!total) return { total, correct, xp: 0, coil: 0, perfect: false }
+      const sid = db.prepare('INSERT INTO flavor_sessions(user_id, correct, total, day) VALUES (?,?,?,?)')
+        .run(u.id, correct, total, day).lastInsertRowid
+      db.prepare('UPDATE flavor_answers SET session_id = ? WHERE user_id = ? AND day = ? AND session_id IS NULL')
+        .run(sid, u.id, day)
+      // Бонус за первую тренировку дня и отдельно — за тренировку без ошибок
+      let xp = awardXp(u.id, XP.flavorTrain, 'flavor_train', day)
+      let coil = awardCoil(u.id, COIL.flavorTrain, 'flavor_train', day)
+      const perfect = total >= 5 && correct === total
+      if (perfect) {
+        xp += awardXp(u.id, 10, 'flavor_perfect', day)
+        coil += awardCoil(u.id, 10, 'flavor_perfect', day)
+      }
+      return { total, correct, xp, coil, perfect }
+    })
+    const r = finish()
+    // Без единого ответа тренировки не было — ничего не начисляем
+    reply.send({ gained: { xp: r.xp, coil: r.coil }, perfect: r.perfect, correct: r.correct, total: r.total })
   })
 
   // Поиск по вкусам — тот самый пятый таб, которого не было в ТЗ.
