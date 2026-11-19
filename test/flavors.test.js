@@ -86,6 +86,28 @@ test('тренировка без ошибок: +18 и +10, бонусы раз 
   assert.equal(coilBy(uid, 'flavor_perfect'), 10)
 })
 
+test('новичок: 4 верных ответа (вся первая тренировка) — бонус «без ошибок» есть', async () => {
+  const phone = '+79104445566'
+  const { cookie } = await S.login(phone)
+  for (const id of quizFlavors(4)) await answer(cookie, id)
+  const r = await S.call('/api/flavors/session/finish', { cookie, method: 'POST', body: {} })
+  assert.equal(r.json.total, 4)
+  assert.equal(r.json.perfect, true)
+  assert.equal(r.json.gained.coil, 18 + 10)
+  assert.equal(coilBy(userId(phone), 'flavor_perfect'), 10)
+})
+
+test('3 верных ответа — мало для бонуса «без ошибок», только +18 за тренировку', async () => {
+  const phone = '+79102223344'
+  const { cookie } = await S.login(phone)
+  for (const id of quizFlavors(3)) await answer(cookie, id)
+  const r = await S.call('/api/flavors/session/finish', { cookie, method: 'POST', body: {} })
+  assert.equal(r.json.total, 3)
+  assert.equal(r.json.perfect, false)
+  assert.equal(r.json.gained.coil, 18)
+  assert.equal(coilBy(userId(phone), 'flavor_perfect'), 0)
+})
+
 test('скрытый вкус не принимается', async () => {
   const { cookie } = await S.login('+79105556677')
   const [id] = quizFlavors(1)

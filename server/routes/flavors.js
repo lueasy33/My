@@ -178,7 +178,8 @@ export default async function flavorRoutes(app) {
       // Бонус за первую тренировку дня и отдельно — за тренировку без ошибок
       let xp = awardXp(u.id, XP.flavorTrain, 'flavor_train', day)
       let coil = awardCoil(u.id, COIL.flavorTrain, 'flavor_train', day)
-      const perfect = total >= 5 && correct === total
+      // Порог — размер тренировки новичка (4 новых вкуса). При «5» новичок бонус получить не мог.
+      const perfect = total >= NEW_PER_SESSION && correct === total
       if (perfect) {
         xp += awardXp(u.id, 10, 'flavor_perfect', day)
         coil += awardCoil(u.id, 10, 'flavor_perfect', day)
