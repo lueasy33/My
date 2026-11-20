@@ -11,7 +11,7 @@ import {
   levelProgress, awardCoil, awardXp, checkAchievements, notify, themeUnlocked, boughtThemes,
   pendingRewards, COIL, XP, STREAK_BONUS
 } from './economy.js'
-import { courseFilterSql } from './access.js'
+import { courseFilterSql, lessonLocks } from './access.js'
 import { myRank, normPeriod } from './ranking.js'
 import { dueForUserSql } from './deadline.js'
 import { initDatabase, startBackups } from './init.js'
@@ -203,7 +203,7 @@ app.post('/api/auth/login', async (req, reply) => {
   const blockedUntil = Math.max(rec.until, byPhone.until)
   if (blockedUntil > now) {
     const mins = Math.ceil((blockedUntil - now) / 60000)
-    return reply.code(429).send({ error: `Слишком много попыток. Повторите через ${mins} мин.` })
+    return reply.code(429).send({ error: `Слишком много попыток. Повтори через ${mins} мин.` })
   }
 
   const user = db.prepare('SELECT * FROM users WHERE phone = ? AND archived_at IS NULL').get(norm)
@@ -354,7 +354,7 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
     ORDER BY CASE c.importance WHEN 'required' THEN 0 WHEN 'recommended' THEN 1 ELSE 2 END, c.id
   `).all(u.id, ...f.params).find(c => c.total > 0 && c.done < c.total) || null
 
-  const deadlines = db.prepare(`
+  const allDeadlines = db.prepare(`
     SELECT * FROM (
       SELECT l.id, l.title, c.title AS course, c.id AS course_id, ${dueForUserSql(u.id)} AS deadline
       FROM lessons l JOIN courses c ON c.id = l.course_id
@@ -362,8 +362,27 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
       WHERE l.published = 1 AND ${f.sql}
         AND (p.status IS NULL OR p.status != 'passed')
     ) WHERE deadline IS NOT NULL
-    ORDER BY deadline ASC LIMIT 3
+    ORDER BY deadline ASC, id ASC
   `).all(u.id, ...f.params).map(d => ({ ...d, days_left: Math.round((Date.parse(d.deadline) - Date.parse(today)) / 86400000) }))
+
+  // Карточка сверху главной — самый срочный урок (тур обещает «сверху то, что срочно»).
+  // Если он закрыт (не сдан предыдущий урок курса) — ведём на тот урок, который его открывает.
+  let urgent = null
+  for (const d of allDeadlines) {
+    const locks = lessonLocks(u, d.course_id)
+    let target = d
+    if (locks.has(d.id)) {
+      target = db.prepare(`SELECT l.id, l.title FROM lessons l LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
+        WHERE l.course_id = ? AND l.published = 1 AND (p.status IS NULL OR p.status != 'passed') ORDER BY l.sort, l.id`)
+        .all(u.id, d.course_id).find(l => !locks.has(l.id))
+      if (!target) continue
+    }
+    const st = db.prepare('SELECT status FROM progress WHERE user_id = ? AND lesson_id = ?').get(u.id, target.id)?.status || null
+    urgent = { id: target.id, title: target.title, course: d.course, course_id: d.course_id, days_left: d.days_left,
+      status: st, for_lesson: target.id === d.id ? null : d.title }
+    break
+  }
+  const deadlines = allDeadlines.slice(0, 3)
 
   // Напоминания о дедлайнах (спецификация 5.12): за 2 дня и при просрочке — по одному разу.
   // Та же функция раз в 30 минут работает и по расписанию — для тех, кто не заходит
@@ -391,6 +410,7 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
   reply.send({
     continue: continueLesson || null,
     suggestion,
+    urgent,
     deadlines,
     recent,
     rank,
@@ -469,7 +489,7 @@ app.post('/api/push/unsubscribe', { preHandler: requireAuth }, async (req, reply
 // Проверка: сразу, без тихих часов — человек сам нажал кнопку
 app.post('/api/push/test', { preHandler: requireAuth }, async (req, reply) => {
   const sent = await sendNow(req.user.id, { title: 'Уведомления работают 🎉', body: 'Так будут приходить дедлайны, награды и новости обучения', url: '/settings', tag: 'test' })
-  if (!sent) return reply.code(400).send({ error: 'Не удалось отправить: подписка не найдена или браузер её отклонил. Включите уведомления заново' })
+  if (!sent) return reply.code(400).send({ error: 'Не удалось отправить: подписка не найдена или браузер её отклонил. Включи уведомления заново' })
   reply.send({ ok: true, sent })
 })
 

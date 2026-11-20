@@ -63,3 +63,20 @@ test('админ задаёт срок в днях — общая дата ур�
   r = await S.call(`/api/admin/lessons/${l.id}`, { cookie, method: 'PATCH', body: { deadline_days: 1 } })
   assert.equal(r.status, 403)
 })
+
+test('главная: карточка сверху — самый срочный урок; закрытый урок ведёт на тот, что его открывает', async () => {
+  const { cookie } = await employee('+79990000309', '')
+  let r = await S.call('/api/dashboard', { cookie })
+  assert.equal(r.status, 200, r.text)
+  const min = Math.min(...r.json.deadlines.map(d => d.days_left))
+  assert.ok(r.json.urgent, 'есть срочный урок')
+  assert.equal(r.json.urgent.days_left, min)
+  assert.equal(r.json.urgent.title, 'Возрастные ограничения')
+  // «Сборка и запуск» (2-й урок курса, закрыт до сдачи 1-го) стала самой срочной
+  const l2 = S.db.prepare("SELECT id, deadline_days FROM lessons WHERE title = 'Сборка и запуск'").get()
+  await S.call(`/api/admin/lessons/${l2.id}`, { cookie: admin, method: 'PATCH', body: { deadline_days: 1 } })
+  r = await S.call('/api/dashboard', { cookie })
+  assert.equal(r.json.urgent.title, 'Устройство кальяна')
+  assert.equal(r.json.urgent.for_lesson, 'Сборка и запуск')
+  await S.call(`/api/admin/lessons/${l2.id}`, { cookie: admin, method: 'PATCH', body: { deadline_days: l2.deadline_days } })
+})

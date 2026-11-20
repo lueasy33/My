@@ -17,6 +17,7 @@ export default function Dashboard() {
   const hour = new Date().getHours()
   const greet = hour < 6 ? 'Доброй ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер'
   const name = firstName(user.name)
+  const deadlines = data.deadlines.filter(d => d.id !== data.urgent?.id)
 
   return (
     <main className="page">
@@ -50,7 +51,18 @@ export default function Dashboard() {
 
       <PushPrompt />
 
-      {data.continue ? (
+      {data.urgent ? (
+        // Сверху — самый срочный урок, а не просто первый курс по списку
+        <Link to={`/lesson/${data.urgent.id}`} className="continue-card">
+          <span className="play"><Icon.play size={22} /></span>
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span className="meta">{data.urgent.status ? 'Продолжи' : 'Начни с урока'} · {data.urgent.course}</span>
+            <h3 className="clamp2">{data.urgent.title}</h3>
+            <span className="meta">{data.urgent.for_lesson ? `откроет «${data.urgent.for_lesson}» · ` : ''}{data.urgent.days_left < 0 ? daysLabel(data.urgent.days_left) : `срок ${daysLabel(data.urgent.days_left)}`}</span>
+          </span>
+          <Icon.arrowR size={20} />
+        </Link>
+      ) : data.continue ? (
         <Link to={`/lesson/${data.continue.id}`} className="continue-card">
           <span className="play"><Icon.play size={22} /></span>
           <span style={{ flex: 1, minWidth: 0 }}>
@@ -80,11 +92,12 @@ export default function Dashboard() {
 
       <div className="dash-grid">
         <div>
-          {data.deadlines.length > 0 && (
+          {/* Самый срочный уже в карточке сверху — здесь остальные */}
+          {deadlines.length > 0 && (
             <section className="section">
               <div className="section-head"><h2>Ближайшие дедлайны</h2></div>
               <div className="col" style={{ gap: 8 }}>
-                {data.deadlines.map(d => {
+                {deadlines.map(d => {
                   const overdue = d.days_left < 0
                   const soon = d.days_left >= 0 && d.days_left <= 2
                   return (
@@ -115,15 +128,6 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="section">
-            <div className="section-head"><h2>Быстрый доступ</h2></div>
-            <div className="quick">
-              <Link to="/flavors"><Icon.target size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Вкусы</b><br /><span>Тренировка дня</span></div></Link>
-              <Link to="/ranking"><Icon.trophy size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Рейтинг</b><br /><span>{data.rank ? `${data.rank.company} место ${rankPeriod(data.rank.period)}` : 'Вся сеть'}</span></div></Link>
-              <Link to="/shop"><Icon.bag size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Магазин</b><br /><span>{user.coil} COIL</span></div></Link>
-              <Link to="/themes"><Icon.palette size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Темы</b><br /><span>Оформление</span></div></Link>
-            </div>
-          </section>
         </div>
 
         <div>
