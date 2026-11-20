@@ -995,3 +995,18 @@ button.order-row { cursor: pointer; } button.order-row:hover { background: var(-
 .attn-lesson { display: flex; align-items: center; gap: 10px; padding-top: 6px; border-top: 1px solid var(--border); }
 .attn-lesson .list-main b { font-size: 14px; font-weight: 650; white-space: normal; }
 @media (max-width: 520px) { .attn-lessons { padding-left: 0; } }
+
+/* ─── Зоны нажатия ≥ 44 px (разбор этапа 3) ─────────────────────
+   .hit — расширяет область касания до 44×44, не меняя вид (бейдж статуса, монеты, логотип в шапке). */
+.hit { position: relative; }
+.hit::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+.reorder .btn { min-height: 22px; background: none; color: var(--text-muted); }
+.section-head a { min-width: 44px; justify-content: flex-end; }
+@media (max-width: 640px), (pointer: coarse) {
+  .btn.xs { min-height: 44px; }
+  .btn.xs.icon { min-width: 44px; }
+  .segmented button, .segmented.sm button, .pill, .admin-tabs a { min-height: 44px; }
+  .reorder .btn { min-height: 44px; }
+  .lesson-admin-row a.lesson-link { min-height: 44px; }
+  button.row { min-height: 44px; }
+}

@@ -120,9 +120,9 @@ export default function Content() {
                   {c.lessons.map((l, i) => (
                     <div key={l.id} className="lesson-admin-row">
                       {c.editable && (
-                        <span className="col" style={{ gap: 0 }}>
-                          <button className="btn plain xs icon" style={{ minHeight: 22, background: 'none', color: 'var(--text-muted)' }} disabled={i === 0} onClick={() => move(c, i, -1)} aria-label="Выше"><Icon.chevU size={14} /></button>
-                          <button className="btn plain xs icon" style={{ minHeight: 22, background: 'none', color: 'var(--text-muted)' }} disabled={i === c.lessons.length - 1} onClick={() => move(c, i, 1)} aria-label="Ниже"><Icon.chevD size={14} /></button>
+                        <span className="col reorder" style={{ gap: 0 }}>
+                          <button className="btn plain xs icon" disabled={i === 0} onClick={() => move(c, i, -1)} aria-label="Выше"><Icon.chevU size={14} /></button>
+                          <button className="btn plain xs icon" disabled={i === c.lessons.length - 1} onClick={() => move(c, i, 1)} aria-label="Ниже"><Icon.chevD size={14} /></button>
                         </span>
                       )}
                       <Link to={`/admin/lesson/${l.id}`} className="lesson-link">

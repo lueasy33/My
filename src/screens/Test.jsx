@@ -134,7 +134,7 @@ export default function Test({ data, onDone, next }) {
         <div className="row wrap" style={{ gap: 6, justifyContent: 'center', marginTop: 18 }}>
           {qs.map((qq, i) => (
             <button key={qq.id} onClick={() => setIdx(i)} aria-label={`Вопрос ${i + 1}`}
-              style={{ width: 30, height: 30, borderRadius: 9, border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 800, fontSize: 12.5,
+              style={{ width: 44, height: 44, borderRadius: 12, border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 800, fontSize: 14,
                 background: i === idx ? 'var(--brand-500)' : answered(qq) ? 'var(--brand-soft)' : 'var(--surface-1)',
                 color: i === idx ? 'var(--text-on-brand)' : answered(qq) ? 'var(--brand-text)' : 'var(--text-muted)' }}>
               {i + 1}

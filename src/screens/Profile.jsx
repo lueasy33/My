@@ -59,7 +59,7 @@ export default function Profile() {
           <div style={{ minWidth: 0 }}>
             <h1 style={{ fontSize: 24 }}>{user.name}</h1>
             <div className="row wrap" style={{ gap: 6, marginTop: 6 }}>
-              <button className="badge brand" style={{ cursor: 'pointer', fontFamily: 'inherit' }} onClick={() => setPicker('status')}>
+              <button className="badge brand hit" style={{ cursor: 'pointer', fontFamily: 'inherit' }} onClick={() => setPicker('status')}>
                 {data.status_info?.image ? <img src={data.status_info.image} alt="" width={14} height={14} /> : <Icon.star size={12} />}
                 {data.status || 'Выбрать статус'}
               </button>

@@ -227,7 +227,7 @@ function TopBar() {
   const location = useLocation()
   return (
     <header className="topbar">
-      <Link to="/" className="topbar-brand" aria-label="На главную">
+      <Link to="/" className="topbar-brand hit" aria-label="На главную">
         <span className="brand-mark sm"><img src="/assets/logo-lampa-192.webp" alt="" /></span>
         <b>Аладдин</b>
       </Link>
@@ -235,7 +235,7 @@ function TopBar() {
         <Link to="/search" className={'icon-btn' + (location.pathname === '/search' ? ' on' : '')} aria-label="Поиск">
           <Icon.search size={20} />
         </Link>
-        <Link to="/shop" className="coil-chip" aria-label={`${user.coil} COIL`}>
+        <Link to="/shop" className="coil-chip hit" aria-label={`${user.coil} COIL`}>
           <Icon.coin size={16} />{user.coil.toLocaleString('ru')}
         </Link>
         <Link to="/notifications" className={'icon-btn' + (location.pathname === '/notifications' ? ' on' : '')} aria-label={`Уведомления${user.unread ? `, новых: ${user.unread}` : ''}`}>
