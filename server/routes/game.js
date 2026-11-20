@@ -61,7 +61,7 @@ export default async function gameRoutes(app) {
     const mine = db.prepare('SELECT achievement_id, granted_at, reason FROM user_achievements WHERE user_id = ?').all(u.id)
     const byId = Object.fromEntries(mine.map(m => [m.achievement_id, m]))
     const history = db.prepare(`
-      SELECT amount, reason, created_at FROM coil_tx WHERE user_id = ? AND reason != 'opening'
+      SELECT amount, reason, created_at FROM coil_tx WHERE user_id = ? AND reason != 'opening' AND amount != 0
       ORDER BY id DESC LIMIT 30
     `).all(u.id)
     const courses = db.prepare(`

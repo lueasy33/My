@@ -96,14 +96,47 @@ export function awardXp(userId, amount, reason, ref = '') {
   return amount
 }
 
-export function awardCoil(userId, amount, reason, ref = '') {
+// ─── «Старт 50» (решение Евгения 20.11.2026) ─────────────────────────────────
+// В первый день новичок получает не больше 50 COIL. За учёбу (урок, тест, 100 %,
+// курс) — всегда полностью: правило COIL не меняется. Всё остальное (вход, серия,
+// достижения, тренажёр) режется так, чтобы сумма за день не превысила 50;
+// срезанное не переносится. Ручные награды админа и возвраты — вне лимита.
+// Первый день — местная дата (UTC+3) первого начисления, строка opening не в счёт.
+// Сотрудник с перенесённым балансом (opening > 0) новичком не считается.
+export const FIRST_DAY_COIL_CAP = 50
+const ALWAYS_FULL = new Set(['lesson', 'test', 'test_perfect', 'course'])
+const OUTSIDE_CAP = new Set(['opening', 'prize_refund'])
+
+function firstDayRoom(userId) {
+  const today = db.prepare("SELECT date('now', '+3 hours') d").get().d
+  const first = db.prepare("SELECT MIN(date(created_at, '+3 hours')) d FROM coil_tx WHERE user_id = ? AND reason != 'opening'").get(userId).d
+  if (first && first !== today) return null
+  if (db.prepare("SELECT 1 FROM coil_tx WHERE user_id = ? AND reason = 'opening' AND amount > 0").get(userId)) return null
+  // Всё начисленное — сегодня. В сумму не входят возвраты и ручные награды админа.
+  const got = db.prepare(`SELECT COALESCE(SUM(c.amount), 0) s FROM coil_tx c
+    WHERE c.user_id = ? AND c.amount > 0 AND c.reason NOT IN ('opening', 'prize_refund')
+      AND NOT (c.reason = 'achievement' AND EXISTS (
+        SELECT 1 FROM user_achievements ua JOIN achievements a ON a.id = ua.achievement_id
+        WHERE ua.user_id = c.user_id AND a.code = c.ref AND ua.granted_by IS NOT NULL))`).get(userId).s
+  return Math.max(0, FIRST_DAY_COIL_CAP - got)
+}
+
+// Возвращает фактически начисленное (после лимита первого дня).
+// Срезанное до нуля всё равно пишется в журнал строкой 0: уникальный индекс
+// не даст начислить ту же награду позже.
+export function awardCoil(userId, amount, reason, ref = '', { capped = true } = {}) {
   if (amount <= 0) return 0
+  let give = amount
+  if (capped && !ALWAYS_FULL.has(reason) && !OUTSIDE_CAP.has(reason)) {
+    const room = firstDayRoom(userId)
+    if (room !== null) give = Math.min(amount, room)
+  }
   const res = db.prepare(
     'INSERT OR IGNORE INTO coil_tx(user_id, amount, reason, ref) VALUES(?,?,?,?)'
-  ).run(userId, amount, reason, ref)
-  if (res.changes === 0) return 0
-  db.prepare('UPDATE users SET coil = coil + ? WHERE id = ?').run(amount, userId)
-  return amount
+  ).run(userId, give, reason, ref)
+  if (res.changes === 0 || give === 0) return 0
+  db.prepare('UPDATE users SET coil = coil + ? WHERE id = ?').run(give, userId)
+  return give
 }
 
 export function spendCoil(userId, amount, reason, ref = '') {
@@ -276,7 +309,8 @@ export function grantAchievement(userId, a, { by = null, reason = '' } = {}) {
     .run(userId, a.id, by, reason)
   if (res.changes === 0) return false
   const xp = a.xp ? awardXp(userId, a.xp, 'achievement', a.code) : 0
-  const coil = a.coil ? awardCoil(userId, a.coil, 'achievement', a.code) : 0
+  // Ручная награда админа — вне лимита первого дня
+  const coil = a.coil ? awardCoil(userId, a.coil, 'achievement', a.code, { capped: !by }) : 0
   // К достижению может быть привязана аватарка или статус — выдаём вместе с ним
   const extras = []
   for (const [kind, ref] of [['avatar', a.reward_avatar], ['status', a.reward_status]]) {

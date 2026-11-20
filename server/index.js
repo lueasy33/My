@@ -256,14 +256,14 @@ function bumpStreak(user) {
   db.prepare('UPDATE users SET streak = ?, last_active_day = ?, best_streak = MAX(best_streak, ?) WHERE id = ?').run(streak, today, streak, user.id)
   // Ежедневный бонус и серия — только тем, кто учится. Админ в рейтинге не участвует.
   if (user.role === 'admin') return
-  awardCoil(user.id, COIL.dailyLogin, 'daily', today)
+  const daily = awardCoil(user.id, COIL.dailyLogin, 'daily', today)
   if (STREAK_BONUS[streak]) {
     // ref с датой: серия 7 дней, набранная второй раз через месяц, снова даёт бонус
     const bonus = awardCoil(user.id, STREAK_BONUS[streak], 'streak', `${streak}:${today}`)
     if (bonus) notify(user.id, 'streak', `Серия ${streak} дней!`, `+${bonus} COIL`, '/profile')
   }
   if (streak === 7) awardXp(user.id, XP.streak7, 'streak', `7:${today}`)
-  if (streak > 1 && !STREAK_BONUS[streak]) notify(user.id, 'streak', `Серия ${streak} ${plural(streak, 'день', 'дня', 'дней')}`, `+${COIL.dailyLogin} COIL за вход`, '/profile')
+  if (streak > 1 && !STREAK_BONUS[streak]) notify(user.id, 'streak', `Серия ${streak} ${plural(streak, 'день', 'дня', 'дней')}`, daily ? `+${daily} COIL за вход` : '', '/profile')
   checkAchievements(user.id)
 }
 
