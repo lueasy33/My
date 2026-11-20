@@ -12,6 +12,7 @@ import {
   pendingRewards, COIL, XP, STREAK_BONUS
 } from './economy.js'
 import { courseFilterSql } from './access.js'
+import { myRank, normPeriod } from './ranking.js'
 import { initDatabase, startBackups } from './init.js'
 import { startPushWorker, pushPublicKey, subscribe, unsubscribe, sendNow, prefsOf, devicesOf } from './push.js'
 import { startReminders, deadlineReminders } from './reminders.js'
@@ -371,16 +372,8 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
     WHERE ua.user_id = ? ORDER BY ua.granted_at DESC LIMIT 6
   `).all(u.id)
 
-  // Место считаем среди тех же людей, что в рейтинге: активные, без админов
-  const pool = "archived_at IS NULL AND status = 'active' AND role != 'admin'"
-  const rankCompany = db.prepare(`SELECT COUNT(*) + 1 c FROM users WHERE xp > ? AND ${pool}`).get(u.xp).c
-  const rankBranch = u.branch_id
-    ? db.prepare(`SELECT COUNT(*) + 1 c FROM users WHERE xp > ? AND branch_id = ? AND ${pool}`).get(u.xp, u.branch_id).c
-    : null
-  const totalUsers = db.prepare(`SELECT COUNT(*) c FROM users WHERE ${pool}`).get().c
-  const totalBranch = u.branch_id
-    ? db.prepare(`SELECT COUNT(*) c FROM users WHERE branch_id = ? AND ${pool}`).get(u.branch_id).c
-    : 0
+  // Место — та же функция и тот же период по умолчанию, что на странице рейтинга
+  const rank = myRank(u, normPeriod(req.query.period))
 
   const progressRow = db.prepare(`
     SELECT COUNT(*) total,
@@ -397,7 +390,7 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
     suggestion,
     deadlines,
     recent,
-    rank: u.role === 'admin' ? null : { company: rankCompany, companyTotal: totalUsers, branch: rankBranch, branchTotal: totalBranch },
+    rank,
     progress: { passed, total: totalLessons, percent: totalLessons ? Math.round((passed / totalLessons) * 100) : 0 },
     unread: db.prepare('SELECT COUNT(*) c FROM notifications WHERE user_id = ? AND read_at IS NULL').get(u.id).c,
     rewards: pendingRewards(u.id).length

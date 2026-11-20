@@ -5,6 +5,7 @@ import {
   themeUnlocked, boughtThemes, ownedStatuses, notify
 } from '../economy.js'
 import { courseFilterSql } from '../access.js'
+import { myRank, rankedPeople, normPeriod } from '../ranking.js'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -92,13 +93,8 @@ export default async function gameRoutes(app) {
         (SELECT ROUND(AVG(score)) FROM attempts WHERE user_id = ? AND pending = 0) avg,
         (SELECT COUNT(*) FROM attempts WHERE user_id = ?) tries
       FROM attempts WHERE user_id = ? AND passed = 1`).get(u.id, u.id, u.id, u.id)
-    const pool = "archived_at IS NULL AND status = 'active' AND role != 'admin'"
-    const rank = u.role === 'admin' ? null : {
-      company: db.prepare(`SELECT COUNT(*) + 1 c FROM users WHERE xp > ? AND ${pool}`).get(u.xp).c,
-      companyTotal: db.prepare(`SELECT COUNT(*) c FROM users WHERE ${pool}`).get().c,
-      branch: u.branch_id ? db.prepare(`SELECT COUNT(*) + 1 c FROM users WHERE xp > ? AND branch_id = ? AND ${pool}`).get(u.xp, u.branch_id).c : null,
-      branchTotal: u.branch_id ? db.prepare(`SELECT COUNT(*) c FROM users WHERE branch_id = ? AND ${pool}`).get(u.branch_id).c : null
-    }
+    // Место — та же функция, что на странице рейтинга; period в ответе для подписи
+    const rank = myRank(u, normPeriod(req.query.period))
     const flavors = db.prepare(`SELECT COUNT(*) total,
         (SELECT COUNT(*) FROM flavor_progress fp JOIN flavors x ON x.id = fp.flavor_id WHERE fp.user_id = ? AND fp.box >= 3) learned
       FROM flavors WHERE published = 1`).get(u.id)
@@ -173,17 +169,8 @@ export default async function gameRoutes(app) {
   app.get('/api/ranking', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
     const scope = ['company', 'branch', 'branches'].includes(req.query.scope) ? req.query.scope : 'company'
-    const period = ['week', 'month', 'all'].includes(req.query.period) ? req.query.period : 'all'
-    const since = period === 'all' ? null
-      : new Date(Date.now() - (period === 'week' ? 7 : 30) * 86400000).toISOString().replace('T', ' ').slice(0, 19)
-
-    const people = db.prepare(`
-      SELECT u.id AS user_id, u.name, u.xp, u.level, u.avatar_id, u.status_ref, u.branch_id, b.name AS branch,
-        ${since ? "(SELECT COALESCE(SUM(x.amount),0) FROM xp_tx x WHERE x.user_id = u.id AND x.created_at >= ? AND x.reason != 'opening')" : 'u.xp'} AS xp_period,
-        (SELECT COUNT(*) FROM progress p WHERE p.user_id = u.id AND p.status = 'passed') AS lessons
-      FROM users u LEFT JOIN branches b ON b.id = u.branch_id
-      WHERE u.archived_at IS NULL AND u.status = 'active' AND u.role != 'admin'
-    `).all(...(since ? [since] : []))
+    const period = normPeriod(req.query.period)
+    const people = rankedPeople(period)
 
     if (scope === 'branches') {
       const byBranch = new Map()
@@ -200,10 +187,9 @@ export default async function gameRoutes(app) {
       return reply.send({ scope, period, rows, me: rows.find(r => r.mine) || null })
     }
 
+    // Сортировка (XP за период, при равенстве — уроки, спецификация 5.8) — в rankedPeople
     let pool = people
     if (scope === 'branch') pool = people.filter(p => p.branch_id === u.branch_id)
-    // Сортировка по XP; при равенстве — по числу пройденных уроков (спецификация 5.8)
-    pool.sort((a, b) => (b.xp_period - a.xp_period) || (b.lessons - a.lessons) || a.name.localeCompare(b.name, 'ru'))
     const statusTitles = Object.fromEntries(db.prepare("SELECT ref, title FROM shop_items WHERE kind = 'status'").all().map(r => [r.ref, r.title]))
     const row = (p, i) => ({
       rank: i + 1, user_id: p.user_id, name: p.name, branch: p.branch, xp: p.xp_period,

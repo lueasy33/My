@@ -349,6 +349,14 @@ const shop = [
 const insS = db.prepare('INSERT INTO shop_items(kind, ref, title, price, purchaseable, sort) VALUES (?,?,?,?,?,?)')
 for (const s of shop) insS.run(...s)
 
+// Демо-призы: настоящие награды — главная мотивация продавца, пустая вкладка «Призы» её прячет.
+// Цены и остатки — пример, админ меняет их в магазине.
+const insP = db.prepare(`INSERT INTO shop_items(kind, ref, title, price, purchaseable, sort, description, stock)
+  VALUES ('prize', ?, ?, ?, 1, ?, ?, ?)`)
+insP.run('prize_demo_mug', 'Фирменная кружка «Аладдин»', 400, 20, 'Забрать у администратора филиала', 10)
+insP.run('prize_demo_discount', 'Скидка 15 % на покупку в магазине', 600, 21, 'Одна покупка для себя, по согласованию с управляющим', null)
+insP.run('prize_demo_dayoff', 'Дополнительный выходной', 1500, 22, 'Дата — по согласованию с управляющим', 2)
+
 // ─── Вкусы (из content/flavors.json — 40 стартовых позиций) ────
 const flavors = JSON.parse(readFileSync(join(__dirname, '..', 'content', 'flavors.json'), 'utf8'))
 const BRAND_INFO = {
@@ -420,7 +428,28 @@ setMeta('themes', THEMES)
 setMeta('seeded_at', new Date().toISOString())
 
 // ─── Пересчёт уровней по XP ────────────────────────────────────
-const { levelForXp, checkAchievements } = await import('./economy.js')
+const { levelForXp, checkAchievements, XP, COIL } = await import('./economy.js')
+
+// ─── Активность за последние дни ───────────────────────────────
+// Рейтинг «Неделя» и «Месяц» считается по журналу. Без свежих записей у ветеранов
+// за месяц 0 XP, и новичок за первый день оказывается выше всех.
+// Каждый активный сотрудник тренировался в дни своей текущей серии (не больше 14).
+// Суммы входят в заданные балансы: opening ниже = баланс − история.
+{
+  const insFS = db.prepare('INSERT INTO flavor_sessions(user_id, correct, total, day, created_at) VALUES (?,?,?,?,?)')
+  const insTX = db.prepare('INSERT OR IGNORE INTO xp_tx(user_id, amount, reason, ref, created_at) VALUES (?,?,?,?,?)')
+  const insTC = db.prepare('INSERT OR IGNORE INTO coil_tx(user_id, amount, reason, ref, created_at) VALUES (?,?,?,?,?)')
+  const active = db.prepare("SELECT id, streak FROM users WHERE role = 'employee' AND streak > 0 AND last_active_day = ?").all(today())
+  for (const u of active) {
+    for (let d = 1; d <= Math.min(u.streak, 14); d++) {
+      const day = datePlus(-d)
+      const at = `${day} 15:00:00` // 18:00 по Туле
+      insFS.run(u.id, 5, 5, day, at)
+      insTX.run(u.id, XP.flavorTrain, 'flavor_train', day, at)
+      insTC.run(u.id, COIL.flavorTrain, 'flavor_train', day, at)
+    }
+  }
+}
 
 for (const u of db.prepare('SELECT id, xp FROM users').all()) {
   db.prepare('UPDATE users SET level = ? WHERE id = ?').run(levelForXp(u.xp), u.id)

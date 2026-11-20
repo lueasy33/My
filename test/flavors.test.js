@@ -60,7 +60,7 @@ test('итог тренировки считает сервер: ошибка �
   assert.equal(r.json.perfect, false)
   assert.equal(r.json.gained.coil, 18)
   assert.equal(coilBy(uid, 'flavor_perfect'), 0)
-  const s = S.db.prepare('SELECT correct, total FROM flavor_sessions WHERE user_id = ?').get(uid)
+  const s = S.db.prepare('SELECT correct, total FROM flavor_sessions WHERE user_id = ? ORDER BY id DESC LIMIT 1').get(uid)
   assert.deepEqual({ ...s }, { correct: 4, total: 5 })
 })
 

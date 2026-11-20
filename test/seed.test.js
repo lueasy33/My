@@ -90,3 +90,21 @@ test('старая база с битой картинкой урока 1 чин
   assert.ok(existsSync(join(root, 'public', src)), src)
   S.db.prepare('DELETE FROM blocks WHERE id = ?').run(id)
 })
+
+test('у ветеранов есть XP за последние 30 дней — рейтинг «Месяц» не пустой', () => {
+  const since = new Date(Date.now() - 30 * 86400000).toISOString().replace('T', ' ').slice(0, 19)
+  const rows = S.db.prepare(`SELECT u.name, u.streak, (SELECT COALESCE(SUM(x.amount),0) FROM xp_tx x
+    WHERE x.user_id = u.id AND x.created_at >= ? AND x.reason != 'opening') xp
+    FROM users u WHERE u.role = 'employee' AND u.streak >= 3 AND u.last_active_day = date('now')`).all(since)
+  assert.ok(rows.length >= 3, 'мало активных ветеранов в демо')
+  for (const r of rows) assert.ok(r.xp > 0, `${r.name}: 0 XP за месяц при серии ${r.streak}`)
+  // История не пишется в будущее и не спорит с сегодняшним тренажёром
+  assert.equal(S.db.prepare("SELECT COUNT(*) c FROM xp_tx WHERE created_at > datetime('now')").get().c, 0)
+})
+
+test('в магазине есть демо-призы: кружка, скидка, выходной', () => {
+  const prizes = S.db.prepare("SELECT title, price, purchaseable FROM shop_items WHERE kind = 'prize'").all()
+  assert.ok(prizes.length >= 3)
+  for (const p of prizes) assert.ok(p.price > 0 && p.purchaseable === 1, p.title)
+  for (const w of [/кружка/i, /скидка/i, /выходной/i]) assert.ok(prizes.some(p => w.test(p.title)), String(w))
+})

@@ -11,6 +11,7 @@ import {
   awardXp, awardCoil, checkAchievements, finishLesson, grantAchievement, grantItem, notify, queueReward, XP, COIL
 } from '../economy.js'
 import { canSeeCourse, canEditCourse } from '../access.js'
+import { withAuditTitles } from '../audit-text.js'
 
 // ─────────────────────────────────────────────────────────────
 // Админка. Все проверки прав на сервере. Управляет только администратор.
@@ -103,11 +104,11 @@ export default async function adminRoutes(app) {
         JOIN tests t ON t.id = a.test_id JOIN lessons l ON l.id = t.lesson_id
         WHERE a.pending = 1 ${w} ORDER BY a.id LIMIT 5
       `).all(...p),
-      recentLog: db.prepare(`
+      recentLog: withAuditTitles(db.prepare(`
         SELECT al.*, u.name AS actor FROM audit_log al LEFT JOIN users u ON u.id = al.actor_id
         ${scope ? 'WHERE u.branch_id = ?' : ''}
         ORDER BY al.id DESC LIMIT 12
-      `).all(...p)
+      `).all(...p))
     })
   })
 
@@ -161,8 +162,9 @@ export default async function adminRoutes(app) {
   // ─── Журнал действий ────────────────────────────────────────
   app.get('/api/admin/audit', admin, async (req, reply) => {
     reply.send({
-      items: db.prepare(`SELECT al.*, u.name AS actor FROM audit_log al LEFT JOIN users u ON u.id = al.actor_id
-        ORDER BY al.id DESC LIMIT 300`).all()
+      // title — безличная подпись («Сотрудник создан»), actor — кто сделал
+      items: withAuditTitles(db.prepare(`SELECT al.*, u.name AS actor FROM audit_log al LEFT JOIN users u ON u.id = al.actor_id
+        ORDER BY al.id DESC LIMIT 300`).all())
     })
   })
 
