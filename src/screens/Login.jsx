@@ -35,7 +35,7 @@ export default function Login({ onLogin }) {
 
   async function submit(e) {
     e.preventDefault()
-    if (digits.length < 10) { setErr('Введите номер полностью — 10 цифр после +7'); return }
+    if (digits.length < 10) { setErr('Введи номер полностью — 10 цифр после +7'); return }
     setErr(''); setBusy(true)
     try {
       await api.login('+7' + digits, password)

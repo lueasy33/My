@@ -10,7 +10,7 @@ async function req(path, opts = {}) {
       body: opts.raw ? opts.body : (opts.body ? JSON.stringify(opts.body) : undefined)
     })
   } catch {
-    const err = new Error('Нет связи с сервером. Проверьте интернет')
+    const err = new Error('Нет связи с сервером. Проверь интернет')
     err.status = 0
     throw err
   }
@@ -18,7 +18,7 @@ async function req(path, opts = {}) {
   let data = null
   try { data = text ? JSON.parse(text) : null } catch { data = { raw: text } }
   if (!res.ok) {
-    const err = new Error(data?.error || (res.status >= 500 ? 'Ошибка на сервере. Попробуйте позже' : 'Ошибка запроса'))
+    const err = new Error(data?.error || (res.status >= 500 ? 'Ошибка на сервере. Попробуй позже' : 'Ошибка запроса'))
     err.status = res.status
     err.data = data
     // Сессия истекла — возвращаем на экран входа

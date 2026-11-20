@@ -115,7 +115,7 @@ export default async function learnRoutes(app) {
       return reply.code(404).send({ error: 'Урок не найден' })
     }
     if (lessonLocks(u, lesson.course_id).has(lesson.id)) {
-      return reply.code(403).send({ error: 'Сначала пройдите предыдущий урок курса', locked: true, course_id: lesson.course_id })
+      return reply.code(403).send({ error: 'Сначала пройди предыдущий урок курса', locked: true, course_id: lesson.course_id })
     }
 
     const positions = Object.fromEntries(db.prepare(
@@ -174,7 +174,7 @@ export default async function learnRoutes(app) {
       return reply.code(404).send({ error: 'Урок не найден' })
     }
     if (lessonLocks(u, lesson.course_id).has(lesson.id)) {
-      return reply.code(403).send({ error: 'Сначала пройдите предыдущий урок курса' })
+      return reply.code(403).send({ error: 'Сначала пройди предыдущий урок курса' })
     }
     const hasTest = db.prepare(`SELECT COUNT(*) c FROM questions q JOIN tests t ON t.id = q.test_id WHERE t.lesson_id = ?`)
       .get(lesson.id).c > 0
@@ -201,7 +201,7 @@ export default async function learnRoutes(app) {
       return reply.code(404).send({ error: 'Тест не найден' })
     }
     if (lessonLocks(u, test.course_id).has(test.lesson_id)) {
-      return reply.code(403).send({ error: 'Сначала пройдите предыдущий урок курса' })
+      return reply.code(403).send({ error: 'Сначала пройди предыдущий урок курса' })
     }
     const pendingNow = db.prepare('SELECT 1 FROM attempts WHERE user_id = ? AND test_id = ? AND pending = 1').get(u.id, test.id)
     if (pendingNow) return reply.code(409).send({ error: 'Предыдущий ответ ещё на проверке у администратора' })

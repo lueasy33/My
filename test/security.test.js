@@ -178,7 +178,7 @@ test('лимит по номеру: 10 ошибок с разных адресо
   // 11-я с нового адреса и с верным паролем — всё равно закрыто
   const blocked = await from('10.0.1.1', DEMO_PASSWORD)
   assert.equal(blocked.status, 429)
-  assert.match(blocked.json.error, /Слишком много попыток\. Повторите через \d+ мин\./)
+  assert.match(blocked.json.error, /Слишком много попыток\. Повтори через \d+ мин\./)
   assert.equal(blocked.headers.get('set-cookie'), null)
   // Другой номер с того же адреса не задет
   const other = await P.call('/api/auth/login', {

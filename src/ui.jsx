@@ -113,7 +113,7 @@ export function LoadError({ error, onRetry }) {
     <div className="card center" style={{ padding: '32px 20px' }}>
       <div style={{ color: 'var(--danger-text)', display: 'flex', justifyContent: 'center', marginBottom: 10 }}><Icon.alert size={28} /></div>
       <h3 style={{ fontSize: 16 }}>Не получилось загрузить</h3>
-      <p className="muted small" style={{ marginTop: 6 }}>{error?.status === 0 || !navigator.onLine ? 'Похоже, пропал интернет.' : error?.message || 'Попробуйте ещё раз.'}</p>
+      <p className="muted small" style={{ marginTop: 6 }}>{error?.status === 0 || !navigator.onLine ? 'Похоже, пропал интернет.' : error?.message || 'Попробуй ещё раз.'}</p>
       {onRetry && <button className="btn ghost sm" style={{ marginTop: 14 }} onClick={onRetry}><Icon.refresh size={15} /> Повторить</button>}
     </div>
   )

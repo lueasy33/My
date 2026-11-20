@@ -59,12 +59,12 @@ export async function enablePush() {
   const before = Notification.permission
   const perm = await askPermission()
   if (perm !== 'granted') reportDiag('permission', { before, answer: perm })
-  if (perm !== 'granted') throw new Error(perm === 'denied' ? 'Браузер запретил уведомления — ниже написано, как это исправить' : 'Вы не дали разрешение. Нажмите «Включить» ещё раз и выберите «Разрешить»')
+  if (perm !== 'granted') throw new Error(perm === 'denied' ? 'Браузер запретил уведомления — ниже написано, как это исправить' : 'Ты не дал разрешение. Нажми «Включить» ещё раз и выбери «Разрешить»')
   const { key } = await api.push()
   if (!key) throw new Error('На сервере push-уведомления выключены')
   let reg
   try { reg = await navigator.serviceWorker.register('/sw.js') }
-  catch (e) { reportDiag('register', { error: String(e?.message || e) }); throw new Error('Этот браузер не поддерживает уведомления. Откройте сайт в Chrome, Edge или Яндекс Браузере') }
+  catch (e) { reportDiag('register', { error: String(e?.message || e) }); throw new Error('Этот браузер не поддерживает уведомления. Открой сайт в Chrome, Edge или Яндекс Браузере') }
   await navigator.serviceWorker.ready
   let sub = await reg.pushManager.getSubscription()
   if (!sub) {

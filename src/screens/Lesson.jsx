@@ -86,16 +86,15 @@ export default function Lesson() {
   return (
     <>
       <header className="lesson-top">
-        <button className="icon-btn" onClick={() => nav(`/course/${lesson.course_id}`)} aria-label="К курсу">
+        {/* Одна кнопка возврата: в тесте «‹» ведёт к уроку, в уроке — к курсу */}
+        <button className="icon-btn" onClick={() => mode === 'test' ? (load(), window.scrollTo(0, 0)) : nav(`/course/${lesson.course_id}`)}
+          aria-label={mode === 'test' ? 'К уроку' : 'К курсу'} title={mode === 'test' ? 'К уроку' : 'К курсу'}>
           <Icon.chevL size={20} />
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="tiny muted bold ellipsis">{lesson.course} · урок {index} из {siblings.length}</div>
           <div className="bold ellipsis" style={{ fontSize: 14.5 }}>{mode === 'test' ? `Тест: ${lesson.title}` : lesson.title}</div>
         </div>
-        {mode === 'test' && (
-          <button className="btn ghost xs" onClick={() => { load(); window.scrollTo(0, 0) }}>К уроку</button>
-        )}
         <div className="progress-line"><i style={{ width: `${mode === 'read' ? scrolled : 100}%` }} /></div>
       </header>
 
