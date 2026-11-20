@@ -33,14 +33,15 @@ export default function Overview() {
 
       <div className="kpis">
         <Kpi to="/admin/users" v={c.users} k={`${plural(c.users, 'сотрудник', 'сотрудника', 'сотрудников')} · ${c.active7} активны за неделю`} />
-        <Kpi to="/admin/content" v={c.courses} k={`курсов · ${c.lessons} уроков${c.drafts ? ` · ${c.drafts} черновик.` : ''}`} />
-        <Kpi to="/admin/reviews" v={c.pending} k="ответов ждут проверки" warn={c.pending > 0} />
+        <Kpi to="/admin/content" v={c.courses} k={`курсов · ${c.lessons} уроков${c.drafts ? ` · ${c.drafts} ${plural(c.drafts, 'черновик', 'черновика', 'черновиков')}` : ''}`} />
+        {/* Открытых вопросов почти нет — карточка нужна, только когда есть что проверять */}
+        {c.pending > 0 && <Kpi to="/admin/reviews" v={c.pending} k={`${plural(c.pending, 'ответ ждёт', 'ответа ждут', 'ответов ждут')} проверки`} warn />}
         <Kpi v={c.overdue} k="просроченных уроков" danger={c.overdue > 0} />
       </div>
 
       <div className="dash-grid">
         <section className="section">
-          <div className="section-head"><h2>Просрочки · требует внимания</h2><span className="small muted">{open.length} без контакта</span></div>
+          <div className="section-head"><h2>Просрочки · требует внимания</h2><span className="small muted" style={{ whiteSpace: 'nowrap' }}>{open.length} без контакта</span></div>
           {data.attention.length === 0 ? (
             <div className="empty"><Icon.check size={24} style={{ color: 'var(--success-text)' }} /><p className="small muted" style={{ marginTop: 6 }}>Просрочек нет — все успевают</p></div>
           ) : (

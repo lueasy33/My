@@ -173,7 +173,7 @@ export default function Users() {
         <Modal title={edit.id ? 'Изменить сотрудника' : 'Новый сотрудник'} onClose={() => setEdit(null)} width={520}
           footer={<><button className="btn ghost" onClick={() => setEdit(null)}>Отмена</button><button className="btn" form="user-form">{edit.id ? 'Сохранить' : 'Создать'}</button></>}>
           <form id="user-form" onSubmit={save} className="col" style={{ gap: 12 }}>
-            <div className="field"><label>Фамилия и имя</label><input className="input" required value={edit.name} onChange={e => setEdit(f => ({ ...f, name: e.target.value }))} autoFocus /></div>
+            <div className="field"><label>Имя и фамилия</label><input className="input" required placeholder="Алексей Гусев" value={edit.name} onChange={e => setEdit(f => ({ ...f, name: e.target.value }))} autoFocus /></div>
             <div className="form-grid two">
               <div className="field"><label>Телефон (логин)</label><input className="input" inputMode="tel" required value={maskPhone(edit.phone)} onChange={e => setEdit(f => ({ ...f, phone: e.target.value }))} placeholder="+7 (___) ___-__-__" /></div>
               <div className="field"><label>Дата приёма</label><input className="input" type="date" value={edit.hired_at || ''} onChange={e => setEdit(f => ({ ...f, hired_at: e.target.value }))} /></div>

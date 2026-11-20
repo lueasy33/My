@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useApp } from '../App'
 import { PushPrompt } from './PushSettings'
-import { Icon, PageSkeleton, ProgressBar, LevelRing, LoadError, useLoad, plural, daysLabel, IMPORTANCE, iconSrc } from '../ui'
+import { Icon, PageSkeleton, ProgressBar, LevelRing, LoadError, useLoad, plural, daysLabel, IMPORTANCE, iconSrc, firstName } from '../ui'
 
 export { plural }
 
@@ -16,7 +16,7 @@ export default function Dashboard() {
   const p = user.levelProgress
   const hour = new Date().getHours()
   const greet = hour < 6 ? 'Доброй ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер'
-  const firstName = user.name.split(' ')[0]
+  const name = firstName(user.name)
 
   return (
     <main className="page">
@@ -24,7 +24,7 @@ export default function Dashboard() {
         <div className="row" style={{ alignItems: 'center', gap: 16 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="muted small bold">{greet}</div>
-            <h1 style={{ marginTop: 2 }}>{firstName}</h1>
+            <h1 style={{ marginTop: 2 }}>{name}</h1>
             <div className="small muted" style={{ marginTop: 2 }}>
               {user.status ? <span className="status-tag">{user.status}</span> : null}
               {user.status && branch ? ' · ' : ''}{branch?.name}

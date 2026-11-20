@@ -10,7 +10,7 @@
 //                 отправленные «потом», путают человека и могут списать COIL дважды.
 //   /uploads/   → только сеть (видео отдаётся частями, кэшировать его нельзя)
 
-const VERSION = 'v4'
+const VERSION = 'v5' // v5: новые значки ach_*.webp под старыми именами — старый кэш /assets/ нужно сбросить
 const SHELL = `shell-${VERSION}`
 const ASSETS = `assets-${VERSION}`
 const API = `api-${VERSION}`

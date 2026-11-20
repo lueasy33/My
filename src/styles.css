@@ -49,7 +49,9 @@ html, body { max-width: 100%; overflow-x: hidden; }
   background: var(--brand-soft); border: 1px solid var(--border);
   animation: pulse 1.4s ease-in-out infinite;
 }
-.boot-mark img { width: 36px; height: 36px; }
+/* Логотип-лампа — уже скруглённый квадрат со своим фоном: плитка не добавляет ни фона, ни рамки */
+.boot-mark { background: none; border: 0; }
+.boot-mark img, .brand-mark img { width: 100%; height: 100%; display: block; }
 @keyframes pulse { 50% { transform: scale(.94); opacity: .7 } }
 
 /* ─── Скелетоны ─────────────────────────────────────────────── */
@@ -82,9 +84,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
   background: linear-gradient(140deg, var(--brand-500), var(--brand-700));
   box-shadow: 0 6px 18px -8px var(--brand-500);
 }
-.brand-mark img { width: 22px; height: 22px; }
+.brand-mark { background: none; box-shadow: none; }
 .brand-mark.sm { width: 30px; height: 30px; border-radius: 9px; }
-.brand-mark.sm img { width: 18px; height: 18px; }
 
 .icon-btn {
   position: relative; display: grid; place-items: center;
@@ -197,6 +198,11 @@ html[data-nav="gradient"] .tabbar {
   background: linear-gradient(110deg, var(--brand-600, var(--brand-500)), var(--brand-500) 50%, var(--reward-500, var(--brand-500)));
   box-shadow: 0 16px 40px -14px var(--brand-500);
 }
+/* Подложка под плавающими панелями (разбор этапа 1: в щели под меню просвечивал текст).
+   Вторая тень цвета фона сдвинута вниз и закрывает зазор до края экрана; сама панель не перекрывается. */
+html[data-nav="floating"] .tabbar, html:not([data-nav]) .tabbar { box-shadow: 0 16px 40px -16px rgba(0,0,0,.55), 0 48px 0 16px var(--bg-base); }
+html[data-nav="dock"] .tabbar { box-shadow: 0 20px 50px -18px rgba(0,0,0,.6), inset 0 1px 0 color-mix(in srgb, #fff 12%, transparent), 0 48px 0 16px var(--bg-base); }
+html[data-nav="gradient"] .tabbar { box-shadow: 0 16px 40px -14px var(--brand-500), 0 48px 0 16px var(--bg-base); }
 html[data-nav="gradient"] .tab { color: color-mix(in srgb, #fff 72%, transparent); }
 html[data-nav="gradient"] .tab.active { color: #fff; }
 html[data-nav="gradient"] .tab-indicator::before { background: color-mix(in srgb, #fff 20%, transparent); }
@@ -403,7 +409,6 @@ a.card { display: block; color: inherit; text-decoration: none; }
 }
 .login-card { width: 100%; max-width: 400px; padding: 30px 24px 24px; border-radius: 24px; background: color-mix(in srgb, var(--surface-1) 92%, transparent); border: 1px solid var(--border); box-shadow: 0 30px 80px -40px rgba(0,0,0,.6); }
 .login-card .brand-mark { width: 60px; height: 60px; border-radius: 18px; margin: 0 auto 16px; }
-.login-card .brand-mark img { width: 36px; height: 36px; }
 .pass-wrap { position: relative; }
 .pass-wrap .input { padding-right: 52px; }
 .pass-wrap .icon-btn { position: absolute; right: 2px; top: 2px; }
@@ -622,6 +627,18 @@ blockquote { margin: 18px 0; padding: 4px 0 4px 16px; border-left: 3px solid var
 .reward-level span { font-size: 52px; font-weight: 800; letter-spacing: -.04em; }
 .reward-title { font-size: 24px; margin-top: 6px; }
 .reward-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); font-size: 13.5px; color: var(--text-muted); font-style: italic; }
+/* Несколько наград — одним списком */
+.reward-list-card { max-height: calc(100dvh - 32px); display: flex; flex-direction: column; }
+.reward-list { list-style: none; margin: 16px 0 0; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 0; position: relative; }
+.reward-list li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); }
+.reward-list-ico { flex: none; width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; overflow: hidden; background: color-mix(in srgb, var(--reward-300) 18%, var(--surface-1)); }
+.reward-list-ico img { width: 36px; height: 36px; object-fit: contain; }
+.reward-list-ico img.reward-avatar { width: 44px; height: 44px; border-radius: 999px; }
+.reward-list-ico .reward-level span { font-size: 18px; }
+.reward-list-ico .reward-level svg { width: 22px; height: 22px; }
+.reward-list-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.reward-list-main b { font-size: 15px; overflow-wrap: anywhere; }
+.reward-list-gain { flex: none; display: flex; flex-direction: column; align-items: flex-end; color: var(--reward-text); font-weight: 750; white-space: nowrap; }
 .reward-xp { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
 .confetti i { position: absolute; top: -20px; display: block; opacity: 0; animation-name: fall; animation-timing-function: cubic-bezier(.25,.6,.4,1); animation-fill-mode: forwards; }

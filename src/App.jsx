@@ -30,8 +30,22 @@ export default function App() {
   const [user, setUser] = useState(undefined)
   const [branch, setBranch] = useState(null)
   const [rewards, setRewards] = useState([])
+  // Окно наград показываем в предсказуемый момент: на главной или сразу после действия
+  // (showRewards / refresh({ show: true })), а не на любом экране, куда человек зашёл.
+  const [rewardsOpen, setRewardsOpen] = useState(false)
+  const rewardsRef = useRef([])
+  rewardsRef.current = rewards
   const location = useLocation()
   const checking = useRef(false)
+  // Сколько открытых ответов ждут проверки — без них вкладка «Проверки» не нужна
+  const [reviewsPending, setReviewsPending] = useState(0)
+  const isAdmin = user?.role === 'admin'
+  const inAdmin = location.pathname.startsWith('/admin')
+  useEffect(() => {
+    if (isAdmin) api.admin.reviews().then(r => setReviewsPending(r.reviews?.length || 0)).catch(() => {})
+  }, [isAdmin, inAdmin])
+  // «Домашний» экран: у продавца — главная, у администратора — «Управление»
+  const home = isAdmin ? '/admin' : '/'
 
   const load = useCallback(async () => {
     try {
@@ -47,16 +61,18 @@ export default function App() {
 
   // Одна точка показа наград (спецификация 5.13): после любого действия экран
   // зовёт checkRewards(), и всё, что сотрудник ещё не видел, показывается по очереди.
-  const checkRewards = useCallback(async () => {
+  const checkRewards = useCallback(async ({ show = false } = {}) => {
     if (checking.current) return
     checking.current = true
     try {
       const res = await api.rewards()
-      if (res.items.length) setRewards(res.items)
+      if (res.items.length) { setRewards(res.items); if (show) setRewardsOpen(true) }
     } catch {} finally { checking.current = false }
   }, [])
 
-  const refresh = useCallback(async () => { await load(); await checkRewards() }, [load, checkRewards])
+  const refresh = useCallback(async (opts) => { await load(); await checkRewards(opts) }, [load, checkRewards])
+  // Экран результата сам решает, когда открыть накопленные награды (тест: после того, как виден балл)
+  const showRewards = useCallback(() => { if (rewardsRef.current.length) setRewardsOpen(true) }, [])
 
   useEffect(() => { load().then(u => { if (u) checkRewards() }) }, [load, checkRewards])
 
@@ -80,22 +96,25 @@ export default function App() {
   }, [user?.reduce_motion])
 
   useEffect(() => { window.scrollTo(0, 0) }, [location.pathname])
+  // Пришёл на главную — забираем то, что начислилось по дороге (вход за день, серия)
+  const signedIn = !!user
+  useEffect(() => { if (signedIn && location.pathname === home) checkRewards() }, [location.pathname, signedIn, home, checkRewards])
 
   async function closeRewards() {
     const ids = rewards.map(r => r.id)
-    setRewards([])
+    setRewards([]); setRewardsOpen(false)
     try { await api.ackRewards(ids) } catch {}
     load()
   }
 
   if (user === undefined) {
-    return <div className="boot"><div className="boot-mark"><img src="/assets/svg/ava_01_ugolek.svg" alt="" /></div></div>
+    return <div className="boot"><div className="boot-mark"><img src="/assets/logo-lampa-192.webp" alt="" /></div></div>
   }
   if (user === null) return <Login onLogin={() => refresh()} />
   if (!user.onboarding_done && location.pathname !== '/onboarding') return <Navigate to="/onboarding" replace />
   if (location.pathname === '/onboarding') {
     return (
-      <Ctx.Provider value={{ user, setUser, reload: load, refresh, checkRewards, branch }}>
+      <Ctx.Provider value={{ user, setUser, reload: load, refresh, checkRewards, showRewards, branch, reviewsPending }}>
         <Onboarding />
       </Ctx.Provider>
     )
@@ -105,13 +124,13 @@ export default function App() {
   const staff = user.role === 'admin'
 
   return (
-    <Ctx.Provider value={{ user, setUser, reload: load, refresh, checkRewards, branch }}>
+    <Ctx.Provider value={{ user, setUser, reload: load, refresh, checkRewards, showRewards, branch, reviewsPending }}>
       <div className={'shell' + (focus ? ' focus' : '')}>
         <Sidebar />
         <div className="shell-main">
           {!focus && <TopBar />}
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={staff ? <Navigate to="/admin" replace /> : <Dashboard />} />
             <Route path="/library" element={<Library />} />
             <Route path="/course/:id" element={<Course />} />
             <Route path="/lesson/:id" element={<Lesson />} />
@@ -131,7 +150,7 @@ export default function App() {
           </Routes>
         </div>
         {!focus && <TabBar />}
-        {rewards.length > 0 && (
+        {rewards.length > 0 && (rewardsOpen || location.pathname === home) && (
           <RewardWindow items={rewards} onClose={closeRewards} sound={user.sound} reduceMotion={user.reduce_motion} />
         )}
       </div>
@@ -139,10 +158,11 @@ export default function App() {
   )
 }
 
-function navItems(user) {
+function navItems(user, reviewsPending) {
   const staff = user.role === 'admin'
   const main = [
-    { to: '/', label: 'Главная', icon: Icon.home, end: true },
+    // У администратора главная — «Управление», отдельная «Главная» ученика ему не нужна
+    ...(staff ? [] : [{ to: '/', label: 'Главная', icon: Icon.home, end: true }]),
     { to: '/library', label: 'Обучение', icon: Icon.book },
     { to: '/flavors', label: 'Вкусы', icon: Icon.target },
     { to: '/ranking', label: 'Рейтинг', icon: Icon.trophy },
@@ -154,19 +174,19 @@ function navItems(user) {
     { to: '/admin/content', label: 'Контент', icon: Icon.book },
     { to: '/admin/workshop', label: 'Мастерская', icon: Icon.sparkles },
     { to: '/admin/users', label: 'Сотрудники', icon: Icon.users },
-    { to: '/admin/reviews', label: 'Проверки', icon: Icon.check },
+    ...(reviewsPending > 0 ? [{ to: '/admin/reviews', label: `Проверки · ${reviewsPending}`, icon: Icon.check }] : []),
     { to: '/analytics', label: 'Аналитика', icon: Icon.chart }
   ] : []
   return { main, manage }
 }
 
 function Sidebar() {
-  const { user, branch } = useApp()
-  const { main, manage } = navItems(user)
+  const { user, branch, reviewsPending } = useApp()
+  const { main, manage } = navItems(user, reviewsPending)
   return (
     <aside className="sidebar" aria-label="Меню">
       <Link to="/" className="brand">
-        <span className="brand-mark"><img src="/assets/svg/ava_01_ugolek.svg" alt="" /></span>
+        <span className="brand-mark"><img src="/assets/logo-lampa-192.webp" alt="" /></span>
         <span>
           <b>Аладдин</b>
           <small>обучение</small>
@@ -207,7 +227,7 @@ function TopBar() {
   return (
     <header className="topbar">
       <Link to="/" className="topbar-brand" aria-label="На главную">
-        <span className="brand-mark sm"><img src="/assets/svg/ava_01_ugolek.svg" alt="" /></span>
+        <span className="brand-mark sm"><img src="/assets/logo-lampa-192.webp" alt="" /></span>
         <b>Аладдин</b>
       </Link>
       <div className="topbar-right">
@@ -232,12 +252,13 @@ function TopBar() {
 function TabBar() {
   const { user } = useApp()
   const staff = user.role === 'admin'
+  // Тренажёр вкусов — ежедневная механика, поэтому он в центре меню. Рейтинг — на главной и в профиле.
   const tabs = [
-    { to: '/', label: 'Главная', icon: Icon.home, end: true },
-    { to: '/library', label: 'Обучение', icon: Icon.book },
     staff
-      ? { to: '/admin', label: 'Админка', icon: Icon.grid }
-      : { to: '/ranking', label: 'Рейтинг', icon: Icon.trophy },
+      ? { to: '/admin', label: 'Управление', icon: Icon.grid }
+      : { to: '/', label: 'Главная', icon: Icon.home, end: true },
+    { to: '/library', label: 'Обучение', icon: Icon.book },
+    { to: '/flavors', label: 'Вкусы', icon: Icon.target },
     { to: '/shop', label: 'Магазин', icon: Icon.bag },
     { to: '/profile', label: 'Профиль', icon: Icon.user }
   ]

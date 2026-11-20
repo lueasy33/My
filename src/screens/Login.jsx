@@ -48,7 +48,7 @@ export default function Login({ onLogin }) {
   return (
     <div className="login">
       <form className="login-card" onSubmit={submit} noValidate>
-        <div className="brand-mark"><img src="/assets/svg/ava_01_ugolek.svg" alt="" /></div>
+        <div className="brand-mark"><img src="/assets/logo-lampa-192.webp" alt="" /></div>
         <div className="center" style={{ marginBottom: 26 }}>
           <h1 style={{ fontSize: 26 }}>Аладдин</h1>
           <p className="muted" style={{ marginTop: 6, fontSize: 14.5 }}>Обучение для своих. Войди, чтобы продолжить</p>

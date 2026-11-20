@@ -25,7 +25,13 @@ export default function Flavors() {
 
   return (
     <main className="page">
-      <PageHead title="Вкусы" sub={`Знаю ${data.known} из ${data.total} · выучено ${data.mastered}`} />
+      {/* «Знаю» растёт не сразу: вкус нужно верно назвать 3 раза подряд на повторениях в разные дни */}
+      <PageHead title="Вкусы" sub={data.started
+        ? `Изучаю ${data.started} из ${data.total} · знаю ${data.known}${data.mastered ? ` · выучено ${data.mastered}` : ''}`
+        : `${data.total} ${plural(data.total, 'вкус', 'вкуса', 'вкусов')} в коллекции`} />
+      {data.started > 0 && data.known === 0 && (
+        <p className="tiny muted" style={{ marginTop: -8, marginBottom: 12 }}>Вкус станет «знаю», когда ответишь на него верно 3 раза подряд в разные дни</p>
+      )}
 
       <div className="flavor-hero">
         <div className="flavor-hero-stats">
@@ -35,7 +41,9 @@ export default function Flavors() {
           <div>
             <b>{goalDone ? 'Цель дня выполнена!' : 'Цель дня — 1 тренировка'}</b>
             <span className="small muted" style={{ display: 'block' }}>
-              {data.today.answered ? `Сегодня ${data.today.correct} из ${data.today.answered} верно` : 'Пара минут — и вкусы запоминаются'}
+              {data.today.answered
+                ? `Сегодня ${data.today.correct} из ${data.today.answered} ${plural(data.today.answered, 'ответа', 'ответов', 'ответов')} верно`
+                : 'Пара минут — и вкусы запоминаются'}
             </span>
           </div>
           <span className="chip-reward" style={{ marginLeft: 'auto' }} title="Дней подряд с тренировкой"><Icon.flame size={16} />{data.streak}</span>

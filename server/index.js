@@ -502,8 +502,10 @@ app.get('/manifest.webmanifest', (req, reply) => {
     name: 'Аладдин LMS', short_name: 'Аладдин', start_url: '/', display: 'standalone',
     background_color: '#0C0A14', theme_color: '#0C0A14', lang: 'ru',
     icons: [
-      { src: '/assets/png-512/ava_01_ugolek.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/assets/png-512/ava_01_ugolek.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      // Логотип «лампа» (выбор Евгения 20.11). Только «any»: у картинки свои скругления и
+      // прозрачные углы — как «maskable» телефон обрезал бы лампу своей маской.
+      { src: '/assets/png-512/logo-lampa-512-light.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/assets/logo-lampa-180.png', sizes: '180x180', type: 'image/png', purpose: 'any' }
     ]
   }))
 })

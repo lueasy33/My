@@ -29,7 +29,8 @@ export default function Shop() {
   if (!data) return <main className="page"><PageSkeleton /></main>
 
   const prizes = data.items.filter(i => i.kind === 'prize')
-  const current = tab || (prizes.length ? 'prize' : 'avatar')
+  // Настоящие призы — главная мотивация продавца: магазин всегда открывается на них
+  const current = tab || 'prize'
   const items = data.items.filter(i => i.kind === current)
   const isAdmin = user.role === 'admin'
 
@@ -41,7 +42,7 @@ export default function Shop() {
         toast('Заказ принят — администратор выдаст приз', 'success')
       } else await api.buy(item.id)
       setConfirm(null)
-      await Promise.all([reload(), refresh()])
+      await Promise.all([reload(), refresh({ show: true })])
     } catch (e) { toast(e.message, 'error') } finally { setBusy(false) }
   }
 

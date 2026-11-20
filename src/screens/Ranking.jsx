@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { api } from '../api'
 import { useApp } from '../App'
-import { Avatar, PageSkeleton, LoadError, Empty, Tabs, PageHead, Icon, useLoad, plural } from '../ui'
+import { Avatar, PageSkeleton, LoadError, Empty, Tabs, PageHead, Icon, useLoad, plural, firstName } from '../ui'
 
 export default function Ranking() {
   const { user } = useApp()
@@ -35,25 +35,27 @@ export default function Ranking() {
 
 function People({ rows, me, total }) {
   const top = rows.slice(0, 3)
+  // Пьедестал — только когда у всей тройки есть XP: «3-е место с 0 XP» выглядит как ошибка
+  const podium = top.length === 3 && top.every(p => p.xp > 0)
   const rest = rows.slice(3)
   const meVisible = me && rows.some(r => r.me)
-  const order = top.length === 3 ? [top[1], top[0], top[2]] : top
+  const order = podium ? [top[1], top[0], top[2]] : top
   return (
     <>
-      {top.length === 3 && (
+      {podium && (
         <div className="podium">
           {order.map(p => (
             <div key={p.user_id} className={`podium-col p${p.rank}`}>
               <Avatar id={p.avatar_id} size={p.rank === 1 ? 64 : 52} ring={p.rank === 1} />
               <div className="place">{p.rank}</div>
-              <b>{p.name.split(' ')[0]}</b>
+              <b>{firstName(p.name)}</b>
               <div className="mono bold reward small">{p.xp.toLocaleString('ru')} XP</div>
             </div>
           ))}
         </div>
       )}
       <div className="col" style={{ gap: 6 }}>
-        {(top.length === 3 ? rest : rows).map(p => <Row key={p.user_id} p={p} />)}
+        {(podium ? rest : rows).map(p => <Row key={p.user_id} p={p} />)}
       </div>
       {me && !meVisible && (
         <div className="rank-me-sticky"><Row p={me} /></div>

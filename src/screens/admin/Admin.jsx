@@ -1,5 +1,6 @@
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom'
 import { Icon } from '../../ui'
+import { useApp } from '../../App'
 import Overview from './Overview'
 import Users from './Users'
 import Branches from './Branches'
@@ -12,13 +13,15 @@ import AdminFlavors from './AdminFlavors'
 import Audit from './Audit'
 
 export default function Admin() {
+  const { reviewsPending } = useApp()
   const items = [
     { to: '/admin', label: 'Обзор', icon: Icon.grid, end: true },
     { to: '/admin/content', label: 'Контент', icon: Icon.book },
     { to: '/admin/workshop', label: 'Мастерская', icon: Icon.sparkles },
     { to: '/admin/users', label: 'Сотрудники', icon: Icon.users },
     { to: '/admin/branches', label: 'Филиалы', icon: Icon.store },
-    { to: '/admin/reviews', label: 'Проверки', icon: Icon.check },
+    // Вкладка видна, только когда есть открытые ответы; адрес /admin/reviews работает всегда
+    ...(reviewsPending > 0 ? [{ to: '/admin/reviews', label: `Проверки · ${reviewsPending}`, icon: Icon.check }] : []),
     { to: '/admin/grants', label: 'Выдать награду', icon: Icon.medal },
     { to: '/analytics', label: 'Аналитика', icon: Icon.chart },
     { to: '/admin/flavors', label: 'Вкусы', icon: Icon.target },

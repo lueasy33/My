@@ -7,6 +7,22 @@ import { FlavorFacts, Mastery, brandColor } from './flavorUi'
 
 const KEYS = ['1', '2', '3', '4']
 
+// Сервер кладёт вопрос про новый вкус сразу за его карточкой — ответ ещё перед глазами.
+// Разводим: вопрос про новый вкус идёт не раньше, чем через 2 других карточки после знакомства.
+export function spaceOut(items) {
+  const isNewQ = (x, i) => x.type !== 'intro' && i > 0 && items[i - 1].type === 'intro' && items[i - 1].flavor?.id === x.flavor_id
+  const src = items.filter((x, i) => !isNewQ(x, i))
+  const delayed = new Map(items.filter(isNewQ).map(q => [q.flavor_id, q]))
+  const out = []; const wait = []
+  for (const x of src) {
+    if (wait.length && wait[0].at <= out.length) out.push(wait.shift().q)
+    out.push(x)
+    if (x.type === 'intro' && delayed.has(x.flavor?.id)) wait.push({ q: delayed.get(x.flavor.id), at: out.length + 2 })
+  }
+  for (const w of wait) out.push(w.q)
+  return out
+}
+
 // Сессия как в Duolingo: новый вкус — карточка знакомства, затем вопрос.
 // После ответа снизу выезжает плашка: зелёная «Верно!» или красная с правильным ответом.
 // Ошибки повторяются в конце сессии (без влияния на расписание повторений).
@@ -31,7 +47,7 @@ export default function FlavorSession() {
     setStats({ correct: 0, total: 0, combo: 0, best: 0, xp: 0, coil: 0 })
     try {
       const r = await api.flavorSession(brand)
-      setQueue(r.items); setTitle(r.brand || 'Тренировка дня')
+      setQueue(spaceOut(r.items)); setTitle(r.brand || 'Тренировка дня')
     } catch (e) { setError(e) }
   }
   useEffect(() => { load() }, [brand])
@@ -73,8 +89,9 @@ export default function FlavorSession() {
     try {
       const firstTry = stats
       const r = await api.flavorFinish(firstTry.correct, firstTry.total)
-      setSummary({ ...r, ...firstTry })
-      refresh()
+      // Верно/всего — как посчитал сервер (correct/total из /session/finish), серия и XP за ответы — наши
+      setSummary({ ...firstTry, ...r, correct: r.total ? r.correct : firstTry.correct, total: r.total || firstTry.total })
+      refresh({ show: true })
     } catch (e) { toast(e.message, 'error') }
   }
 
@@ -104,12 +121,18 @@ export default function FlavorSession() {
           <div className="session-end-badge">{summary.perfect ? <Icon.trophy size={40} /> : <Icon.check size={40} />}</div>
           <h1 style={{ fontSize: 26, marginTop: 14 }}>{summary.perfect ? 'Без единой ошибки!' : acc >= 70 ? 'Отличная тренировка!' : 'Тренировка завершена'}</h1>
           <p className="muted" style={{ marginTop: 6 }}>{title}</p>
+          <p className="bold" style={{ marginTop: 10, fontSize: 17 }}>Верно {summary.correct} из {summary.total}</p>
           <div className="session-stats">
             <div><b className="reward">+{summary.xp + (summary.gained?.xp || 0)}</b><span>XP</span></div>
             <div><b style={{ color: acc >= 70 ? 'var(--success-text)' : 'var(--warning-text)' }}>{acc}%</b><span>точность</span></div>
             <div><b className="reward"><Icon.flame size={18} />{summary.best}</b><span>серия ответов</span></div>
           </div>
           {(summary.coil + (summary.gained?.coil || 0)) > 0 && <span className="chip-reward" style={{ marginTop: 14 }}><Icon.coin size={15} />+{summary.coil + (summary.gained?.coil || 0)} COIL</span>}
+          {(summary.gained?.xp > 0 || summary.gained?.coil > 0) && (
+            <p className="small muted" style={{ marginTop: 8 }}>
+              Из них за тренировку{summary.perfect ? ' и за ответы без ошибок' : ''}: {[summary.gained.xp > 0 && `+${summary.gained.xp} XP`, summary.gained.coil > 0 && `+${summary.gained.coil} COIL`].filter(Boolean).join(', ')}
+            </p>
+          )}
           <p className="small muted" style={{ marginTop: 16 }}>Ошибки вернутся завтра, верные ответы — через 3, 7 и 21 день. Так вкусы запоминаются надолго.</p>
           <div className="col" style={{ gap: 8, marginTop: 20 }}>
             <button className="btn block" onClick={load}><Icon.refresh size={17} />Ещё тренировка</button>

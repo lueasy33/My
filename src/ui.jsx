@@ -238,20 +238,9 @@ function Confetti() {
   )
 }
 
-export function RewardWindow({ items, onClose, sound = true, reduceMotion = false }) {
-  const [idx, setIdx] = useState(0)
-  const item = items[idx]
-  const calm = reduceMotion || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-  useEffect(() => { if (item && sound) chime() }, [idx, item, sound])
-  useEffect(() => {
-    const h = e => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
-  }, [onClose])
-  if (!item) return null
-
-  const isLast = idx >= items.length - 1
-  const visual = item.avatar
+// Картинка награды: аватарка, номер уровня, иконка темы/статуса/приза или значок достижения
+function rewardVisual(item) {
+  return item.avatar
     ? <img className="reward-avatar" src={avatarSrc(item.avatar, 256)} alt="" />
     : item.kind === 'level'
       ? <div className="reward-level"><span>{item.level}</span></div>
@@ -260,11 +249,64 @@ export function RewardWindow({ items, onClose, sound = true, reduceMotion = fals
         : ['theme', 'status', 'prize'].includes(item.kind)
           ? <div className="reward-level">{item.kind === 'theme' ? <Icon.palette size={44} /> : item.kind === 'prize' ? <Icon.gift size={44} /> : <Icon.star size={44} />}</div>
           : <img src={iconSrc(item.icon)} alt="" />
+}
 
+// Все награды разом — одним окном-списком (разбор этапа 1: 4 окна подряд перекрывали результат)
+export function RewardWindow({ items, onClose, sound = true, reduceMotion = false }) {
+  const calm = reduceMotion || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  useEffect(() => { if (items.length && sound) chime() }, [items.length, sound])
+  useEffect(() => {
+    const h = e => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [onClose])
+  if (!items.length) return null
+  if (items.length === 1) return <RewardCard item={items[0]} calm={calm} onClose={onClose} />
+
+  const xp = items.reduce((s, i) => s + (i.xp || 0), 0)
+  const coil = items.reduce((s, i) => s + (i.coil || 0), 0)
+  return (
+    <div className="overlay reward-overlay" role="dialog" aria-modal="true" aria-label="Награды">
+      {!calm && <Confetti />}
+      <div className={'reward-card reward-list-card' + (calm ? ' calm' : '')}>
+        <div className="reward-glow" aria-hidden="true" />
+        <h2 className="reward-title">{`${items.length} ${plural(items.length, 'новая награда', 'новые награды', 'новых наград')}`}</h2>
+        <ul className="reward-list">
+          {items.map((item, i) => (
+            <li key={item.id ?? i}>
+              <span className="reward-list-ico">{rewardVisual(item)}</span>
+              <span className="reward-list-main">
+                <span className="tiny muted">{KIND_LABEL[item.kind] || 'Награда'}</span>
+                <b>{item.title}</b>
+              </span>
+              {(item.xp > 0 || item.coil > 0) && (
+                <span className="reward-list-gain small">
+                  {item.xp > 0 && <span>+{item.xp} XP</span>}
+                  {item.coil > 0 && <span>+{item.coil} COIL</span>}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+        {(xp > 0 || coil > 0) && (
+          <div className="reward-xp">
+            {xp > 0 && <span className="chip-reward"><Icon.bolt size={16} />+{xp} XP</span>}
+            {coil > 0 && <span className="chip-reward"><Icon.coin size={16} />+{coil} COIL</span>}
+          </div>
+        )}
+        <button className="btn block gold" style={{ marginTop: 20 }} autoFocus onClick={onClose}>Забрать всё</button>
+      </div>
+    </div>
+  )
+}
+
+// Escape обрабатывает RewardWindow — здесь второй обработчик закрыл бы окно дважды
+function RewardCard({ item, calm, onClose }) {
+  const visual = rewardVisual(item)
   return (
     <div className="overlay reward-overlay" role="dialog" aria-modal="true" aria-label="Награда">
-      {!calm && <Confetti key={idx} />}
-      <div className={'reward-card' + (calm ? ' calm' : '')} key={idx}>
+      {!calm && <Confetti />}
+      <div className={'reward-card' + (calm ? ' calm' : '')}>
         <div className="reward-glow" aria-hidden="true" />
         <div className="reward-medal">{visual}</div>
         <div className="eyebrow reward">{KIND_LABEL[item.kind] || 'Награда'}</div>
@@ -283,12 +325,7 @@ export function RewardWindow({ items, onClose, sound = true, reduceMotion = fals
           </div>
         )}
 
-        <button className="btn block gold" style={{ marginTop: 20 }} autoFocus onClick={() => isLast ? onClose() : setIdx(i => i + 1)}>
-          {isLast ? 'Забрать' : `Дальше · ${idx + 2} из ${items.length}`}
-        </button>
-        {items.length > 1 && !isLast && (
-          <button className="btn ghost block plain" style={{ marginTop: 6 }} onClick={onClose}>Пропустить всё</button>
-        )}
+        <button className="btn block gold" style={{ marginTop: 20 }} autoFocus onClick={onClose}>Забрать</button>
       </div>
     </div>
   )
@@ -405,6 +442,12 @@ export function PageHead({ title, sub, action, back }) {
 }
 
 /* ─── Форматирование ────────────────────────────────────────── */
+// Имя для приветствия и пьедестала. Сотрудника заводят одной строкой «Имя Фамилия»
+// (поле формы так и подписано) — берём первое слово.
+export function firstName(full) {
+  return String(full || '').trim().split(/\s+/)[0] || ''
+}
+
 export function plural(n, one, few, many) {
   const a = Math.abs(n) % 100
   const b = a % 10
@@ -474,7 +517,8 @@ export function avatarSrc(id, size = 128) {
   if (isUrl(id)) return id
   return `/assets/webp-${size >= 200 ? 256 : 128}/${id || 'ava_01_ugolek'}.webp`
 }
+// Значки достижений — webp 256 px (~16 КБ). Оригиналы 512 px лежат в png-512, старые svg — в svg/.
 export function iconSrc(icon) {
   if (isUrl(icon)) return icon
-  return `/assets/svg/${icon || 'ach_01_pervyy-shag'}.svg`
+  return `/assets/webp-256/${icon || 'ach_01_pervyy-shag'}.webp`
 }

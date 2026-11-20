@@ -9,7 +9,7 @@ import Test from './Test'
 export default function Lesson() {
   const { id } = useParams()
   const nav = useNavigate()
-  const { refresh } = useApp()
+  const { refresh, showRewards } = useApp()
   const toast = useToast()
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
@@ -79,7 +79,7 @@ export default function Lesson() {
       setReward(res.reward)
       setMode('done')
       window.scrollTo({ top: 0, behavior: 'smooth' })
-      refresh()
+      refresh({ show: true })
     } catch (e) { toast(e.message, 'error') } finally { setBusy(false) }
   }
 
@@ -110,6 +110,8 @@ export default function Lesson() {
         {mode === 'test' && test ? (
           <Test data={data} onDone={async (res) => {
             await refresh()
+            // Сначала человек видит свой балл, награды — одним окном чуть позже
+            setTimeout(showRewards, 1400)
             setData(d => ({
               ...d,
               attemptsUsed: d.attemptsUsed + 1,
@@ -267,7 +269,8 @@ export function safeHref(value) {
   const s = String(value || '').trim()
   if (!s) return ''
   if (/^https?:\/\//i.test(s)) return s
-  if (s.startsWith('/') && !s.startsWith('//')) return s
+  // Путь сайта: «/», за которым не «/» и не «\» — «//evil.com» и «/\evil.com» браузер откроет как чужой сайт (как в admin.js)
+  if (/^\/(?![/\\])/.test(s)) return s
   return ''
 }
 
