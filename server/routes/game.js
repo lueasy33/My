@@ -6,6 +6,7 @@ import {
 } from '../economy.js'
 import { courseFilterSql } from '../access.js'
 import { myRank, rankedPeople, normPeriod } from '../ranking.js'
+import { dueSql } from '../deadline.js'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -374,7 +375,7 @@ function analytics(u, query = {}) {
       (SELECT ROUND(AVG(a.score)) FROM attempts a WHERE a.user_id = u.id AND a.pending = 0) AS avg_score,
       (SELECT COUNT(*) FROM lessons l JOIN courses c ON c.id = l.course_id
         LEFT JOIN progress pr ON pr.lesson_id = l.id AND pr.user_id = u.id
-        WHERE l.deadline IS NOT NULL AND l.deadline < date('now', '+3 hours') AND l.published = 1 AND c.published = 1
+        WHERE ${dueSql()} < date('now', '+3 hours') AND l.published = 1 AND c.published = 1
           AND (c.branch_id IS NULL OR c.branch_id = u.branch_id)
           AND (pr.status IS NULL OR pr.status != 'passed')) AS overdue,
       (SELECT COALESCE(SUM(x.amount),0) FROM xp_tx x WHERE x.user_id = u.id AND x.created_at >= ? AND x.reason != 'opening') AS xp_period

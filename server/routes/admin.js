@@ -12,6 +12,7 @@ import {
 } from '../economy.js'
 import { canSeeCourse, canEditCourse } from '../access.js'
 import { withAuditTitles } from '../audit-text.js'
+import { dueSql, cleanDays } from '../deadline.js'
 
 // ─────────────────────────────────────────────────────────────
 // Админка. Все проверки прав на сервере. Управляет только администратор.
@@ -83,7 +84,7 @@ export default async function adminRoutes(app) {
       JOIN users u ON u.archived_at IS NULL AND u.status = 'active' AND u.role = 'employee'
         AND (c.branch_id IS NULL OR c.branch_id = u.branch_id)
       LEFT JOIN progress pr ON pr.lesson_id = l.id AND pr.user_id = u.id
-      WHERE l.published = 1 AND l.deadline IS NOT NULL AND l.deadline < ?
+      WHERE l.published = 1 AND ${dueSql()} < ?
         AND (pr.status IS NULL OR pr.status != 'passed') ${w}
     `).get(today, ...p).c
     reply.send({
@@ -118,7 +119,7 @@ export default async function adminRoutes(app) {
     const today = TZ_DAY(Date.now())
     const rows = db.prepare(`
       SELECT u.id AS user_id, u.name, u.phone, u.branch_id, b.name AS branch,
-             l.id AS lesson_id, l.title AS lesson, c.title AS course, l.deadline,
+             l.id AS lesson_id, l.title AS lesson, c.title AS course, ${dueSql()} AS deadline,
              (SELECT MAX(n.created_at) FROM overdue_notes n
                WHERE n.user_id = u.id AND n.lesson_id = l.id) AS contacted_at,
              (SELECT n.note FROM overdue_notes n
@@ -129,10 +130,10 @@ export default async function adminRoutes(app) {
         AND (c.branch_id IS NULL OR c.branch_id = u.branch_id)
       LEFT JOIN branches b ON b.id = u.branch_id
       LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = u.id
-      WHERE l.published = 1 AND l.deadline IS NOT NULL AND l.deadline < ?
+      WHERE l.published = 1 AND ${dueSql()} < ?
         AND (p.status IS NULL OR p.status != 'passed')
         ${scope ? 'AND u.branch_id = ?' : ''}
-      ORDER BY l.deadline, u.name
+      ORDER BY deadline, u.name
       LIMIT 200
     `).all(...(scope ? [today, scope] : [today]))
     reply.send({
@@ -190,14 +191,15 @@ export default async function adminRoutes(app) {
       FROM users u LEFT JOIN branches b ON b.id = u.branch_id WHERE u.id = ?`).get(req.params.id)
     if (!u) return reply.code(404).send({ error: 'Не найден' })
     const lessons = db.prepare(`
-      SELECT l.id, l.title, c.title AS course, l.deadline, p.status, p.updated_at,
+      SELECT l.id, l.title, c.title AS course, ${dueSql('l', 'su')} AS deadline, p.status, p.updated_at,
         (SELECT MAX(a.score) FROM attempts a JOIN tests t ON t.id = a.test_id WHERE t.lesson_id = l.id AND a.user_id = ?) AS best,
         (SELECT COUNT(*) FROM attempts a JOIN tests t ON t.id = a.test_id WHERE t.lesson_id = l.id AND a.user_id = ?) AS tries
       FROM lessons l JOIN courses c ON c.id = l.course_id
+      JOIN users su ON su.id = ?
       LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
       WHERE l.published = 1 AND c.published = 1 AND (c.branch_id IS NULL OR c.branch_id = ?)
       ORDER BY c.id, l.sort
-    `).all(u.id, u.id, u.id, u.branch_id)
+    `).all(u.id, u.id, u.id, u.id, u.branch_id)
     const achievements = db.prepare(`SELECT a.title, a.icon, ua.granted_at, ua.reason FROM user_achievements ua
       JOIN achievements a ON a.id = ua.achievement_id WHERE ua.user_id = ? ORDER BY ua.granted_at DESC`).all(u.id)
     reply.send({ user: u, lessons, achievements })
@@ -359,7 +361,7 @@ export default async function adminRoutes(app) {
       ORDER BY cat.sort, c.id
     `).all(...(scope ? [scope] : []))
     const lessons = db.prepare(`
-      SELECT l.id, l.course_id, l.title, l.sort, l.minutes, l.deadline, l.published, l.version,
+      SELECT l.id, l.course_id, l.title, l.sort, l.minutes, l.deadline, l.deadline_days, l.published, l.version,
         (SELECT COUNT(*) FROM blocks b WHERE b.lesson_id = l.id) AS blocks,
         (SELECT COUNT(*) FROM questions q JOIN tests t ON t.id = q.test_id WHERE t.lesson_id = l.id) AS questions
       FROM lessons l ORDER BY l.sort, l.id
@@ -479,13 +481,15 @@ export default async function adminRoutes(app) {
   })
 
   app.post('/api/admin/lessons', staff, async (req, reply) => {
-    const { course_id, title, minutes, deadline } = req.body || {}
+    const { course_id, title, minutes, deadline, deadline_days } = req.body || {}
     const course = loadCourse(course_id)
     if (!canEditCourse(req.user, course)) return reply.code(403).send({ error: 'Нет прав на этот курс' })
     if (!String(title || '').trim()) return reply.code(400).send({ error: 'Название обязательно' })
     const sort = (db.prepare('SELECT COALESCE(MAX(sort),0) m FROM lessons WHERE course_id = ?').get(course.id).m) + 1
-    const id = db.prepare('INSERT INTO lessons(course_id,title,sort,version,minutes,deadline,published) VALUES (?,?,?,1,?,?,0)')
-      .run(course.id, String(title).trim(), sort, Number(minutes) || 8, cleanDate(deadline)).lastInsertRowid
+    // Срок «N дней от приёма» важнее общей даты: если он задан, общую дату не храним
+    const days = cleanDays(deadline_days)
+    const id = db.prepare('INSERT INTO lessons(course_id,title,sort,version,minutes,deadline,deadline_days,published) VALUES (?,?,?,1,?,?,?,0)')
+      .run(course.id, String(title).trim(), sort, Number(minutes) || 8, days === null ? cleanDate(deadline) : null, days).lastInsertRowid
     audit(req.user.id, 'lesson.create', 'lesson', id, { title })
     reply.send({ id })
   })
@@ -494,12 +498,17 @@ export default async function adminRoutes(app) {
     const { lesson, course } = lessonWithCourse(req.params.id)
     if (!lesson) return reply.code(404).send({ error: 'Не найден' })
     if (!canEditCourse(req.user, course)) return reply.code(403).send({ error: 'Этот урок может менять только администратор' })
-    const { title, minutes, deadline, published, description } = req.body || {}
+    const { title, minutes, deadline, deadline_days, published, description } = req.body || {}
     const fields = [], vals = []
+    if (deadline_days !== undefined) {
+      const days = cleanDays(deadline_days)
+      fields.push('deadline_days = ?'); vals.push(days)
+      if (days !== null) { fields.push('deadline = NULL') }
+    }
     if (title && String(title).trim()) { fields.push('title = ?'); vals.push(String(title).trim()) }
     if (description !== undefined) { fields.push('description = ?'); vals.push(String(description)) }
     if (minutes) { fields.push('minutes = ?'); vals.push(Number(minutes)) }
-    if (deadline !== undefined) { fields.push('deadline = ?'); vals.push(cleanDate(deadline)) }
+    if (deadline !== undefined && !fields.includes('deadline = NULL')) { fields.push('deadline = ?'); vals.push(cleanDate(deadline)) }
     if (published !== undefined) {
       if (published) {
         // Публикация — осознанное действие: пустой урок или тест без правильных ответов не выпускаем

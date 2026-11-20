@@ -292,6 +292,8 @@ addColumn('categories', 'color', "color TEXT NOT NULL DEFAULT ''")
 addColumn('attempts', 'reviewed_by', 'reviewed_by INTEGER')
 addColumn('attempts', 'review_note', "review_note TEXT DEFAULT ''")
 addColumn('lessons', 'description', "description TEXT NOT NULL DEFAULT ''")
+// Дедлайн «через N дней после приёма» (server/deadline.js)
+addColumn('lessons', 'deadline_days', 'deadline_days INTEGER')
 // Мастерская: свои картинки, описание и редкость товаров; награды за достижения
 addColumn('shop_items', 'image', "image TEXT NOT NULL DEFAULT ''")
 addColumn('shop_items', 'description', "description TEXT NOT NULL DEFAULT ''")

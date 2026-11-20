@@ -306,12 +306,15 @@ function Upload({ kind, accept, value, fileName, onUploaded }) {
 /* ─── Настройки урока ───────────────────────────────────────── */
 function Settings({ lesson, editable, onSaved, onDeleted, ask }) {
   const toast = useToast()
-  const [f, setF] = useState({ title: lesson.title, minutes: lesson.minutes, deadline: lesson.deadline || '', description: lesson.description || '' })
+  // Дедлайн — «через N дней после приёма» (deadline_days). Общая дата (deadline) осталась у старых уроков:
+  // её можно только убрать, а при заполнении дней сервер её стирает сам
+  const [f, setF] = useState({ title: lesson.title, minutes: lesson.minutes, deadline: lesson.deadline || '', days: lesson.deadline_days ?? '', description: lesson.description || '' })
 
   async function save(e) {
     e.preventDefault()
     try {
-      await api.admin.updateLesson(lesson.id, { ...f, minutes: Number(f.minutes) || 8, deadline: f.deadline || null })
+      const { days, ...rest } = f
+      await api.admin.updateLesson(lesson.id, { ...rest, minutes: Number(f.minutes) || 8, deadline: days === '' ? (f.deadline || null) : null, deadline_days: days === '' ? null : Number(days) })
       toast('Настройки сохранены', 'success'); onSaved()
     } catch (e) { toast(e.message, 'error') }
   }
@@ -336,12 +339,13 @@ function Settings({ lesson, editable, onSaved, onDeleted, ask }) {
         <div className="form-grid two">
           <div className="field"><label>Время прохождения, мин</label><input className="input" type="number" min="1" value={f.minutes} onChange={e => setF(x => ({ ...x, minutes: e.target.value }))} /></div>
           <div className="field">
-            <label>Дедлайн</label>
-            <div className="row" style={{ gap: 6 }}>
-              <input className="input" type="date" value={f.deadline} onChange={e => setF(x => ({ ...x, deadline: e.target.value }))} />
-              {f.deadline && <button type="button" className="btn ghost icon" aria-label="Убрать дедлайн" onClick={() => setF(x => ({ ...x, deadline: '' }))}><Icon.x size={16} /></button>}
-            </div>
-            <span className="hint">Мягкий: опоздавшие не блокируются, а попадают в «Просрочки»</span>
+            <label>Дедлайн, дней от приёма</label>
+            <input className="input" type="number" min="0" max="365" inputMode="numeric" placeholder="без дедлайна" value={f.days} onChange={e => setF(x => ({ ...x, days: e.target.value }))} />
+            {f.days === '' && f.deadline && (
+              <span className="hint row" style={{ gap: 6 }}>Сейчас общая дата для всех: {new Date(f.deadline + 'T00:00:00').toLocaleDateString('ru', { day: 'numeric', month: 'long' })}
+                <button type="button" className="btn ghost xs" onClick={() => setF(x => ({ ...x, deadline: '' }))}>Убрать</button></span>
+            )}
+            <span className="hint">Считается от даты приёма сотрудника (пустая — от дня, когда его завели). Мягкий: опоздавшие не блокируются, а попадают в «Просрочки»</span>
           </div>
         </div>
         <div className="row wrap" style={{ gap: 8, marginTop: 6 }}>

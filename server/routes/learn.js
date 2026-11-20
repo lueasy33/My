@@ -2,6 +2,7 @@ import { db } from '../db.js'
 import { requireAuth } from '../index.js'
 import { awardXp, awardCoil, checkAchievements, finishLesson, notify, XP, COIL } from '../economy.js'
 import { canSeeCourse, courseFilterSql, lessonLocks, isStaff } from '../access.js'
+import { dueForUserSql } from '../deadline.js'
 
 // ─────────────────────────────────────────────────────────────
 // Обучение: библиотека, курс, урок, тест.
@@ -23,9 +24,9 @@ export default async function learnRoutes(app) {
         (SELECT COUNT(*) FROM lessons l WHERE l.course_id = c.id AND l.published = 1) AS lessons_total,
         (SELECT COUNT(*) FROM lessons l JOIN progress p ON p.lesson_id = l.id
           WHERE l.course_id = c.id AND l.published = 1 AND p.user_id = ? AND p.status = 'passed') AS lessons_done,
-        (SELECT MIN(l.deadline) FROM lessons l
+        (SELECT MIN(${dueForUserSql(u.id)}) FROM lessons l
           LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
-          WHERE l.course_id = c.id AND l.published = 1 AND l.deadline IS NOT NULL
+          WHERE l.course_id = c.id AND l.published = 1
             AND (p.status IS NULL OR p.status != 'passed')) AS next_deadline
       FROM courses c LEFT JOIN categories cat ON cat.id = c.category_id
       WHERE ${f.sql} AND c.published = 1
@@ -78,7 +79,7 @@ export default async function learnRoutes(app) {
 
     const staff = isStaff(u)
     const lessons = db.prepare(`
-      SELECT l.id, l.title, l.description, l.sort, l.minutes, l.deadline, l.published, l.version,
+      SELECT l.id, l.title, l.description, l.sort, l.minutes, ${dueForUserSql(u.id)} AS deadline, l.deadline_days, l.published, l.version,
         p.status, p.updated_at,
         (SELECT COUNT(*) FROM blocks b WHERE b.lesson_id = l.id) AS blocks,
         (SELECT COUNT(*) FROM questions q JOIN tests t ON t.id = q.test_id WHERE t.lesson_id = l.id) AS questions
@@ -103,9 +104,11 @@ export default async function learnRoutes(app) {
   app.get('/api/lesson/:id', { preHandler: requireAuth }, async (req, reply) => {
     const u = req.user
     const lesson = db.prepare(`
-      SELECT l.*, c.title AS course, c.id AS course_id, c.category_id, c.published AS course_published, c.branch_id
+      SELECT l.*, ${dueForUserSql(u.id)} AS due, c.title AS course, c.id AS course_id, c.category_id, c.published AS course_published, c.branch_id
       FROM lessons l JOIN courses c ON c.id = l.course_id WHERE l.id = ?
     `).get(req.params.id)
+    // Сотруднику — его личный дедлайн (от даты приёма), а не общая дата урока
+    if (lesson) { lesson.deadline = lesson.due; delete lesson.due }
     const course = lesson && { published: lesson.course_published, branch_id: lesson.branch_id }
     const staff = isStaff(u)
     if (!lesson || !canSeeCourse(u, course) || (!lesson.published && !staff)) {

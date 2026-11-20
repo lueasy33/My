@@ -4,6 +4,7 @@
 import { db } from './db.js'
 import { courseFilterSql } from './access.js'
 import { notify } from './economy.js'
+import { dueForUserSql } from './deadline.js'
 
 const TZ_DAY = (ms) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow' }).format(new Date(ms))
 const plural = (n, one, few, many) => {
@@ -20,11 +21,13 @@ export function deadlineReminders(user) {
   const f = courseFilterSql({ ...user, role: 'employee' })
   const today = TZ_DAY(Date.now())
   const list = db.prepare(`
-    SELECT l.id, l.title, c.title AS course, l.deadline
-    FROM lessons l JOIN courses c ON c.id = l.course_id
-    LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
-    WHERE l.published = 1 AND ${f.sql} AND l.deadline IS NOT NULL
-      AND (p.status IS NULL OR p.status != 'passed')
+    SELECT * FROM (
+      SELECT l.id, l.title, c.title AS course, ${dueForUserSql(user.id)} AS deadline
+      FROM lessons l JOIN courses c ON c.id = l.course_id
+      LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
+      WHERE l.published = 1 AND ${f.sql}
+        AND (p.status IS NULL OR p.status != 'passed')
+    ) WHERE deadline IS NOT NULL
   `).all(user.id, ...f.params)
   const remind = db.prepare('INSERT OR IGNORE INTO sent_reminders(user_id, lesson_id, kind) VALUES (?,?,?)')
   for (const d of list) {

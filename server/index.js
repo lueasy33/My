@@ -13,6 +13,7 @@ import {
 } from './economy.js'
 import { courseFilterSql } from './access.js'
 import { myRank, normPeriod } from './ranking.js'
+import { dueForUserSql } from './deadline.js'
 import { initDatabase, startBackups } from './init.js'
 import { startPushWorker, pushPublicKey, subscribe, unsubscribe, sendNow, prefsOf, devicesOf } from './push.js'
 import { startReminders, deadlineReminders } from './reminders.js'
@@ -354,12 +355,14 @@ app.get('/api/dashboard', { preHandler: requireAuth }, async (req, reply) => {
   `).all(u.id, ...f.params).find(c => c.total > 0 && c.done < c.total) || null
 
   const deadlines = db.prepare(`
-    SELECT l.id, l.title, c.title AS course, c.id AS course_id, l.deadline
-    FROM lessons l JOIN courses c ON c.id = l.course_id
-    LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
-    WHERE l.published = 1 AND ${f.sql} AND l.deadline IS NOT NULL
-      AND (p.status IS NULL OR p.status != 'passed')
-    ORDER BY l.deadline ASC LIMIT 3
+    SELECT * FROM (
+      SELECT l.id, l.title, c.title AS course, c.id AS course_id, ${dueForUserSql(u.id)} AS deadline
+      FROM lessons l JOIN courses c ON c.id = l.course_id
+      LEFT JOIN progress p ON p.lesson_id = l.id AND p.user_id = ?
+      WHERE l.published = 1 AND ${f.sql}
+        AND (p.status IS NULL OR p.status != 'passed')
+    ) WHERE deadline IS NOT NULL
+    ORDER BY deadline ASC LIMIT 3
   `).all(u.id, ...f.params).map(d => ({ ...d, days_left: Math.round((Date.parse(d.deadline) - Date.parse(today)) / 86400000) }))
 
   // Напоминания о дедлайнах (спецификация 5.12): за 2 дня и при просрочке — по одному разу.

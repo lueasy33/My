@@ -36,7 +36,7 @@ export default function Content() {
   async function addLesson(e) {
     e.preventDefault()
     try {
-      const res = await api.admin.createLesson({ course_id: lesson.course_id, title: lesson.title, minutes: Number(lesson.minutes) || 8, deadline: lesson.deadline || null })
+      const res = await api.admin.createLesson({ course_id: lesson.course_id, title: lesson.title, minutes: Number(lesson.minutes) || 8, deadline_days: lesson.days === '' ? null : Number(lesson.days) })
       nav('/admin/lesson/' + res.id)
     } catch (e) { toast(e.message, 'error') }
   }
@@ -129,7 +129,7 @@ export default function Content() {
                         <span className="lesson-num" style={{ width: 28, height: 28, fontSize: 12.5 }}>{i + 1}</span>
                         <span className="list-main">
                           <b style={{ fontSize: 14 }}>{l.title}</b>
-                          <span>{l.blocks} {plural(l.blocks, 'блок', 'блока', 'блоков')} · {l.questions ? `тест: ${l.questions} вопр.` : 'без теста'}{l.deadline ? ` · до ${new Date(l.deadline).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}` : ''}</span>
+                          <span>{l.blocks} {plural(l.blocks, 'блок', 'блока', 'блоков')} · {l.questions ? `тест: ${l.questions} вопр.` : 'без теста'}{l.deadline_days != null ? ` · ${l.deadline_days} ${plural(l.deadline_days, 'день', 'дня', 'дней')} от приёма` : l.deadline ? ` · до ${new Date(l.deadline).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}` : ''}</span>
                         </span>
                       </Link>
                       {!l.published && <span className="badge warn">черновик</span>}
@@ -138,7 +138,7 @@ export default function Content() {
                   ))}
                   {c.editable && (
                     <div className="row" style={{ gap: 8, padding: '6px 4px 2px' }}>
-                      <button className="btn ghost xs" onClick={() => setLesson({ course_id: c.id, course: c.title, title: '', minutes: 8, deadline: '' })}><Icon.plus size={14} />Урок</button>
+                      <button className="btn ghost xs" onClick={() => setLesson({ course_id: c.id, course: c.title, title: '', minutes: 8, days: '' })}><Icon.plus size={14} />Урок</button>
                       {!c.published && c.lessons.length === 0 && <button className="btn ghost xs" style={{ color: 'var(--danger-text)' }} onClick={() => removeCourse(c)}><Icon.trash size={14} />Удалить курс</button>}
                     </div>
                   )}
@@ -201,7 +201,7 @@ export default function Content() {
             <div className="field"><label>Название урока</label><input className="input" required value={lesson.title} onChange={e => setLesson(f => ({ ...f, title: e.target.value }))} placeholder="Устройство кальяна" autoFocus /></div>
             <div className="form-grid two">
               <div className="field"><label>Время, мин</label><input className="input" type="number" min="1" value={lesson.minutes} onChange={e => setLesson(f => ({ ...f, minutes: e.target.value }))} /></div>
-              <div className="field"><label>Дедлайн (необязательно)</label><input className="input" type="date" value={lesson.deadline} onChange={e => setLesson(f => ({ ...f, deadline: e.target.value }))} /></div>
+              <div className="field"><label>Дедлайн, дней от приёма (необязательно)</label><input className="input" type="number" min="0" max="365" inputMode="numeric" placeholder="без дедлайна" value={lesson.days} onChange={e => setLesson(f => ({ ...f, days: e.target.value }))} /></div>
             </div>
           </form>
         </Modal>

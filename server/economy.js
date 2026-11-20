@@ -1,5 +1,6 @@
 import { db, getMeta } from './db.js'
 import { queuePush } from './push.js'
+import { dueSql } from './deadline.js'
 
 // ─────────────────────────────────────────────────────────────
 // Экономика. Числа — стартовая настройка из спецификации (раздел 7),
@@ -283,9 +284,9 @@ export function checkAchievements(userId) {
     // Сдано заранее: дата сдачи минимум на N дней раньше дедлайна урока.
     if (rule.type === 'early') {
       const hit = db.prepare(`
-        SELECT 1 FROM progress p JOIN lessons l ON l.id = p.lesson_id
-        WHERE p.user_id = ? AND p.status = 'passed' AND l.deadline IS NOT NULL
-          AND julianday(l.deadline) - julianday(date(p.updated_at, '+3 hours')) >= ?
+        SELECT 1 FROM progress p JOIN lessons l ON l.id = p.lesson_id JOIN users u ON u.id = p.user_id
+        WHERE p.user_id = ? AND p.status = 'passed' AND ${dueSql()} IS NOT NULL
+          AND julianday(${dueSql()}) - julianday(date(p.updated_at, '+3 hours')) >= ?
         LIMIT 1
       `).get(userId, Number(rule.days || 3))
       if (hit) ok = true
