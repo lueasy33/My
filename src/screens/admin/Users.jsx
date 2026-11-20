@@ -99,7 +99,7 @@ export default function Users() {
   return (
     <>
       <PageHead title="Сотрудники" sub="Аккаунты создаёт только администратор — регистрации нет"
-        action={isAdmin && <button className="btn sm" onClick={() => setEdit({ name: '', phone: '', password: genPassword(), role: 'employee', branch_id: data.branches[0]?.id || '', hired_at: '' })}><Icon.plus size={16} />Добавить</button>} />
+        action={isAdmin && <button className="btn sm" onClick={() => setEdit({ name: '', phone: '', password: genPassword(), role: 'employee', branch_id: data.branches[0]?.id || '', hired_at: new Date().toLocaleDateString('en-CA') })}><Icon.plus size={16} />Добавить</button>} />
 
       <div className="row wrap" style={{ gap: 10, marginBottom: 16 }}>
         <div style={{ position: 'relative', flex: '1 1 220px' }}>
@@ -173,7 +173,7 @@ export default function Users() {
         <Modal title={edit.id ? 'Изменить сотрудника' : 'Новый сотрудник'} onClose={() => setEdit(null)} width={520}
           footer={<><button className="btn ghost" onClick={() => setEdit(null)}>Отмена</button><button className="btn" form="user-form">{edit.id ? 'Сохранить' : 'Создать'}</button></>}>
           <form id="user-form" onSubmit={save} className="col" style={{ gap: 12 }}>
-            <div className="field"><label>Имя и фамилия</label><input className="input" required placeholder="Алексей Гусев" value={edit.name} onChange={e => setEdit(f => ({ ...f, name: e.target.value }))} autoFocus /></div>
+            <div className="field"><label>Имя и фамилия</label><input className="input" required placeholder="Иван Петров" value={edit.name} onChange={e => setEdit(f => ({ ...f, name: e.target.value }))} autoFocus /></div>
             <div className="form-grid two">
               <div className="field"><label>Телефон (логин)</label><input className="input" inputMode="tel" required value={maskPhone(edit.phone)} onChange={e => setEdit(f => ({ ...f, phone: e.target.value }))} placeholder="+7 (___) ___-__-__" /></div>
               <div className="field"><label>Дата приёма</label><input className="input" type="date" value={edit.hired_at || ''} onChange={e => setEdit(f => ({ ...f, hired_at: e.target.value }))} /></div>
@@ -218,7 +218,7 @@ export default function Users() {
           <div className="card flat">
             <div className="small muted">{secret.name}</div>
             <div className="bold" style={{ marginTop: 6 }}>Телефон: {secret.phone}</div>
-            <div className="bold" style={{ fontSize: 20, fontFamily: 'monospace', marginTop: 4 }}>{secret.password}</div>
+            <div className="bold" style={{ marginTop: 4 }}>Пароль: <span style={{ fontSize: 20, fontFamily: 'monospace' }}>{secret.password}</span></div>
           </div>
           <button className="btn soft block sm" style={{ marginTop: 12 }} onClick={() => {
             navigator.clipboard?.writeText(`Вход в обучение «Аладдин»: ${window.location.origin}\nТелефон: ${secret.phone}\nПароль: ${secret.password}`)

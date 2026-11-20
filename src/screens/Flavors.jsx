@@ -42,14 +42,14 @@ export default function Flavors() {
             <b>{goalDone ? 'Цель дня выполнена!' : 'Цель дня — 1 тренировка'}</b>
             <span className="small muted" style={{ display: 'block' }}>
               {data.today.answered
-                ? `Сегодня ${data.today.correct} из ${data.today.answered} ${plural(data.today.answered, 'ответа', 'ответов', 'ответов')} верно`
+                ? `Сегодня ${data.today.correct} из ${data.today.answered} верно · ${data.today.sessions} ${plural(data.today.sessions, 'тренировка', 'тренировки', 'тренировок')}`
                 : 'Пара минут — и вкусы запоминаются'}
             </span>
           </div>
           <span className="chip-reward" style={{ marginLeft: 'auto' }} title="Дней подряд с тренировкой"><Icon.flame size={16} />{data.streak}</span>
         </div>
-        <button className="btn gold block" style={{ marginTop: 14, minHeight: 54, fontSize: 16 }} disabled={!data.quiz} onClick={() => nav('/flavors/session')}>
-          <Icon.play size={18} />{work ? `Тренировка дня · ${work} ${plural(work, 'вкус', 'вкуса', 'вкусов')}` : 'Повторить вкусы'}
+        <button className="btn gold block" style={{ marginTop: 14, minHeight: 54, fontSize: 16 }} disabled={!data.quiz} onClick={() => nav('/flavors/session', { state: { extra: goalDone } })}>
+          <Icon.play size={18} />{goalDone ? 'Ещё тренировка' : 'Тренировка дня'}{work ? ` · ${work} ${plural(work, 'вкус', 'вкуса', 'вкусов')}` : ''}
         </button>
         {data.due > 0 && <p className="tiny muted center" style={{ marginTop: 8 }}>{data.due} {plural(data.due, 'вкус ждёт', 'вкуса ждут', 'вкусов ждут')} повторения</p>}
       </div>

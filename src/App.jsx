@@ -41,9 +41,10 @@ export default function App() {
   const [reviewsPending, setReviewsPending] = useState(0)
   const isAdmin = user?.role === 'admin'
   const inAdmin = location.pathname.startsWith('/admin')
+  const adminArea = isAdmin && inAdmin
   useEffect(() => {
-    if (isAdmin) api.admin.reviews().then(r => setReviewsPending(r.reviews?.length || 0)).catch(() => {})
-  }, [isAdmin, inAdmin])
+    if (adminArea) api.admin.reviews().then(r => setReviewsPending(r.reviews?.length || 0)).catch(() => {})
+  }, [adminArea])
   // «Домашний» экран: у продавца — главная, у администратора — «Управление»
   const home = isAdmin ? '/admin' : '/'
 
@@ -255,7 +256,7 @@ function TabBar() {
   // Тренажёр вкусов — ежедневная механика, поэтому он в центре меню. Рейтинг — на главной и в профиле.
   const tabs = [
     staff
-      ? { to: '/admin', label: 'Управление', icon: Icon.grid }
+      ? { to: '/admin', label: 'Админка', icon: Icon.grid }
       : { to: '/', label: 'Главная', icon: Icon.home, end: true },
     { to: '/library', label: 'Обучение', icon: Icon.book },
     { to: '/flavors', label: 'Вкусы', icon: Icon.target },

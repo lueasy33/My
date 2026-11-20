@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
 import { useApp } from '../App'
 import { Icon, PageSkeleton, LoadError, useToast, answerSound } from '../ui'
@@ -32,6 +32,9 @@ export default function FlavorSession() {
   const toast = useToast()
   const [params] = useSearchParams()
   const brand = params.get('brand') || ''
+  // Цель дня уже выполнена — это «Ещё тренировка», а не «Тренировка дня»
+  const location = useLocation()
+  const [extra, setExtra] = useState(!!location.state?.extra)
   const [queue, setQueue] = useState(null)
   const [title, setTitle] = useState('')
   const [error, setError] = useState(null)
@@ -42,12 +45,12 @@ export default function FlavorSession() {
   const [summary, setSummary] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  async function load() {
+  async function load(more = extra) {
     setError(null); setQueue(null); setIdx(0); setPicked(null); setFeedback(null); setSummary(null)
     setStats({ correct: 0, total: 0, combo: 0, best: 0, xp: 0, coil: 0 })
     try {
       const r = await api.flavorSession(brand)
-      setQueue(spaceOut(r.items)); setTitle(r.brand || 'Тренировка дня')
+      setQueue(spaceOut(r.items)); setTitle(r.brand || (more ? 'Ещё тренировка' : 'Тренировка дня'))
     } catch (e) { setError(e) }
   }
   useEffect(() => { load() }, [brand])
@@ -97,7 +100,7 @@ export default function FlavorSession() {
 
   async function quit() { nav(brand ? `/flavors/brand/${brand}` : '/flavors') }
 
-  if (error) return <main className="page lesson-page"><LoadError error={error} onRetry={load} /></main>
+  if (error) return <main className="page lesson-page"><LoadError error={error} onRetry={() => load()} /></main>
   if (!queue) return <main className="page lesson-page"><PageSkeleton /></main>
 
   if (!queue.length) {
@@ -133,9 +136,10 @@ export default function FlavorSession() {
               Из них за тренировку{summary.perfect ? ' и за ответы без ошибок' : ''}: {[summary.gained.xp > 0 && `+${summary.gained.xp} XP`, summary.gained.coil > 0 && `+${summary.gained.coil} COIL`].filter(Boolean).join(', ')}
             </p>
           )}
+          {queue.some(x => x.retry) && <p className="tiny muted" style={{ marginTop: 10 }}>«Повторим ошибку» в счёт не идёт — считается первый ответ</p>}
           <p className="small muted" style={{ marginTop: 16 }}>Ошибки вернутся завтра, верные ответы — через 3, 7 и 21 день. Так вкусы запоминаются надолго.</p>
           <div className="col" style={{ gap: 8, marginTop: 20 }}>
-            <button className="btn block" onClick={load}><Icon.refresh size={17} />Ещё тренировка</button>
+            <button className="btn block" onClick={() => { setExtra(true); load(true) }}><Icon.refresh size={17} />Ещё тренировка</button>
             <button className="btn ghost block" onClick={quit}>Готово</button>
           </div>
         </div>
@@ -169,7 +173,7 @@ export default function FlavorSession() {
                 <div className="muted bold">{item.flavor.brand}</div>
               </div>
             </div>
-            <FlavorFacts f={item.flavor} />
+            <FlavorFacts f={item.flavor} pitch />
           </>
         ) : (
           <>

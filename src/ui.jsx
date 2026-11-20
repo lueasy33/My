@@ -448,6 +448,11 @@ export function firstName(full) {
   return String(full || '').trim().split(/\s+/)[0] || ''
 }
 
+// Подпись периода рейтинга: сервер кладёт period рядом с местом, чтобы цифра и подпись совпадали везде
+export function rankPeriod(period) {
+  return { week: 'за неделю', month: 'за месяц', all: 'за всё время' }[period] || 'за месяц'
+}
+
 export function plural(n, one, few, many) {
   const a = Math.abs(n) % 100
   const b = a % 10

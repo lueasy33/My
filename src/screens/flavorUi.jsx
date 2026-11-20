@@ -33,11 +33,19 @@ export function Mastery({ box }) {
 
 export const STRENGTH_LABEL = { 'лёгкая': 'Лёгкая', 'средняя': 'Средняя', 'высокая': 'Высокая' }
 
-export function FlavorFacts({ f }) {
+// pitch — карточка знакомства в тренировке: если отдельной подсказки «как рассказать» нет,
+// описание и есть та фраза для клиента (вопрос «Как описать этот вкус клиенту?» спрашивает именно его)
+export function FlavorFacts({ f, pitch }) {
   const tags = (f.tags || []).filter(t => !/крепост|холод/.test(t))
+  const descAsTip = pitch && !f.tip && f.description
   return (
     <div className="col" style={{ gap: 12 }}>
-      {f.description && <p style={{ fontSize: 15.5, lineHeight: 1.6 }}>{f.description}</p>}
+      {descAsTip ? (
+        <div className="callout tip" style={{ margin: 0 }}>
+          <span className="ico"><Icon.message size={18} /></span>
+          <div><b>Как описать клиенту</b><br /><span style={{ fontSize: 16 }}>«{f.description}»</span></div>
+        </div>
+      ) : f.description && <p style={{ fontSize: 15.5, lineHeight: 1.6 }}>{f.description}</p>}
       <div className="row wrap" style={{ gap: 6 }}>
         {f.strength && <span className="badge"><Icon.bolt size={12} />{STRENGTH_LABEL[f.strength] || f.strength} крепость</span>}
         <span className={'badge' + (f.cold ? ' brand' : '')}>{f.cold ? '❄ С холодом' : 'Без холода'}</span>

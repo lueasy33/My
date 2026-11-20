@@ -5,7 +5,7 @@ import { Icon, ProgressBar, plural } from '../ui'
 
 const KEYS = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З']
 
-export default function Test({ data, onDone, onBack, next }) {
+export default function Test({ data, onDone, next }) {
   const { test, lesson, attemptsUsed } = data
   const [answers, setAnswers] = useState({})
   const [idx, setIdx] = useState(0)
@@ -57,7 +57,7 @@ export default function Test({ data, onDone, onBack, next }) {
   }
 
   if (phase === 'result' && result) {
-    return <ResultView result={result} lesson={lesson} questions={qs} onBack={onBack} next={next} />
+    return <ResultView result={result} lesson={lesson} questions={qs} next={next} />
   }
 
   if (phase === 'sending') {
@@ -149,7 +149,8 @@ export default function Test({ data, onDone, onBack, next }) {
 }
 
 /* ─── Результат: разбор важнее процента ─────────────────────── */
-function ResultView({ result, lesson, questions, onBack, next }) {
+// «К уроку» — одна кнопка в шапке урока, внизу дубль не нужен
+function ResultView({ result, lesson, questions, next }) {
   const nav = useNavigate()
   const { attempt, review, reward, attempts_left, pass_score, pause_minutes } = result
   const opts = (qid) => questions.find(x => x.id === qid)?.options || []
@@ -240,7 +241,6 @@ function ResultView({ result, lesson, questions, onBack, next }) {
         {!attempt.passed && attempts_left === 0 && !wrong.length && (
           <div className="card tight center small muted">Попытки закончились. Обратись к администратору — он поможет.</div>
         )}
-        <button className="btn ghost block" onClick={onBack}>Вернуться к уроку</button>
       </div>
     </div>
   )

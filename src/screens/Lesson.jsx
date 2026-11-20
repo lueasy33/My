@@ -94,7 +94,7 @@ export default function Lesson() {
           <div className="bold ellipsis" style={{ fontSize: 14.5 }}>{mode === 'test' ? `Тест: ${lesson.title}` : lesson.title}</div>
         </div>
         {mode === 'test' && (
-          <button className="btn ghost xs" onClick={() => setMode('read')}>К уроку</button>
+          <button className="btn ghost xs" onClick={() => { load(); window.scrollTo(0, 0) }}>К уроку</button>
         )}
         <div className="progress-line"><i style={{ width: `${mode === 'read' ? scrolled : 100}%` }} /></div>
       </header>
@@ -118,7 +118,7 @@ export default function Lesson() {
               lastAttempt: { ...res.attempt, created_at: new Date().toISOString() },
               progress: { ...(d.progress || {}), status: res.attempt.pending ? 'pending' : res.attempt.passed ? 'passed' : (d.progress?.status === 'passed' ? 'passed' : 'failed') }
             }))
-          }} onBack={() => { load(); window.scrollTo(0, 0) }} next={next} />
+          }} next={next} />
         ) : (
           <>
             <h1 style={{ fontSize: 26, lineHeight: 1.2, marginBottom: 8 }}>{lesson.title}</h1>

@@ -69,13 +69,19 @@ export default function Shop() {
           <span className="coil-chip" style={{ height: 40, fontSize: 16 }}><Icon.coin size={18} />{data.balance.toLocaleString('ru')}</span>
         </div>} />
 
-      <div style={{ marginBottom: 18 }}>
+      {/* tabs-fit: все 4 вкладки влезают в 375 px, «Темы» не уходит за край */}
+      <div className="tabs-fit" style={{ marginBottom: 18 }}>
         <Tabs value={current} onChange={setTab} items={[['prize', 'Призы', prizes.length], ['avatar', 'Аватарки'], ['status', 'Статусы'], ['theme', 'Темы']]} />
       </div>
 
-      {items.length === 0 ? <Empty icon={current === 'prize' ? <Icon.gift size={26} /> : <Icon.bag size={26} />} title="Здесь пока пусто"
-        text={current === 'prize' ? 'Призы — настоящие подарки за COIL: мерч, скидки, сладости. Их добавляет администратор' : 'Администратор скоро добавит товары'}
-        action={isAdmin && <Link className="btn sm" to={`/admin/workshop?tab=${current}`}><Icon.plus size={16} />Добавить</Link>} /> : (
+      {items.length === 0 ? (current === 'prize' && !isAdmin
+        // Магазин открывается на «Призах» — первый экран новичка не должен быть тупиком
+        ? <Empty icon={<Icon.gift size={26} />} title="Призы скоро появятся"
+            text="Это настоящие подарки за COIL: мерч, скидки, сладости. А пока загляни в аватарки"
+            action={<button className="btn sm" onClick={() => setTab('avatar')}><Icon.user size={16} />К аватаркам</button>} />
+        : <Empty icon={current === 'prize' ? <Icon.gift size={26} /> : <Icon.bag size={26} />} title="Здесь пока пусто"
+            text={current === 'prize' ? 'Призы — настоящие подарки за COIL: мерч, скидки, сладости. Их добавляет администратор' : 'Администратор скоро добавит товары'}
+            action={isAdmin && <Link className="btn sm" to={`/admin/workshop?tab=${current}`}><Icon.plus size={16} />Добавить</Link>} />) : (
         <div className="shop-grid">
           {items.map(item => (
             <div key={item.id} className={'shop-item' + (item.owned ? ' owned' : '') + (!item.purchaseable && !item.owned ? ' limited' : '')}>
@@ -143,7 +149,7 @@ export default function Shop() {
         <div className="section-head"><h2>Как заработать COIL</h2></div>
         <div className="card">
           <div className="grid-auto" style={{ gap: 8 }}>
-            {[['Пройти урок', 15], ['Сдать тест', 10], ['Тест на 100%', 15], ['Завершить курс', 40], ['Зайти в день', 5], ['Серия 7 дней', 30], ['Тренировка вкусов', 18]].map(([l, v]) => (
+            {[['Пройти урок', 15], ['Сдать тест', 10], ['Тест на 100%', 15], ['Завершить курс', 40], ['Зайти в день', 5], ['Серия 7 дней', 30], ['Тренировка вкусов', 18], ['Верный ответ во вкусах', 2]].map(([l, v]) => (
               <div key={l} className="row between small" style={{ padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
                 <span className="muted bold">{l}</span>
                 <span className="mono bold reward">+{v}</span>

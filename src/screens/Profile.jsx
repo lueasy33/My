@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { THEMES } from '../theme'
 import { useApp } from '../App'
-import { Icon, Avatar, PageSkeleton, ProgressBar, LevelRing, LoadError, Modal, Tabs, useLoad, useToast, plural, fmtDate, fmtAgo, ROLE_LABEL, avatarSrc, iconSrc, RARITY } from '../ui'
+import { Icon, Avatar, PageSkeleton, ProgressBar, LevelRing, LoadError, Modal, Tabs, useLoad, useToast, plural, fmtDate, fmtAgo, ROLE_LABEL, avatarSrc, iconSrc, RARITY, rankPeriod } from '../ui'
 
 function StatTile({ icon: I, label, value, sub, percent, gold, tone, to }) {
   const body = (
@@ -98,7 +98,7 @@ export default function Profile() {
           <StatTile icon={Icon.star} label="Тестов на 100%" value={s.perfectTests} gold />
           <StatTile icon={Icon.sparkles} label="Вкусов знаю" value={`${s.flavorsLearned}/${s.flavorsTotal}`} percent={s.flavorsTotal ? s.flavorsLearned / s.flavorsTotal * 100 : 0} to="/flavors" />
           <StatTile icon={Icon.flame} label="Лучшая серия" value={`${s.bestStreak} ${plural(s.bestStreak, 'день', 'дня', 'дней')}`} gold />
-          {data.rank && <StatTile icon={Icon.trophy} label="Место в компании" value={`${data.rank.company} из ${data.rank.companyTotal}`} sub={data.rank.branch ? `в филиале ${data.rank.branch} из ${data.rank.branchTotal}` : ''} to="/ranking" />}
+          {data.rank && <StatTile icon={Icon.trophy} label={`Место ${rankPeriod(data.rank.period)}`} value={`${data.rank.company} из ${data.rank.companyTotal}`} sub={data.rank.branch ? `в филиале ${data.rank.branch} из ${data.rank.branchTotal}` : 'в компании'} to="/ranking" />}
           <StatTile icon={Icon.medal} label="Достижений" value={`${earned.length}/${data.achievements.length}`} gold />
           <StatTile icon={Icon.coin} label="COIL заработано за учёбу" value={s.coilEarned.toLocaleString('ru')} sub={`потрачено ${s.coilSpent.toLocaleString('ru')}`} gold />
         </div>

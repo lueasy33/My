@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { api } from '../api'
 import { useApp } from '../App'
-import { Avatar, PageSkeleton, LoadError, Empty, Tabs, PageHead, Icon, useLoad, plural, firstName } from '../ui'
+import { Avatar, PageSkeleton, LoadError, Empty, Tabs, PageHead, Icon, useLoad, plural, firstName, rankPeriod } from '../ui'
 
 export default function Ranking() {
   const { user } = useApp()
@@ -9,7 +9,7 @@ export default function Ranking() {
   const [period, setPeriod] = useState('month')
   const { data, error, reload } = useLoad(() => api.ranking(scope, period), [scope, period])
 
-  const periodLabel = { week: 'за неделю', month: 'за месяц', all: 'за всё время' }[period]
+  const periodLabel = rankPeriod(period)
 
   return (
     <main className="page narrow">
@@ -28,12 +28,12 @@ export default function Ranking() {
         : !data ? <PageSkeleton />
         : data.rows.length === 0 ? <Empty icon={<Icon.trophy size={26} />} title="Пока пусто" text="За этот период ещё никто не набрал опыт" />
         : data.scope === 'branches' ? <Branches rows={data.rows} />
-        : <People rows={data.rows} me={data.me} total={data.total} />}
+        : <People rows={data.rows} me={data.me} total={data.total} periodLabel={periodLabel} />}
     </main>
   )
 }
 
-function People({ rows, me, total }) {
+function People({ rows, me, total, periodLabel }) {
   const top = rows.slice(0, 3)
   // Пьедестал — только когда у всей тройки есть XP: «3-е место с 0 XP» выглядит как ошибка
   const podium = top.length === 3 && top.every(p => p.xp > 0)
@@ -60,7 +60,7 @@ function People({ rows, me, total }) {
       {me && !meVisible && (
         <div className="rank-me-sticky"><Row p={me} /></div>
       )}
-      {me && <p className="small muted center" style={{ marginTop: 14 }}>Ты на {me.rank} месте из {total}</p>}
+      {me && <p className="small muted center" style={{ marginTop: 14 }}>Ты на {me.rank} месте из {total} {periodLabel}</p>}
     </>
   )
 }

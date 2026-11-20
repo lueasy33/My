@@ -85,6 +85,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
   box-shadow: 0 6px 18px -8px var(--brand-500);
 }
 .brand-mark { background: none; box-shadow: none; }
+/* Значок шага в туре — иконка, а не картинка-логотип: ей фон нужен */
+.brand-mark.tour-mark { background: linear-gradient(140deg, var(--brand-500), var(--brand-700)); box-shadow: 0 6px 18px -8px var(--brand-500); }
 .brand-mark.sm { width: 30px; height: 30px; border-radius: 9px; }
 
 .icon-btn {
@@ -375,6 +377,9 @@ a.card { display: block; color: inherit; text-decoration: none; }
 .segmented.sm button { min-height: 34px; font-size: 13px; }
 /* В формах варианты делят ширину поровну и переносят текст, а не уезжают за край */
 .modal .segmented, .field .segmented { overflow: visible; }
+/* Вкладки делят ширину поровну и не прокручиваются — для коротких наборов (магазин) */
+.tabs-fit .segmented { gap: 2px; }
+.tabs-fit .segmented button { flex: 1 1 auto; min-width: 0; padding: 0 8px; font-size: 13px; }
 .modal .segmented button, .field .segmented button { flex: 1 1 0; min-width: 0; white-space: normal; text-align: center; line-height: 1.2; padding: 6px 10px; }
 
 .scroll-x { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
@@ -724,7 +729,9 @@ blockquote { margin: 18px 0; padding: 4px 0 4px 16px; border-left: 3px solid var
 
 /* ─── Аналитика ─────────────────────────────────────────────── */
 .kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-@media (min-width: 760px) { .kpis { grid-template-columns: repeat(4, 1fr); } }
+/* Карточек бывает 3 или 4: на телефоне нечётная последняя — во всю ширину, на ПК ряд делится поровну, без дыры справа */
+@media (max-width: 759px) { .kpis > :last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (min-width: 760px) { .kpis { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; } }
 .kpi { padding: 14px 16px; border-radius: 16px; background: var(--surface-1); border: 1px solid var(--border); }
 .kpi .v { font-size: 28px; font-weight: 800; letter-spacing: -.03em; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi .k { font-size: 13px; color: var(--text-muted); font-weight: 650; margin-top: 2px; }

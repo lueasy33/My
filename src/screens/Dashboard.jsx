@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useApp } from '../App'
 import { PushPrompt } from './PushSettings'
-import { Icon, PageSkeleton, ProgressBar, LevelRing, LoadError, useLoad, plural, daysLabel, IMPORTANCE, iconSrc, firstName } from '../ui'
+import { Icon, PageSkeleton, ProgressBar, LevelRing, LoadError, useLoad, plural, daysLabel, IMPORTANCE, iconSrc, firstName, rankPeriod } from '../ui'
 
 export { plural }
 
@@ -119,7 +119,7 @@ export default function Dashboard() {
             <div className="section-head"><h2>Быстрый доступ</h2></div>
             <div className="quick">
               <Link to="/flavors"><Icon.target size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Вкусы</b><br /><span>Тренировка дня</span></div></Link>
-              <Link to="/ranking"><Icon.trophy size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Рейтинг</b><br /><span>{data.rank ? `${data.rank.company} место` : 'Вся сеть'}</span></div></Link>
+              <Link to="/ranking"><Icon.trophy size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Рейтинг</b><br /><span>{data.rank ? `${data.rank.company} место ${rankPeriod(data.rank.period)}` : 'Вся сеть'}</span></div></Link>
               <Link to="/shop"><Icon.bag size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Магазин</b><br /><span>{user.coil} COIL</span></div></Link>
               <Link to="/themes"><Icon.palette size={22} style={{ color: 'var(--brand-text)' }} /><div><b>Темы</b><br /><span>Оформление</span></div></Link>
             </div>
@@ -129,7 +129,7 @@ export default function Dashboard() {
         <div>
           {data.rank && (
             <section className="section">
-              <div className="section-head"><h2>Моё место</h2><Link to="/ranking">Рейтинг</Link></div>
+              <div className="section-head"><h2>Моё место <span className="muted small">{rankPeriod(data.rank.period)}</span></h2><Link to="/ranking">Рейтинг</Link></div>
               <div className="grid2">
                 <div className="card tight">
                   <div className="mono" style={{ fontSize: 26, fontWeight: 800 }}>{data.rank.company}<span className="muted small"> / {data.rank.companyTotal}</span></div>

@@ -15,10 +15,11 @@ import Audit from './Audit'
 export default function Admin() {
   const { reviewsPending } = useApp()
   const items = [
+    // «Сотрудники» — главное действие администратора, вторая вкладка: видна без прокрутки и на телефоне
     { to: '/admin', label: 'Обзор', icon: Icon.grid, end: true },
+    { to: '/admin/users', label: 'Сотрудники', icon: Icon.users },
     { to: '/admin/content', label: 'Контент', icon: Icon.book },
     { to: '/admin/workshop', label: 'Мастерская', icon: Icon.sparkles },
-    { to: '/admin/users', label: 'Сотрудники', icon: Icon.users },
     { to: '/admin/branches', label: 'Филиалы', icon: Icon.store },
     // Вкладка видна, только когда есть открытые ответы; адрес /admin/reviews работает всегда
     ...(reviewsPending > 0 ? [{ to: '/admin/reviews', label: `Проверки · ${reviewsPending}`, icon: Icon.check }] : []),
