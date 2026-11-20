@@ -16,6 +16,7 @@ export default function Overview() {
 
   const c = data.counts
   const open = data.attention.filter(r => !r.contacted)
+  const people = groupByPerson(data.attention)
 
   async function markContacted() {
     try {
@@ -41,26 +42,41 @@ export default function Overview() {
 
       <div className="dash-grid">
         <section className="section">
-          <div className="section-head"><h2>Просрочки · требует внимания</h2><span className="small muted" style={{ whiteSpace: 'nowrap' }}>{open.length} без контакта</span></div>
+          <div className="section-head"><h2>Просрочки · требует внимания</h2><span className="small muted" style={{ whiteSpace: 'nowrap' }}>{people.length} {plural(people.length, 'человек', 'человека', 'человек')} · {open.length} без контакта</span></div>
           {data.attention.length === 0 ? (
             <div className="empty"><Icon.check size={24} style={{ color: 'var(--success-text)' }} /><p className="small muted" style={{ marginTop: 6 }}>Просрочек нет — все успевают</p></div>
           ) : (
-            <div className="col" style={{ gap: 6 }}>
-              {data.attention.slice(0, 12).map(r => (
-                <div key={`${r.user_id}-${r.lesson_id}`} className="list-row attn">
-                  <span className={'list-ico ' + (r.contacted ? 'success' : 'danger')}>{r.contacted ? <Icon.check size={18} /> : <Icon.alert size={18} />}</span>
-                  <span className="list-main wrap">
-                    <b>{r.name}</b>
-                    <span>{r.lesson} · просрочен на {r.days_overdue} {plural(r.days_overdue, 'день', 'дня', 'дней')}{r.branch ? ` · ${r.branch}` : ''}</span>
-                    {r.contacted && <span>Связались {fmtAgo(r.contacted_at)}{r.last_note ? `: ${r.last_note}` : ''}</span>}
-                  </span>
-                  <span className="attn-actions">
-                    <a className="btn ghost sm icon" href={`tel:${r.phone}`} aria-label={`Позвонить: ${r.name}`}><Icon.phone size={16} /></a>
-                    {!r.contacted && <button className="btn soft sm" onClick={() => setContact(r)}>Связался</button>}
-                  </span>
+            <div className="col" style={{ gap: 8 }}>
+              {people.slice(0, 10).map(g => (
+                <div key={g.user_id} className="card tight attn-person">
+                  <div className="list-row bare">
+                    <span className={'list-ico ' + (g.open ? 'danger' : 'success')}>{g.open ? <Icon.alert size={18} /> : <Icon.check size={18} />}</span>
+                    <span className="list-main wrap">
+                      <b>{g.name}</b>
+                      <span>{g.rows.length === 1
+                        ? `просрочен на ${g.oldest} ${plural(g.oldest, 'день', 'дня', 'дней')}`
+                        : `${g.rows.length} ${plural(g.rows.length, 'урок просрочен', 'урока просрочены', 'уроков просрочено')} · самый старый — ${g.oldest} ${plural(g.oldest, 'день', 'дня', 'дней')}`}{g.branch ? ` · ${g.branch}` : ''}</span>
+                    </span>
+                    <a className="btn ghost sm icon" href={`tel:${g.phone}`} aria-label={`Позвонить: ${g.name}`}><Icon.phone size={16} /></a>
+                  </div>
+                  <div className="attn-lessons">
+                    {g.rows.map(r => (
+                      <div key={r.lesson_id} className="attn-lesson">
+                        <span className="list-main wrap">
+                          <b>{r.lesson}</b>
+                          <span>{r.contacted
+                            ? `Связались ${fmtAgo(r.contacted_at)}${r.last_note ? `: ${r.last_note}` : ''}`
+                            : `просрочен на ${r.days_overdue} ${plural(r.days_overdue, 'день', 'дня', 'дней')}`}</span>
+                        </span>
+                        {r.contacted
+                          ? <Icon.check size={18} style={{ color: 'var(--success-text)', flex: 'none' }} aria-label="Связались" />
+                          : <button className="btn soft sm" onClick={() => setContact(r)}>Связался</button>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
-              {data.attention.length > 12 && <p className="small muted center">и ещё {data.attention.length - 12}</p>}
+              {people.length > 10 && <p className="small muted center">и ещё {people.length - 10} {plural(people.length - 10, 'человек', 'человека', 'человек')}</p>}
             </div>
           )}
           <p className="tiny muted" style={{ marginTop: 8 }}>Система не блокирует опоздавших: просрочка — повод поговорить, а не наказание.</p>
@@ -108,6 +124,23 @@ export default function Overview() {
       )}
     </>
   )
+}
+
+// Просрочки одним списком повторяли имя на каждой строке («Ирина» 4 раза подряд).
+// Группа = человек → его уроки; сверху тот, у кого самая старая просрочка без контакта.
+function groupByPerson(rows) {
+  const map = new Map()
+  for (const r of rows) {
+    if (!map.has(r.user_id)) map.set(r.user_id, { user_id: r.user_id, name: r.name, phone: r.phone, branch: r.branch, rows: [] })
+    map.get(r.user_id).rows.push(r)
+  }
+  const list = [...map.values()]
+  for (const g of list) {
+    g.rows.sort((a, b) => b.days_overdue - a.days_overdue)
+    g.oldest = g.rows[0].days_overdue
+    g.open = g.rows.some(r => !r.contacted)
+  }
+  return list.sort((a, b) => (b.open - a.open) || (b.oldest - a.oldest) || a.name.localeCompare(b.name, 'ru'))
 }
 
 function Kpi({ v, k, warn, danger, to }) {

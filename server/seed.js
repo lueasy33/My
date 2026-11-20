@@ -57,9 +57,9 @@ insertUser.run('+79102223344', 'Дмитрий Волков', pass, 'employee', 
 insertUser.run('+79103334455', 'Алексей Гусев', pass, 'employee', branchIds[0], 420, 310, 6, 'ava_01_ugolek', JSON.stringify(['ava_01_ugolek']), 7, today(), 1)
 insertUser.run('+79104445566', 'Никита Морозов', pass, 'employee', branchIds[0], 305, 240, 5, 'ava_02_dym', JSON.stringify(['ava_02_dym']), 3, today(), 1)
 insertUser.run('+79105556677', 'Анна Лебедева', pass, 'employee', branchIds[1], 260, 215, 4, 'ava_04_vitrazh', JSON.stringify(['ava_04_vitrazh']), 9, today(), 1)
-insertUser.run('+79106667788', 'Сергей Панов', pass, 'employee', branchIds[1], 140, 95, 3, 'ava_01_ugolek', JSON.stringify(['ava_01_ugolek']), 1, '2026-10-14', 1)
+insertUser.run('+79106667788', 'Сергей Панов', pass, 'employee', branchIds[1], 140, 95, 3, 'ava_01_ugolek', JSON.stringify(['ava_01_ugolek']), 0, datePlus(-5), 1)
 insertUser.run('+79107778899', 'Ольга Романова', pass, 'employee', branchIds[2], 95, 60, 2, 'ava_06_mirazh', '[]', 2, today(), 1)
-insertUser.run('+79108889900', 'Тимур Асланов', pass, 'employee', branchIds[2], 55, 40, 2, 'ava_01_ugolek', '[]', 0, '2026-10-10', 1)
+insertUser.run('+79108889900', 'Тимур Асланов', pass, 'employee', branchIds[2], 55, 40, 2, 'ava_01_ugolek', '[]', 0, datePlus(-3), 1)
 insertUser.run('+79109990011', 'Виктория Смирнова', pass, 'employee', branchIds[3], 0, 0, 1, 'ava_01_ugolek', '[]', 0, null, 0)
 
 
@@ -379,49 +379,62 @@ for (const f of flavors) {
 }
 
 // ─── Прогресс и история ────────────────────────────────────────
+// Демо должно выглядеть как обычная неделя, а не пожар (разбор этапа 3):
+// ветераны прошли то, что положено по стажу, просрочки — у 4 новичков, 5 уроков, 1–7 дней.
+// Даты приёма — относительно сегодня, иначе через месяц все снова «опоздают».
+const at = (daysAgo, time) => `${datePlus(-daysAgo)} ${time}`
+const hire = db.prepare('UPDATE users SET hired_at = ? WHERE id = ?')
+//            id: дней назад принят
+for (const [id, days] of [[2, 180], [3, 120], [4, 60], [5, 9], [6, 15], [7, 14], [8, 4], [9, 10], [10, 0]]) hire.run(datePlus(-days), id)
+
 const insProg = db.prepare('INSERT INTO progress(user_id, lesson_id, lesson_version, status) VALUES (?,?,?,?)')
-insProg.run(4, l1, 1, 'passed')
-insProg.run(4, l2, 1, 'passed')
-insProg.run(4, l3, 1, 'in_progress')
-insProg.run(5, l1, 1, 'passed')
-insProg.run(6, l1, 1, 'passed')
-insProg.run(6, l2, 1, 'failed')
-insProg.run(7, l1, 1, 'passed')
-insProg.run(8, l1, 1, 'in_progress')
+const prog = {
+  2: { passed: [l1, l2, l3, l4, l5, l6, l7] },                       // Ирина — всё пройдено
+  3: { passed: [l1, l2, l3, l4, l5, l6], in_progress: [l7] },        // Дмитрий
+  4: { passed: [l1, l2, l4, l6], in_progress: [l3] },                // Алексей
+  5: { passed: [l1, l4, l6], in_progress: [l2] },                    // Никита: «Сборка» — через 3 дня
+  6: { passed: [l1, l4, l6], failed: [l2] },                         // Анна: тест «Сборки» не сдан — просрочка 3 дня
+  7: { passed: [l1, l6] },                                           // Сергей: «Крепость» и «Сборка» просрочены
+  8: { in_progress: [l1] },                                          // Ольга: «Возраст» просрочен на день
+  9: { passed: [l1, l6] }                                            // Тимур: «Крепость» просрочена на 3 дня
+}
+for (const [uid, by] of Object.entries(prog)) {
+  for (const [status, ids] of Object.entries(by)) for (const lid of ids) insProg.run(Number(uid), lid, 1, status)
+}
 
 const insAtt = db.prepare('INSERT INTO attempts(user_id, test_id, answers, score, passed, pending, created_at) VALUES (?,?,?,?,?,?,?)')
-insAtt.run(4, t1, JSON.stringify({ 1: [1], 2: [0], 3: [0, 1], 4: [0], 5: [1] }), 80, 1, 0, '2026-10-12 19:20')
-insAtt.run(4, t2, JSON.stringify({ 1: [1], 2: [1], 3: [0, 1, 3], 4: 'text' }), 100, 1, 0, '2026-10-15 20:10')
-insAtt.run(6, t1, JSON.stringify({ 1: [0], 2: [1], 3: [0], 4: [1], 5: [1] }), 40, 0, 0, '2026-10-16 18:40')
-insAtt.run(5, t1, JSON.stringify({ 1: [1], 2: [1], 3: [0, 1], 4: [0], 5: [1] }), 100, 1, 0, '2026-10-11 12:00')
-insAtt.run(7, t1, JSON.stringify({ 1: [1], 2: [1], 3: [0], 4: [1], 5: [1] }), 80, 1, 0, '2026-10-10 16:30')
+insAtt.run(4, t1, JSON.stringify({ 1: [1], 2: [0], 3: [0, 1], 4: [0], 5: [1] }), 80, 1, 0, at(57, '19:20'))
+insAtt.run(4, t2, JSON.stringify({ 1: [1], 2: [1], 3: [0, 1, 3], 4: 'text' }), 100, 1, 0, at(52, '20:10'))
+insAtt.run(6, t2, JSON.stringify({ 1: [0], 2: [1], 3: [0], 4: 'text' }), 40, 0, 0, at(2, '18:40'))
+insAtt.run(5, t1, JSON.stringify({ 1: [1], 2: [1], 3: [0, 1], 4: [0], 5: [1] }), 100, 1, 0, at(6, '12:00'))
+insAtt.run(7, t1, JSON.stringify({ 1: [1], 2: [1], 3: [0], 4: [1], 5: [1] }), 80, 1, 0, at(11, '16:30'))
 
 // Достижения сотрудникам
 const ua = db.prepare('INSERT OR IGNORE INTO user_achievements(user_id, achievement_id, granted_at, seen) VALUES (?,?,?,1)')
 const achByCode = Object.fromEntries(db.prepare('SELECT id, code FROM achievements').all().map(a => [a.code, a.id]))
-ua.run(4, achByCode['ach_01_pervyy-shag'], '2026-10-12 19:21')
-ua.run(4, achByCode['ach_06_otlichnik'], '2026-10-15 20:11')
-ua.run(4, achByCode['ach_10_seriya-7'], '2026-10-16 09:00')
-ua.run(5, achByCode['ach_01_pervyy-shag'], '2026-10-11 12:01')
-ua.run(6, achByCode['ach_01_pervyy-shag'], '2026-10-08 17:00')
-ua.run(7, achByCode['ach_01_pervyy-shag'], '2026-10-10 16:31')
+ua.run(4, achByCode['ach_01_pervyy-shag'], at(57, '19:21'))
+ua.run(4, achByCode['ach_06_otlichnik'], at(52, '20:11'))
+ua.run(4, achByCode['ach_10_seriya-7'], at(50, '09:00'))
+ua.run(5, achByCode['ach_01_pervyy-shag'], at(6, '12:01'))
+ua.run(6, achByCode['ach_01_pervyy-shag'], at(12, '17:00'))
+ua.run(7, achByCode['ach_01_pervyy-shag'], at(11, '16:31'))
 
 // COIL/XP история
 const insC = db.prepare('INSERT OR IGNORE INTO coil_tx(user_id, amount, reason, ref, created_at) VALUES (?,?,?,?,?)')
-insC.run(4, 15, 'lesson', 'l1', '2026-10-12 19:00')
-insC.run(4, 10, 'test', 'a1', '2026-10-12 19:20')
-insC.run(4, 15, 'lesson', 'l2', '2026-10-15 19:50')
-insC.run(4, 15, 'test_perfect', 'a2', '2026-10-15 20:10')
-insC.run(5, 15, 'lesson', 'l1', '2026-10-11 11:40')
-insC.run(6, 15, 'lesson', 'l1', '2026-10-08 16:40')
+insC.run(4, 15, 'lesson', 'l1', at(57, '19:00'))
+insC.run(4, 10, 'test', 'a1', at(57, '19:20'))
+insC.run(4, 15, 'lesson', 'l2', at(52, '19:50'))
+insC.run(4, 15, 'test_perfect', 'a2', at(52, '20:10'))
+insC.run(5, 15, 'lesson', 'l1', at(6, '11:40'))
+insC.run(6, 15, 'lesson', 'l1', at(12, '16:40'))
 
 // Уведомления
 const insN = db.prepare('INSERT INTO notifications(user_id, kind, title, body, link, created_at) VALUES (?,?,?,?,?,?)')
-insN.run(4, 'deadline', 'До дедлайна 2 дня', 'Курс «Табак»: Крепость и жар', '/course/' + c2, '2026-10-17 09:00')
-insN.run(4, 'achievement', 'Новое достижение: Отличник', 'Тест сдан на 100%', '/profile', '2026-10-15 20:11')
-insN.run(4, 'level', 'Уровень 6!', 'Открыта тема «Кофе»', '/themes', '2026-10-15 20:12')
-insN.run(5, 'lesson', 'Новый урок в курсе «Кальяны»', 'Уход и чистка', '/course/' + c1, '2026-10-16 10:00')
-insN.run(6, 'deadline', 'Урок просрочен на 3 дня', 'Устройство кальяна', '/lesson/' + l1, '2026-10-16 09:00')
+insN.run(4, 'deadline', 'До дедлайна 2 дня', 'Курс «Табак»: Крепость и жар', '/course/' + c2, at(55, '09:00'))
+insN.run(4, 'achievement', 'Новое достижение: Отличник', 'Тест сдан на 100%', '/profile', at(52, '20:11'))
+insN.run(4, 'level', 'Уровень 6!', 'Открыта тема «Кофе»', '/themes', at(52, '20:12'))
+insN.run(5, 'lesson', 'Новый урок в курсе «Кальяны»', 'Уход и чистка', '/course/' + c1, at(3, '10:00'))
+insN.run(6, 'deadline', 'Урок просрочен на 1 день', 'Сборка и запуск', '/lesson/' + l2, at(2, '09:00'))
 
 // ─── Мета ──────────────────────────────────────────────────────
 setMeta('themes', THEMES)
@@ -473,6 +486,9 @@ db.prepare('UPDATE user_achievements SET seen = 1').run()
 // «В команде» не короче серии: дата регистрации — до начала текущей серии
 db.prepare(`UPDATE users SET best_streak = MAX(best_streak, streak),
   created_at = datetime('now', '-' || (streak + 30) || ' days') WHERE last_active_day IS NOT NULL`).run()
+// Кого приняли недавно — тот и в приложении недавно (серия у них короче стажа)
+db.prepare(`UPDATE users SET created_at = hired_at || ' 09:00:00'
+  WHERE hired_at IS NOT NULL AND hired_at > date(created_at)`).run()
 
 // Баланс в users — кэш для чтения. Источник правды — журнал.
 // Стартовые суммы пишем в журнал как opening, иначе баланс не сходится

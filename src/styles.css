@@ -987,3 +987,11 @@ button.order-row { cursor: pointer; } button.order-row:hover { background: var(-
   .list-row.attn .attn-actions { width: 100%; padding-left: 52px; }
   .list-row.attn .attn-actions .btn:not(.icon) { flex: 1; }
 }
+
+/* Просрочки по человеку: шапка «имя · N уроков», под ней его уроки с кнопкой «Связался» */
+.list-row.bare { border: 0; background: none; padding: 0; }
+.attn-person { padding: 10px 12px; }
+.attn-lessons { margin-top: 8px; padding-left: 52px; display: flex; flex-direction: column; gap: 6px; }
+.attn-lesson { display: flex; align-items: center; gap: 10px; padding-top: 6px; border-top: 1px solid var(--border); }
+.attn-lesson .list-main b { font-size: 14px; font-weight: 650; white-space: normal; }
+@media (max-width: 520px) { .attn-lessons { padding-left: 0; } }

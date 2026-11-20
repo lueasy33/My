@@ -108,3 +108,17 @@ test('в магазине есть демо-призы: кружка, скидк
   for (const p of prizes) assert.ok(p.price > 0 && p.purchaseable === 1, p.title)
   for (const w of [/кружка/i, /скидка/i, /выходной/i]) assert.ok(prizes.some(p => w.test(p.title)), String(w))
 })
+
+test('демо-админка не «горит»: просрочек немного, у разных людей и свежие', async () => {
+  const { cookie } = await S.login('+79101234567')
+  const r = await S.call('/api/admin/attention', { cookie })
+  assert.equal(r.status, 200)
+  const rows = r.json.rows
+  assert.ok(rows.length >= 3 && rows.length <= 6, `просрочек ${rows.length}, ждём 3–6`)
+  const people = new Set(rows.map(x => x.user_id))
+  assert.ok(people.size >= 3, `просрочки только у ${people.size} человек`)
+  for (const x of rows) assert.ok(x.days_overdue >= 1 && x.days_overdue <= 14, `${x.name}: ${x.lesson} просрочен на ${x.days_overdue} дн.`)
+  // Ветераны прошли положенное по стажу
+  const veteran = S.db.prepare("SELECT COUNT(*) c FROM progress p JOIN users u ON u.id = p.user_id WHERE u.phone = '+79101112233' AND p.status = 'passed'").get().c
+  assert.ok(veteran >= 5, `у Ирины пройдено ${veteran}`)
+})
