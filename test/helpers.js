@@ -11,6 +11,19 @@ import { DatabaseSync } from 'node:sqlite'
 import assert from 'node:assert/strict'
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+
+// Временная папка теста удаляется после того, как сервер реально завершился:
+// на Windows база держится открытой, пока процесс жив, и rmSync молча не срабатывал —
+// папки aladdin-test-* копились в %TEMP% и забили диск.
+export async function cleanupDir(dir, proc) {
+  if (proc && proc.exitCode === null && proc.signalCode === null) {
+    const exited = new Promise(r => proc.once('exit', r))
+    proc.kill()
+    await Promise.race([exited, new Promise(r => setTimeout(r, 5000))])
+  }
+  try { rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }) }
+  catch (e) { console.warn('не удалось удалить временную папку теста', dir, e.code) }
+}
 export const DEMO_PASSWORD = 'aladdin2026'
 export const SESSION_SECRET = 'x'.repeat(64)
 
@@ -58,10 +71,9 @@ export async function startServer(extraEnv = {}) {
     return { ...r, cookie }
   }
 
-  function stop() {
+  async function stop() {
     try { db.close() } catch { /* уже закрыта */ }
-    server.kill()
-    try { rmSync(dir, { recursive: true, force: true }) } catch { /* Windows может держать файл */ }
+    await cleanupDir(dir, server)
   }
 
   return { call, login, db, stop, env, base }

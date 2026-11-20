@@ -79,6 +79,6 @@ test('seed и reset не стирают базу с людьми без FORCE=1'
     assert.equal(run('seed.js', { FORCE: '1 ' }).status, 0)
     assert.equal(run('reset.js', { FORCE: '1' }).status, 0)
   } finally {
-    try { rmSync(dir, { recursive: true, force: true }) } catch { /* Windows может держать файл */ }
+    try { rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }) } catch { /* Windows может держать файл */ }
   }
 })

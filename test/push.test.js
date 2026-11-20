@@ -8,7 +8,7 @@ import assert from 'node:assert/strict'
 import { createServer } from 'node:https'
 import { createECDH, randomBytes } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, readFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { startServer } from './helpers.js'
@@ -36,7 +36,7 @@ before(async () => {
   S = await startServer({ NODE_TLS_REJECT_UNAUTHORIZED: '0' })
   admin = (await S.login('+79101234567')).cookie
 })
-after(() => { S?.stop(); fake?.close() })
+after(async () => { fake?.close(); await S?.stop(); rmSync(certDir, { recursive: true, force: true }) })
 
 const b64url = (buf) => Buffer.from(buf).toString('base64url')
 function browserSubscription(path) {

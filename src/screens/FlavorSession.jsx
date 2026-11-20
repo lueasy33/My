@@ -141,6 +141,7 @@ export default function FlavorSession() {
               Из них за тренировку{summary.perfect ? ' и за ответы без ошибок' : ''}: {[summary.gained.xp > 0 && `+${summary.gained.xp} XP`, summary.gained.coil > 0 && `+${summary.gained.coil} COIL`].filter(Boolean).join(', ')}
             </p>
           )}
+          {summary.goalReached === false && <p className="small muted" style={{ marginTop: 8 }}>Бонус за тренировку — от половины верных</p>}
           {queue.some(x => x.retry) && <p className="tiny muted" style={{ marginTop: 10 }}>«Повторим ошибку» в счёт не идёт — считается первый ответ</p>}
           <p className="small muted" style={{ marginTop: 16 }}>Ошибки вернутся завтра, верные ответы — через 3, 7 и 21 день. Так вкусы запоминаются надолго.</p>
           <div className="col" style={{ gap: 8, marginTop: 20 }}>

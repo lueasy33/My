@@ -1,13 +1,16 @@
 // Тренажёр вкусов: COIL только за проверенные сервером ответы.
 // Правило (утверждено Евгением, «как в коде»): +2 COIL за верный ответ (раз в день на вкус),
-// +18 за первую тренировку дня, +10 за тренировку без ошибок (от 5 ответов).
+// +18 за первую тренировку дня, +10 за тренировку без ошибок (от 4 ответов).
+// Бонусы тренировки — только если верно хотя бы половина (как цель дня).
 
 import { test, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { startServer } from './helpers.js'
 
-let S
-before(async () => { S = await startServer() })
+let S, admin
+const PASS = 'porog-bonusa-2026'
+const branchId = () => S.db.prepare('SELECT MIN(id) id FROM branches').get().id
+before(async () => { S = await startServer(); admin = (await S.login('+79101234567')).cookie })
 after(() => S?.stop())
 
 const quizFlavors = (n) => S.db.prepare(`SELECT f.id FROM flavors f JOIN flavor_brands b ON b.id = f.brand_id
@@ -157,4 +160,22 @@ test('карточка нового вкуса не пустая: похожие
   }
   assert.ok(intros.some(it => it.similar.length > 0), 'похожие вкусы не нашлись ни для одного')
   assert.ok(intros.every(it => typeof it.brand_info === 'string'))
+})
+
+test('порог бонуса — половина верных, считает сервер: 0/4 и 1/4 без бонуса, 2/4 +18, 4/4 +18 и +10', async () => {
+  const cases = [['+79101110001', 0, 0, 0], ['+79101110002', 1, 0, 0], ['+79101110003', 2, 30, 18], ['+79101110004', 4, 40, 28]]
+  const fl = quizFlavors(4)
+  for (const [phone, right, xp, coil] of cases) {
+    const r0 = await S.call('/api/admin/users', { cookie: admin, method: 'POST', body: { name: 'Порог ' + right, phone, password: PASS, role: 'employee', branch_id: branchId() } })
+    assert.equal(r0.status, 200, r0.text)
+    const { cookie } = await S.login(phone, PASS)
+    for (let i = 0; i < 4; i++) await answer(cookie, fl[i], i < right)
+    const r = await S.call('/api/flavors/session/finish', { cookie, method: 'POST', body: { correct: 4, total: 4 } })
+    assert.equal(r.status, 200, r.text)
+    assert.equal(r.json.correct, right, 'итог из ответов сервера, не из браузера')
+    assert.equal(r.json.goalReached, right >= 2)
+    assert.deepEqual(r.json.gained, { xp, coil }, `${right} из 4`)
+    const uid = userId(phone)
+    assert.equal(coilBy(uid, 'flavor_train') + coilBy(uid, 'flavor_perfect'), coil)
+  }
 })

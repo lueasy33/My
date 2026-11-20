@@ -17,7 +17,7 @@ let P // сайт «за прокси»: прокси на этом же ком�
 before(async () => {
   [S, P] = await Promise.all([startServer(), startServer({ TRUST_PROXY: '127.0.0.1' })])
 })
-after(() => { S?.stop(); P?.stop() })
+after(async () => { await S?.stop(); await P?.stop() })
 
 // Курс только для филиала Анны: урок с тестом. Алексей (другой филиал) не должен его видеть.
 function makeBranchCourse() {

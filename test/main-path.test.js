@@ -7,7 +7,8 @@
 import { test, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
-import { mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync } from 'node:fs'
+import { cleanupDir } from './helpers.js'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -46,10 +47,9 @@ before(async () => {
   db = new DatabaseSync(env.DB_PATH)
 })
 
-after(() => {
+after(async () => {
   db?.close()
-  server?.kill()
-  try { rmSync(dir, { recursive: true, force: true }) } catch { /* Windows может держать файл */ }
+  await cleanupDir(dir, server)
 })
 
 async function call(path, { cookie, method = 'GET', body } = {}) {

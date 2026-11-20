@@ -15,7 +15,7 @@ import { courseFilterSql } from '../access.js'
 const BOX_DAYS = [1, 3, 7, 21, 60, 60]
 const MAX_BOX = 5
 const NEW_PER_SESSION = 4
-// Цель дня: тренировка, где верно не меньше половины ответов. Бонусы за тренировку это правило не меняет.
+// Цель дня и бонус тренировки — одно правило: верно не меньше половины первых ответов (решение Евгения 20.11.2026).
 const GOAL_PERCENT = 50
 const GOAL_SQL = `(total > 0 AND correct * 100 >= total * ${GOAL_PERCENT})`
 export const STRENGTHS = ['лёгкая', 'средняя', 'высокая']
@@ -194,12 +194,15 @@ export default async function flavorRoutes(app) {
         WHERE user_id = ? AND day = ? AND session_id IS NULL`).get(u.id, day)
       const total = Number(row.total)
       const correct = Number(row.correct)
-      if (!total) return { total, correct, xp: 0, coil: 0, perfect: false }
+      if (!total) return { total, correct, xp: 0, coil: 0, perfect: false, passed: false }
+      const passed = correct * 100 >= total * GOAL_PERCENT
       const sid = db.prepare('INSERT INTO flavor_sessions(user_id, correct, total, day) VALUES (?,?,?,?)')
         .run(u.id, correct, total, day).lastInsertRowid
       db.prepare('UPDATE flavor_answers SET session_id = ? WHERE user_id = ? AND day = ? AND session_id IS NULL')
         .run(sid, u.id, day)
-      // Бонус за первую тренировку дня и отдельно — за тренировку без ошибок
+      // Меньше половины верно — тренировка засчитана в статистику, но без бонусов
+      if (!passed) return { total, correct, xp: 0, coil: 0, perfect: false, passed }
+      // Бонус за первую удачную тренировку дня и отдельно — за тренировку без ошибок
       let xp = awardXp(u.id, XP.flavorTrain, 'flavor_train', day)
       let coil = awardCoil(u.id, COIL.flavorTrain, 'flavor_train', day)
       // Порог — размер тренировки новичка (4 новых вкуса). При «5» новичок бонус получить не мог.
@@ -208,14 +211,14 @@ export default async function flavorRoutes(app) {
         xp += awardXp(u.id, 10, 'flavor_perfect', day)
         coil += awardCoil(u.id, 10, 'flavor_perfect', day)
       }
-      return { total, correct, xp, coil, perfect }
+      return { total, correct, xp, coil, perfect, passed }
     })
     const r = finish()
     // Без единого ответа тренировки не было — ничего не начисляем
     // Цель дня — тренировка, где верно хотя бы половина первых ответов (решение: «1 из 4» — не цель)
     const goalDone = !!db.prepare(`SELECT 1 FROM flavor_sessions WHERE user_id = ? AND day = ? AND ${GOAL_SQL}`).get(u.id, day)
     reply.send({ gained: { xp: r.xp, coil: r.coil }, perfect: r.perfect, correct: r.correct, total: r.total,
-      goalReached: r.total > 0 && r.correct * 100 >= r.total * GOAL_PERCENT, goalDone })
+      goalReached: r.passed, goalDone, bonusPercent: GOAL_PERCENT })
   })
 
   // Поиск по вкусам — тот самый пятый таб, которого не было в ТЗ.
