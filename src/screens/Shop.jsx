@@ -115,8 +115,9 @@ export default function Shop() {
                 ) : !item.purchaseable ? (
                   <span className="badge gold"><Icon.medal size={12} />Только за достижение</span>
                 ) : item.missing > 0 ? (
-                  <button className="btn ghost sm block" disabled title={`Не хватает ${item.missing} COIL`}>
-                    <Icon.coin size={15} />{item.price} · не хватает {item.missing}
+                  <button className="btn ghost sm block price-short" disabled title={`Не хватает ${item.missing} COIL`}>
+                    <span className="price"><Icon.coin size={15} />{item.price}</span>
+                    <span className="tiny">не хватает {item.missing}</span>
                   </button>
                 ) : (
                   <button className="btn sm block" onClick={() => setConfirm(item)}><Icon.coin size={15} />{item.price}</button>

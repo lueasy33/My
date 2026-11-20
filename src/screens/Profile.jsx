@@ -78,7 +78,7 @@ export default function Profile() {
               <span className="mono bold reward">{lp.current} / {lp.span}</span>
             </div>
             <ProgressBar percent={lp.percent} gold />
-            {data.nextThemes?.length > 0 && <p className="tiny muted" style={{ marginTop: 6 }}>На {lp.level + 1} уровне откроется тема «{data.nextThemes.join('», «')}»</p>}
+            {data.nextThemes?.length > 0 && <p className="tiny muted" style={{ marginTop: 6 }}>На {lp.level + 1} уровне {data.nextThemes.length > 1 ? 'откроются темы' : 'откроется тема'} «{data.nextThemes.join('», «')}»</p>}
           </div>
         </div>
         <div className="hero-stats">
@@ -229,7 +229,7 @@ export default function Profile() {
       )}
 
       <div className="col" style={{ gap: 8, marginTop: 26 }}>
-        <Link to="/themes" className="list-row"><span className="list-ico"><Icon.palette size={19} /></span><span className="list-main"><b>Оформление</b><span>{THEMES.length} тем: за уровни и в магазине</span></span><Icon.chevR size={18} /></Link>
+        <Link to="/themes" className="list-row"><span className="list-ico"><Icon.palette size={19} /></span><span className="list-main"><b>Оформление</b><span>{THEMES.length} {plural(THEMES.length, 'тема', 'темы', 'тем')}: за уровни и в магазине</span></span><Icon.chevR size={18} /></Link>
         <Link to="/settings" className="list-row"><span className="list-ico"><Icon.settings size={19} /></span><span className="list-main"><b>Настройки</b><span>Пароль, звук, анимации, обучение заново</span></span><Icon.chevR size={18} /></Link>
       </div>
 

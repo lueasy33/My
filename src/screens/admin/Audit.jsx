@@ -9,14 +9,14 @@ export default function Audit() {
   if (error) return <LoadError error={error} onRetry={reload} />
   if (!data) return <PageSkeleton />
   const low = q.trim().toLowerCase()
-  const items = data.items.filter(i => !low || String(i.actor || '').toLowerCase().includes(low) || label(i.action).includes(low))
+  const items = data.items.filter(i => !low || String(i.actor || '').toLowerCase().includes(low) || label(i.action).includes(low) || String(i.title || '').toLowerCase().includes(low))
   return (
     <>
       <PageHead title="Журнал действий" sub="Кто что создал, изменил и выдал — последние 300 записей"
         action={<input className="input" style={{ minHeight: 42, maxWidth: 240 }} placeholder="Поиск" value={q} onChange={e => setQ(e.target.value)} />} />
       <div className="table-wrap">
-        <table className="dtable">
-          <thead><tr><th>Когда</th><th>Кто</th><th>Действие</th><th>Подробности</th></tr></thead>
+        <table className="dtable stack">
+          <thead><tr><th>Когда</th><th>Действие</th><th>Кто</th><th>Подробности</th></tr></thead>
           <tbody>
             {items.map(i => {
               let p = {}
@@ -25,9 +25,9 @@ export default function Audit() {
               return (
                 <tr key={i.id}>
                   <td className="small muted" style={{ whiteSpace: 'nowrap' }}>{fmtDate(i.created_at, { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
-                  <td className="bold">{i.actor || 'система'}</td>
-                  <td>{label(i.action)}</td>
-                  <td className="small muted">{details}</td>
+                  <td data-label="Действие" className="bold">{i.title || label(i.action)}</td>
+                  <td data-label="Кто">{i.actor || 'система'}</td>
+                  <td data-label="Подробности" className="small muted">{details || '—'}</td>
                 </tr>
               )
             })}

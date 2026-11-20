@@ -47,15 +47,17 @@ export default function Overview() {
           ) : (
             <div className="col" style={{ gap: 6 }}>
               {data.attention.slice(0, 12).map(r => (
-                <div key={`${r.user_id}-${r.lesson_id}`} className="list-row">
+                <div key={`${r.user_id}-${r.lesson_id}`} className="list-row attn">
                   <span className={'list-ico ' + (r.contacted ? 'success' : 'danger')}>{r.contacted ? <Icon.check size={18} /> : <Icon.alert size={18} />}</span>
-                  <span className="list-main">
+                  <span className="list-main wrap">
                     <b>{r.name}</b>
                     <span>{r.lesson} · просрочен на {r.days_overdue} {plural(r.days_overdue, 'день', 'дня', 'дней')}{r.branch ? ` · ${r.branch}` : ''}</span>
                     {r.contacted && <span>Связались {fmtAgo(r.contacted_at)}{r.last_note ? `: ${r.last_note}` : ''}</span>}
                   </span>
-                  <a className="btn ghost xs icon" href={`tel:${r.phone}`} aria-label={`Позвонить: ${r.name}`}><Icon.phone size={16} /></a>
-                  {!r.contacted && <button className="btn soft xs" onClick={() => setContact(r)}>Связался</button>}
+                  <span className="attn-actions">
+                    <a className="btn ghost sm icon" href={`tel:${r.phone}`} aria-label={`Позвонить: ${r.name}`}><Icon.phone size={16} /></a>
+                    {!r.contacted && <button className="btn soft sm" onClick={() => setContact(r)}>Связался</button>}
+                  </span>
                 </div>
               ))}
               {data.attention.length > 12 && <p className="small muted center">и ещё {data.attention.length - 12}</p>}
@@ -85,7 +87,7 @@ export default function Overview() {
               {data.recentLog.length === 0 && <p className="small muted">Пока пусто</p>}
               {data.recentLog.map(l => (
                 <div key={l.id} className="row between small" style={{ padding: '8px 0', borderBottom: '1px solid var(--border)', gap: 10 }}>
-                  <span style={{ minWidth: 0 }}><b>{l.actor || 'система'}</b> <span className="muted">{label(l.action)}</span></span>
+                  <span style={{ minWidth: 0 }}>{l.title || label(l.action)} <span className="muted">· {l.actor || 'система'}</span></span>
                   <span className="tiny muted" style={{ flex: 'none' }}>{fmtDate(l.created_at, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               ))}

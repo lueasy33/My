@@ -972,3 +972,18 @@ button.order-row { cursor: pointer; } button.order-row:hover { background: var(-
 
 /* Плашки в узких карточках переносятся, а не вылезают за край («Только за достижение») */
 .shop-item .badge, .workshop-tile .badge { white-space: normal; max-width: 100%; justify-content: center; text-align: center; line-height: 1.25; height: auto; min-height: 22px; padding-block: 3px; }
+
+/* Кнопка цены в узкой карточке магазина: «400 · не хватает 350» переносится, а не вылезает за рамку */
+.shop-item .btn { white-space: normal; text-align: center; line-height: 1.25; padding: 6px 10px; gap: 6px; }
+.shop-item .btn.price-short { flex-direction: column; gap: 0; }
+
+/* Строка просрочки в админке: урок и срок видны целиком, а не «Возрастные огран…» */
+.list-main.wrap span { white-space: normal; overflow-wrap: normal; }
+/* На телефоне кнопки «позвонить / связался» уходят под текст, чтобы имя и урок не сжимались */
+.attn-actions { display: flex; gap: 8px; flex: none; }
+@media (max-width: 520px) {
+  .list-row.attn { flex-wrap: wrap; }
+  .list-row.attn .list-main { flex-basis: calc(100% - 52px); }
+  .list-row.attn .attn-actions { width: 100%; padding-left: 52px; }
+  .list-row.attn .attn-actions .btn:not(.icon) { flex: 1; }
+}
