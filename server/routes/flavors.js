@@ -15,6 +15,9 @@ import { courseFilterSql } from '../access.js'
 const BOX_DAYS = [1, 3, 7, 21, 60, 60]
 const MAX_BOX = 5
 const NEW_PER_SESSION = 4
+// Цель дня: тренировка, где верно не меньше половины ответов. Бонусы за тренировку это правило не меняет.
+const GOAL_PERCENT = 50
+const GOAL_SQL = `(total > 0 AND correct * 100 >= total * ${GOAL_PERCENT})`
 export const STRENGTHS = ['лёгкая', 'средняя', 'высокая']
 
 const dayMsk = (ms) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow' }).format(new Date(ms))
@@ -25,6 +28,25 @@ const publicFlavor = (f, p) => ({
   tags: JSON.parse(f.tags || '[]'), strength: f.strength, cold: !!f.cold, tip: f.tip, mix: f.mix, line: f.line,
   in_quiz: !!f.in_quiz, box: p?.box ?? null, correct: p?.correct || 0, wrong: p?.wrong || 0
 })
+
+// «Похожие вкусы» для карточки знакомства: общий вкус по тегам (фрукт, десерт…), потом холод и крепость.
+// Сначала — других брендов: продавцу это замена, если нужного вкуса нет на полке.
+const TASTE = (t) => !/крепост|холод/.test(t)
+export function similarTo(f, all, n = 2) {
+  const mine = JSON.parse(f.tags || '[]').filter(TASTE)
+  if (!mine.length) return []
+  return all
+    .filter(x => x.id !== f.id)
+    .map(x => {
+      const shared = JSON.parse(x.tags || '[]').filter(t => TASTE(t) && mine.includes(t)).length
+      const score = shared * 4 + (!!x.cold === !!f.cold ? 2 : 0) + (x.strength === f.strength ? 1 : 0) + (x.brand_id !== f.brand_id ? 1 : 0)
+      return { x, shared, score }
+    })
+    .filter(r => r.shared > 0)
+    .sort((a, b) => b.score - a.score || a.x.id - b.x.id)
+    .slice(0, n)
+    .map(({ x }) => ({ id: x.id, name: x.name, brand: x.brand }))
+}
 
 function progressMap(userId) {
   return Object.fromEntries(db.prepare('SELECT * FROM flavor_progress WHERE user_id = ?').all(userId).map(p => [p.flavor_id, p]))
@@ -54,9 +76,10 @@ export default async function flavorRoutes(app) {
       }
     }).filter(b => b.total > 0)
     const quiz = all.filter(f => f.in_quiz)
-    const todayRow = db.prepare('SELECT COUNT(*) sessions, COALESCE(SUM(correct),0) correct, COALESCE(SUM(total),0) total FROM flavor_sessions WHERE user_id = ? AND day = ?').get(u.id, today)
-    // Серия тренировок: дни подряд, в которые была хотя бы одна сессия
-    const days = db.prepare('SELECT DISTINCT day FROM flavor_sessions WHERE user_id = ? ORDER BY day DESC LIMIT 400').all(u.id).map(r => r.day)
+    const todayRow = db.prepare(`SELECT COUNT(*) sessions, COALESCE(SUM(correct),0) correct, COALESCE(SUM(total),0) total,
+      COALESCE(MAX(${GOAL_SQL}), 0) done FROM flavor_sessions WHERE user_id = ? AND day = ?`).get(u.id, today)
+    // Серия тренировок: дни подряд, в которые цель дня выполнена (то же правило, что и «Цель дня»)
+    const days = db.prepare(`SELECT DISTINCT day FROM flavor_sessions WHERE user_id = ? AND ${GOAL_SQL} ORDER BY day DESC LIMIT 400`).all(u.id).map(r => r.day)
     const prevDay = (d) => new Date(Date.parse(d + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10)
     let streak = 0
     let expect = days[0] === today ? today : prevDay(today)
@@ -70,7 +93,7 @@ export default async function flavorRoutes(app) {
       mastered: all.filter(f => (prog[f.id]?.box ?? -1) >= MAX_BOX).length,
       due: quiz.filter(f => prog[f.id] && prog[f.id].due_at <= today && prog[f.id].box < MAX_BOX).length,
       fresh: quiz.filter(f => !prog[f.id]).length,
-      today: { sessions: todayRow.sessions, correct: todayRow.correct, answered: todayRow.total, goal: 1 },
+      today: { sessions: todayRow.sessions, correct: todayRow.correct, answered: todayRow.total, goal: 1, done: !!todayRow.done, goalPercent: GOAL_PERCENT },
       streak,
       brands
     })
@@ -115,11 +138,12 @@ export default async function flavorRoutes(app) {
       .filter((f, i, a) => a.indexOf(f) === i).slice(0, size)
     if (!picked.length) return reply.send({ items: [], done: true })
 
-    const brands = db.prepare('SELECT id, name FROM flavor_brands WHERE published = 1').all()
+    const brands = db.prepare('SELECT id, name, description FROM flavor_brands WHERE published = 1').all()
+    const brandInfo = new Map(brands.map(b => [b.id, b.description]))
     const items = []
     for (const f of shuffle(picked)) {
       const isNew = !prog[f.id]
-      if (isNew) items.push({ type: 'intro', flavor: publicFlavor(f) })
+      if (isNew) items.push({ type: 'intro', flavor: publicFlavor(f), similar: similarTo(f, all), brand_info: brandInfo.get(f.brand_id) || '' })
       items.push(makeQuestion(f, box(f), quiz, brands))
     }
     reply.send({ items, brand: brandId ? brands.find(b => b.id === brandId)?.name : null })
@@ -188,7 +212,10 @@ export default async function flavorRoutes(app) {
     })
     const r = finish()
     // Без единого ответа тренировки не было — ничего не начисляем
-    reply.send({ gained: { xp: r.xp, coil: r.coil }, perfect: r.perfect, correct: r.correct, total: r.total })
+    // Цель дня — тренировка, где верно хотя бы половина первых ответов (решение: «1 из 4» — не цель)
+    const goalDone = !!db.prepare(`SELECT 1 FROM flavor_sessions WHERE user_id = ? AND day = ? AND ${GOAL_SQL}`).get(u.id, day)
+    reply.send({ gained: { xp: r.xp, coil: r.coil }, perfect: r.perfect, correct: r.correct, total: r.total,
+      goalReached: r.total > 0 && r.correct * 100 >= r.total * GOAL_PERCENT, goalDone })
   })
 
   // Поиск по вкусам — тот самый пятый таб, которого не было в ТЗ.

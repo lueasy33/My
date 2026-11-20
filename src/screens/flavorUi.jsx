@@ -58,6 +58,12 @@ export function FlavorFacts({ f, pitch }) {
           <div><b>Как рассказать клиенту</b><br />{f.tip}</div>
         </div>
       )}
+      {pitch && whoFor(f) && (
+        <div className="callout" style={{ margin: 0 }}>
+          <span className="ico"><Icon.user size={18} /></span>
+          <div><b>Кому предложить</b><br />{whoFor(f)}</div>
+        </div>
+      )}
       {f.mix && (
         <div className="callout" style={{ margin: 0 }}>
           <span className="ico"><Icon.sparkles size={18} /></span>
@@ -66,6 +72,13 @@ export function FlavorFacts({ f, pitch }) {
       )}
     </div>
   )
+}
+
+// «Кому предложить» — из крепости и холода, которые уже есть у каждого вкуса (пустых полей не бывает)
+export function whoFor(f) {
+  const who = { 'лёгкая': 'новичку и тому, кто не любит крепкое', 'средняя': 'почти любому гостю — безопасный выбор', 'высокая': 'опытному гостю, который хочет плотный дым' }[f.strength]
+  if (!who) return ''
+  return who[0].toUpperCase() + who.slice(1) + (f.cold ? '. Любителям холодка — в самый раз' : '')
 }
 
 export function FlavorModal({ f, onClose, onTrain }) {

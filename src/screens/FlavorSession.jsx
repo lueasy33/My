@@ -78,6 +78,8 @@ export default function FlavorSession() {
       setFeedback(r)
       if (user.sound) answerSound(r.correct)
       setStats(s => {
+        // «Повторим ошибку» в серию ответов не идёт — как и в «Верно N из M»: считаем только первые ответы
+        if (item.retry) return s
         const combo = r.correct ? s.combo + 1 : 0
         return { correct: s.correct + (r.correct ? 1 : 0), total: s.total + 1, combo, best: Math.max(s.best, combo), xp: s.xp + r.gained.xp, coil: s.coil + r.gained.coil }
       })
@@ -125,6 +127,9 @@ export default function FlavorSession() {
           <h1 style={{ fontSize: 26, marginTop: 14 }}>{summary.perfect ? 'Без единой ошибки!' : acc >= 70 ? 'Отличная тренировка!' : 'Тренировка завершена'}</h1>
           <p className="muted" style={{ marginTop: 6 }}>{title}</p>
           <p className="bold" style={{ marginTop: 10, fontSize: 17 }}>Верно {summary.correct} из {summary.total}</p>
+          {summary.goalReached !== undefined && (summary.goalReached
+            ? <span className="badge success" style={{ marginTop: 8 }}><Icon.check size={12} />{extra ? 'Цель дня выполнена' : 'Цель дня выполнена!'}</span>
+            : <p className="small muted" style={{ marginTop: 8 }}>{summary.goalDone ? 'Цель дня уже выполнена раньше' : 'Для цели дня нужно верно хотя бы половину — попробуй ещё раз'}</p>)}
           <div className="session-stats">
             <div><b className="reward">+{summary.xp + (summary.gained?.xp || 0)}</b><span>XP</span></div>
             <div><b style={{ color: acc >= 70 ? 'var(--success-text)' : 'var(--warning-text)' }}>{acc}%</b><span>точность</span></div>
@@ -174,6 +179,15 @@ export default function FlavorSession() {
               </div>
             </div>
             <FlavorFacts f={item.flavor} pitch />
+            {item.similar?.length > 0 && (
+              <div className="callout" style={{ margin: '12px 0 0' }}>
+                <span className="ico"><Icon.target size={18} /></span>
+                <div><b>Похожие вкусы — если этого нет</b>
+                  {item.similar.map(x => <span key={x.id} style={{ display: 'block' }}>{x.name} <span className="muted">· {x.brand}</span></span>)}
+                </div>
+              </div>
+            )}
+            {item.brand_info && <p className="small muted" style={{ marginTop: 12 }}><b>{item.flavor.brand}:</b> {item.brand_info}</p>}
           </>
         ) : (
           <>

@@ -119,3 +119,42 @@ test('скрытый вкус не принимается', async () => {
     S.db.prepare('UPDATE flavors SET published = 1 WHERE id = ?').run(id)
   }
 })
+
+test('цель дня — тренировка от 50% верно: «1 из 4» цель не закрывает, серия дней по тому же правилу', async () => {
+  const phone = '+79105556677'
+  const { cookie } = await S.login(phone)
+  const fl = quizFlavors(8)
+  const before = (await S.call('/api/flavors', { cookie })).json
+  assert.equal(before.today.done, false)
+  await answer(cookie, fl[0], true)
+  for (const f of fl.slice(1, 4)) await answer(cookie, f, false)
+  const r1 = await S.call('/api/flavors/session/finish', { cookie, method: 'POST', body: {} })
+  assert.equal(r1.json.correct, 1)
+  assert.equal(r1.json.goalReached, false)
+  assert.equal(r1.json.goalDone, false)
+  const mid = (await S.call('/api/flavors', { cookie })).json
+  assert.equal(mid.today.done, false, '1 из 4 — цель дня не выполнена')
+  assert.equal(mid.today.sessions, 1)
+  assert.equal(mid.streak, before.streak, 'неудачная тренировка не продлевает серию')
+  await answer(cookie, fl[4], true)
+  await answer(cookie, fl[5], false)
+  const r2 = await S.call('/api/flavors/session/finish', { cookie, method: 'POST', body: {} })
+  assert.equal(r2.json.goalReached, true, '1 из 2 = 50% — цель')
+  assert.equal(r2.json.goalDone, true)
+  const after = (await S.call('/api/flavors', { cookie })).json
+  assert.equal(after.today.done, true)
+  assert.equal(after.streak, before.streak + 1)
+})
+
+test('карточка нового вкуса не пустая: похожие вкусы по тегам и описание бренда', async () => {
+  const { cookie } = await S.login('+79101234567')
+  const r = await S.call('/api/flavors/session', { cookie })
+  const intros = r.json.items.filter(x => x.type === 'intro')
+  assert.ok(intros.length > 0, 'у админа без истории должны быть новые вкусы')
+  for (const it of intros) {
+    assert.ok(Array.isArray(it.similar))
+    assert.ok(it.similar.every(x => x.id !== it.flavor.id), 'вкус не похож сам на себя')
+  }
+  assert.ok(intros.some(it => it.similar.length > 0), 'похожие вкусы не нашлись ни для одного')
+  assert.ok(intros.every(it => typeof it.brand_info === 'string'))
+})

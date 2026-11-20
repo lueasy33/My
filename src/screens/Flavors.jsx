@@ -19,7 +19,9 @@ export default function Flavors() {
   if (!data.brands.length) return <main className="page"><Empty icon={<Icon.target size={26} />} title="Вкусов пока нет" text={user.role === 'admin' ? 'Добавьте бренды и вкусы — они появятся здесь для обучения' : 'Администратор ещё не добавил бренды и вкусы'}
     action={user.role === 'admin' && <Link className="btn primary sm" to="/admin/flavors">Добавить вкусы</Link>} /></main>
 
-  const goalDone = data.today.sessions >= data.today.goal
+  // Цель дня — тренировка, где верно хотя бы половина (считает сервер). «1 из 4» цель не закрывает.
+  const goalDone = data.today.done ?? data.today.sessions >= data.today.goal
+  const goalPct = data.today.goalPercent || 50
   const work = data.due + Math.min(data.fresh, 4)
   const low = q.trim().toLowerCase()
 
@@ -35,18 +37,18 @@ export default function Flavors() {
 
       <div className="flavor-hero">
         <div className="flavor-hero-stats">
-          <div className={'goal-ring' + (goalDone ? ' done' : '')} aria-label={goalDone ? 'Цель дня выполнена' : 'Цель дня — одна тренировка'}>
+          <div className={'goal-ring' + (goalDone ? ' done' : '')} aria-label={goalDone ? 'Цель дня выполнена' : `Цель дня — тренировка от ${goalPct}% верно`}>
             {goalDone ? <Icon.check size={26} /> : <Icon.target size={24} />}
           </div>
           <div>
-            <b>{goalDone ? 'Цель дня выполнена!' : 'Цель дня — 1 тренировка'}</b>
+            <b>{goalDone ? 'Цель дня выполнена!' : `Цель дня — тренировка от ${goalPct}% верно`}</b>
             <span className="small muted" style={{ display: 'block' }}>
               {data.today.answered
                 ? `Сегодня ${data.today.correct} из ${data.today.answered} верно · ${data.today.sessions} ${plural(data.today.sessions, 'тренировка', 'тренировки', 'тренировок')}`
                 : 'Пара минут — и вкусы запоминаются'}
             </span>
           </div>
-          <span className="chip-reward" style={{ marginLeft: 'auto' }} title="Дней подряд с тренировкой"><Icon.flame size={16} />{data.streak}</span>
+          <span className="chip-reward" style={{ marginLeft: 'auto' }} title="Дней подряд с выполненной целью"><Icon.flame size={16} />{data.streak}</span>
         </div>
         <button className="btn gold block" style={{ marginTop: 14, minHeight: 54, fontSize: 16 }} disabled={!data.quiz} onClick={() => nav('/flavors/session', { state: { extra: goalDone } })}>
           <Icon.play size={18} />{goalDone ? 'Ещё тренировка' : 'Тренировка дня'}{work ? ` · ${work} ${plural(work, 'вкус', 'вкуса', 'вкусов')}` : ''}
